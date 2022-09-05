@@ -5,6 +5,7 @@
     <modules>
         <module>server</module>
         <module>gateway</module>
+        <module>statistics</module>
     </modules>
 
     <parent>
