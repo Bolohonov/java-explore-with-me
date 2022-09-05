@@ -1,25 +1,17 @@
-package ru.practicum.event;
+package ru.practicum.event.dto;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.Setter;
-import lombok.ToString;
+import lombok.*;
+import ru.practicum.event.State;
 
-import javax.persistence.*;
 import java.io.Serializable;
 import java.time.LocalDateTime;
 
-@Entity
-@Table(name = "events", schema = "public")
-@Getter
-@Setter
-@ToString
-public class Event {
+@Data
+@AllArgsConstructor
+public class EventFullDto {
     /**
      * уникальный идентификатор
      */
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     /**
      * Заголовок события
@@ -32,8 +24,7 @@ public class Event {
     /**
      * Категория
      */
-    @Column(name = "category_id")
-    private Long categoryId;
+    private CategoryDto category;
     /**
      * Количество одобренных заявок на участие в данном событии
      */
@@ -53,8 +44,7 @@ public class Event {
     /**
      * Инициатор события
      */
-    @Column(name = "initiator_id")
-    private Long initiatorId;
+    private UserShortDto initiator;
     /**
      * Нужно ли оплачивать участие
      */
@@ -79,4 +69,35 @@ public class Event {
      * Количество просмотрев события
      */
     private Long views;
+
+
+    @AllArgsConstructor
+    @ToString
+    @Getter
+    @Setter
+    public static class CategoryDto implements Serializable {
+        /**
+         * уникальный идентификатор
+         */
+        private Long id;
+        /**
+         * название категории
+         */
+        private String name;
+    }
+
+    @AllArgsConstructor
+    @ToString
+    @Getter
+    @Setter
+    public static class UserShortDto implements Serializable {
+        /**
+         * уникальный идентификатор
+         */
+        private Long id;
+        /**
+         * название категории
+         */
+        private String name;
+    }
 }
