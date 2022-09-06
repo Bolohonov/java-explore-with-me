@@ -18,6 +18,8 @@ import java.util.Collections;
 import java.util.Map;
 import java.util.Optional;
 
+import static java.util.Optional.of;
+
 @Service
 @RequiredArgsConstructor
 @Slf4j
@@ -39,13 +41,33 @@ public class EventMainService implements EventService {
         Event event = eventRepository.findById(eventId).orElseThrow(() -> {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND);
         });
-        return eventMapper.toEventFullDto(event, userService.getUserById(event.getInitiatorId(),
-                categoryService.getCategoryById(event.getCategoryId())));
+        return of(eventMapper.toEventFullDto(event));
+    }
+
+    @Transactional(readOnly = true)
+    @Override
+    public Collection<EventShortDto> findEventsByUser(Long userId) {
+        return eventMapper.toEventShortDto(eventRepository.findEventsByInitiatorId(userId));
     }
 
     @Override
-    public Collection<EventShortDto> findEventsByUser(Long userId) {
-        return null;
+    public Optional<EventShortDto> updateEventByInitiator(Long userId, EventShortDto event) {
+        if (!getEventById(event.getId()).isPresent()) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND);
+        }
+        if (!getEventById(event.getId()).get().getInitiator().getId().equals(userId)) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
+        }
+        if (getEventById(event.getId()).get().getState().equals(State.PENDING)
+                || getEventById(event.getId()).get().getState().equals(State.CANCELED)) {
+            return null;
+        }
+        throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
+    }
+
+    @Override
+    public Optional<EventFullDto> addEvent(Long userId, Event event) {
+        return of(eventMapper.toEventFullDto(eventRepository.save(event)));
     }
 
 }

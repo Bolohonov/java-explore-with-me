@@ -9,6 +9,7 @@ import ru.practicum.event.dto.EventShortDto;
 
 import java.util.Collection;
 import java.util.Map;
+import java.util.Optional;
 
 import static org.springframework.http.HttpStatus.OK;
 
@@ -23,5 +24,11 @@ public class EventController {
     @ResponseStatus(OK)
     public Collection<EventShortDto> findEvents(@RequestParam Map<String,String> allParams) {
         return eventService.getEvents(allParams);
+    }
+
+    @GetMapping("/{eventId}")
+    @ResponseStatus(OK)
+    public Optional<EventFullDto> findEventById(@PathVariable Long eventId) {
+        return eventService.getEventById(eventId);
     }
 }

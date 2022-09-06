@@ -3,11 +3,14 @@ package ru.practicum.event.controller;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
+import ru.practicum.event.Event;
 import ru.practicum.event.EventService;
+import ru.practicum.event.State;
+import ru.practicum.event.dto.EventFullDto;
 import ru.practicum.event.dto.EventShortDto;
-import ru.practicum.user.User;
 
 import java.util.Collection;
+import java.util.Optional;
 
 import static org.springframework.http.HttpStatus.OK;
 
@@ -21,6 +24,35 @@ public class EventPrivateController {
     @GetMapping()
     @ResponseStatus(OK)
     public Collection<EventShortDto> findEventsByUser(@PathVariable Long userId) {
-        return userService.getUserById(id).get();
+        return eventService.findEventsByUser(userId);
+    }
+
+    @PatchMapping()
+    @ResponseStatus(OK)
+    public Optional<EventShortDto> patchEventByInitiator(@PathVariable Long userId,
+                                                         @RequestBody EventShortDto event) {
+        return eventService.updateEventByInitiator(userId, event);
+    }
+
+    @PostMapping()
+    @ResponseStatus(OK)
+    public Optional<EventFullDto> addNewEvent(@PathVariable Long userId,
+                                                        @RequestBody Event event) {
+        return eventService.addEvent(userId, event);
+    }
+
+    @GetMapping("/{eventId}")
+    @ResponseStatus(OK)
+    public Optional<EventFullDto> findEventById(@PathVariable Long userId,
+                                                @PathVariable Long eventId) {
+        return eventService.getEventById(eventId);
+    }
+
+    @PatchMapping("/{eventId}")
+    @ResponseStatus(OK)
+    public Optional<EventShortDto> changeEventStateToCanceled(@PathVariable Long userId,
+                                                @PathVariable Long eventId) {
+        return eventService.updateEventByInitiator(userId,
+                eventService.getEventById(eventId).get().setState(State.CANCELED);
     }
 }
