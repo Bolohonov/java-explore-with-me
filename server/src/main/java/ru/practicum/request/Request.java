@@ -1,8 +1,6 @@
 package ru.practicum.request;
 
-import lombok.Getter;
-import lombok.Setter;
-import lombok.ToString;
+import lombok.*;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
@@ -12,7 +10,15 @@ import java.time.LocalDateTime;
 @Getter
 @Setter
 @ToString
+@NoArgsConstructor
 public class Request {
+    @Builder
+    public Request(LocalDateTime created, Long event, Long requester, Status status) {
+        this.created = created;
+        this.event = event;
+        this.requester = requester;
+        this.status = status;
+    }
     /**
      * уникальный идентификатор заявки
      */

@@ -3,10 +3,13 @@ package ru.practicum.user.controller;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
+import ru.practicum.request.RequestService;
+import ru.practicum.request.dto.RequestDto;
 import ru.practicum.user.User;
 import ru.practicum.user.UserService;
 
 import java.util.Collection;
+import java.util.Optional;
 
 import static org.springframework.http.HttpStatus.CREATED;
 import static org.springframework.http.HttpStatus.OK;
@@ -17,6 +20,7 @@ import static org.springframework.http.HttpStatus.OK;
 @Slf4j
 public class UserController {
     private final UserService userService;
+    private final RequestService requestService;
 
     @GetMapping
     @ResponseStatus(OK)
@@ -47,4 +51,18 @@ public class UserController {
     public void deleteUser(@PathVariable Long id) {
         userService.deleteUser(id);
     }
+
+    @GetMapping("/{userId}/requests")
+    @ResponseStatus(OK)
+    public Collection<RequestDto> findUserRequests(@PathVariable Long userId) {
+        return requestService.getUserRequests(userId);
+    }
+
+    @GetMapping("/{userId}/requests/{eventId}")
+    @ResponseStatus(OK)
+    public Optional<RequestDto> addRequest(@PathVariable Long userId,
+                                           @PathVariable Long eventId) {
+        return requestService.addNewRequest(userId, eventId);
+    }
+
 }
