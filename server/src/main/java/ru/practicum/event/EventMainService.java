@@ -7,6 +7,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 import ru.practicum.category.CategoryService;
+import ru.practicum.event.dto.EventFullDto;
 import ru.practicum.event.dto.EventMapper;
 import ru.practicum.event.dto.EventShortDto;
 import ru.practicum.event.repository.EventRepository;
@@ -34,12 +35,17 @@ public class EventMainService implements EventService {
 
     @Transactional(readOnly = true)
     @Override
-    public Optional<EventShortDto> getEventById(Long eventId) {
+    public Optional<EventFullDto> getEventById(Long eventId) {
         Event event = eventRepository.findById(eventId).orElseThrow(() -> {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND);
         });
-        return eventMapper(event, userService.getUserById(event.getInitiatorId(),
+        return eventMapper.toEventFullDto(event, userService.getUserById(event.getInitiatorId(),
                 categoryService.getCategoryById(event.getCategoryId())));
+    }
+
+    @Override
+    public Collection<EventShortDto> findEventsByUser(Long userId) {
+        return null;
     }
 
 }

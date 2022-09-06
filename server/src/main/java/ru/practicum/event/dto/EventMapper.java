@@ -11,8 +11,6 @@ import java.util.Collection;
 @Component
 @RequiredArgsConstructor
 public class EventMapper {
-    private final EventService eventService;
-
     public static EventFullDto toEventFullDto(Event event, String initiator, String category) {
         return new EventFullDto(
                 event.getId(),
