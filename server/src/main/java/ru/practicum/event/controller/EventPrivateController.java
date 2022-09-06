@@ -55,4 +55,11 @@ public class EventPrivateController {
         return eventService.updateEventByInitiator(userId,
                 eventService.getEventById(eventId).get().setState(State.CANCELED);
     }
+
+    @GetMapping("/{eventId}/requests")
+    @ResponseStatus(OK)
+    public Optional<EventFullDto> findEventById(@PathVariable Long userId,
+                                                @PathVariable Long eventId) {
+        return eventService.getEventById(eventId);
+    }
 }

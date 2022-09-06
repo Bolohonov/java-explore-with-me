@@ -1,8 +1,10 @@
-package ru.practicum.user;
+package ru.practicum.user.controller;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
+import ru.practicum.user.User;
+import ru.practicum.user.UserService;
 
 import java.util.Collection;
 
