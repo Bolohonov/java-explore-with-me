@@ -65,4 +65,11 @@ public class UserController {
         return requestService.addNewRequest(userId, eventId);
     }
 
+    @PatchMapping("/{userId}/requests/{requestId}/cancel")
+    @ResponseStatus(OK)
+    public Optional<RequestDto> cancelRequest(@PathVariable Long userId,
+                                           @PathVariable Long requestId) {
+        return requestService.revokeRequest(userId, requestId);
+    }
+
 }

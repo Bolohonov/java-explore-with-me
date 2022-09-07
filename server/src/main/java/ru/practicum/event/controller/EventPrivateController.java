@@ -8,6 +8,8 @@ import ru.practicum.event.EventService;
 import ru.practicum.event.State;
 import ru.practicum.event.dto.EventFullDto;
 import ru.practicum.event.dto.EventShortDto;
+import ru.practicum.request.RequestService;
+import ru.practicum.request.dto.RequestDto;
 
 import java.util.Collection;
 import java.util.Optional;
@@ -20,6 +22,7 @@ import static org.springframework.http.HttpStatus.OK;
 @RequestMapping("/users/{userId}/events")
 public class EventPrivateController {
     private final EventService eventService;
+    private final RequestService requestService;
 
     @GetMapping()
     @ResponseStatus(OK)
@@ -58,8 +61,8 @@ public class EventPrivateController {
 
     @GetMapping("/{eventId}/requests")
     @ResponseStatus(OK)
-    public Optional<EventFullDto> findEventById(@PathVariable Long userId,
-                                                @PathVariable Long eventId) {
-        return eventService.getEventById(eventId);
+    public Optional<RequestDto> findRequestByUser(@PathVariable Long userId,
+                                                  @PathVariable Long eventId) {
+        return requestService.;
     }
 }

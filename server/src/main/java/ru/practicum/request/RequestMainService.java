@@ -2,7 +2,9 @@ package ru.practicum.request;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
 import ru.practicum.request.dto.RequestDto;
 import ru.practicum.request.dto.RequestMapper;
 import ru.practicum.request.repository.RequestRepository;
@@ -34,6 +36,21 @@ public class RequestMainService implements RequestService {
                 .status(Status.WAITING)
                 .build();
         return of(requestMapper.toRequestDto(requestRepository.save(request)));
+    }
+
+    @Override
+    public Optional<RequestDto> revokeRequest(Long userId, Long requestId) {
+        Request request = requestRepository.findById(requestId)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
+        request.setStatus(Status.CANCELED);
+        return of(requestMapper.toRequestDto(request));
+    }
+
+    @Override
+    public Optional<RequestDto> getUserRequestOfEvent(Long userId, Long eventId) {
+        return of(requestMapper.toRequestDto(requestRepository
+                .getRequestByRequesterAndEvent(userId, eventId)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND))));
     }
 
 }
