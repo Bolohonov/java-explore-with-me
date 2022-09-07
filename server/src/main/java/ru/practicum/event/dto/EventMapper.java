@@ -38,6 +38,14 @@ public class EventMapper {
         );
     }
 
+    public Collection<EventFullDto> toEventFullDto(Collection<Event> events) {
+        Collection<EventFullDto> dtos = new ArrayList<>();
+        for (Event event : events) {
+            dtos.add(toEventFullDto(event));
+        }
+        return dtos;
+    }
+
     public EventShortDto toEventShortDto(Event event) {
         return new EventShortDto(
                 event.getId(),

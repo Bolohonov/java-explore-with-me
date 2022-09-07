@@ -2,23 +2,22 @@ package ru.practicum.event;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
-import ru.practicum.Validation;
 import ru.practicum.category.CategoryService;
 import ru.practicum.event.dto.EventFullDto;
 import ru.practicum.event.dto.EventMapper;
 import ru.practicum.event.dto.EventShortDto;
 import ru.practicum.event.repository.EventRepository;
 import ru.practicum.user.UserService;
+import ru.practicum.user.exceptions.UserNotFoundException;
 
 import java.time.LocalDateTime;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 
 import static java.util.Optional.of;
 
@@ -28,7 +27,6 @@ import static java.util.Optional.of;
 public class EventMainService implements EventService {
     private final EventRepository eventRepository;
     private final EventMapper eventMapper;
-    private final Validation validation;
     private final UserService userService;
     private final CategoryService categoryService;
 
@@ -49,8 +47,13 @@ public class EventMainService implements EventService {
 
     @Transactional(readOnly = true)
     @Override
-    public Collection<EventShortDto> findEventsByUser(Long userId) {
-        return eventMapper.toEventShortDto(eventRepository.findEventsByInitiatorId(userId));
+    public Collection<EventShortDto> findEventsByInitiator(Long userId, Integer from, Integer size) {
+        PageRequest pageRequest = PageRequest.of(this.getPageNumber(from, size), size,
+                Sort.by("id").ascending());
+        Iterable<Event> eventsPage = eventRepository.findEventsByInitiatorId(userId, pageRequest);
+        Collection<Event> events = new ArrayList<>();
+        eventsPage.forEach(events::add);
+        return eventMapper.toEventShortDto(events);
     }
 
     @Override
@@ -58,7 +61,7 @@ public class EventMainService implements EventService {
         if (!getEventById(event.getId()).isPresent()) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND);
         }
-        validation.validateEventDate(event);
+        validateEventDate(event);
         if (!getEventById(event.getId()).get().getInitiator().getId().equals(userId)) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
         }
@@ -71,8 +74,52 @@ public class EventMainService implements EventService {
 
     @Override
     public Optional<EventFullDto> addEvent(Long userId, Event event) {
-        validation.validateUserActivation(userId);
-        validation.validateEventDate(event);
+        validateUserActivation(userId);
+        validateEventDate(event);
         return of(eventMapper.toEventFullDto(eventRepository.save(event)));
+    }
+
+    @Override
+    public Optional<EventShortDto> changeEventStateToCanceled(Long userId, Long eventId) {
+        Event event = eventRepository.findById(eventId).orElseThrow(() -> {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND);
+        });
+        if (!event.getState().equals(State.PENDING)) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
+        }
+        event.setState(State.CANCELED);
+        return of(eventMapper.toEventShortDto(event));
+    }
+
+    @Override
+    public Collection<EventFullDto> findEventsByAdmin(String[] states, Integer[] categoriesId,
+                                               String rangeStart, String rangeEnd, Integer from, Integer size) {
+        Collection<Event> events = eventRepository.findEventsByState(states);
+
+        return eventMapper.toEventFullDto(events);
+    }
+
+    private Integer getPageNumber(Integer from, Integer size) {
+        return from % size;
+    }
+
+    public void validateEventDate(EventShortDto event) {
+        if (!event.getEventDate().isAfter(LocalDateTime.now().plusHours(2L))) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
+        }
+    }
+
+    public void validateEventDate(Event event) {
+        if (!event.getEventDate().isAfter(LocalDateTime.now().plusHours(2L))) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
+        }
+    }
+
+    public void validateUserActivation(Long userId) {
+        if (!userService.getUserById(userId)
+                .orElseThrow(() -> new UserNotFoundException("Пользователь не найден"))
+                .isActivation()) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
+        }
     }
 }

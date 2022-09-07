@@ -50,10 +50,10 @@ public class RequestMainService implements RequestService {
     }
 
     @Override
-    public Optional<RequestDto> getUserRequestOfEvent(Long userId, Long eventId) {
-        return of(requestMapper.toRequestDto(requestRepository
-                .getRequestByRequesterAndEvent(userId, eventId)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND))));
+    public Collection<RequestDto> getRequestsOfEventInitiator(Long initiatorId, Long eventId) {
+        validateEventInitiator(initiatorId, eventId);
+        return requestMapper.toRequestDto(requestRepository
+                .getRequestsByEvent(eventId));
     }
 
     @Override
@@ -66,7 +66,8 @@ public class RequestMainService implements RequestService {
             event.setConfirmedRequests(event.getConfirmedRequests() + 1L);
         }
         if (event.getConfirmedRequests().equals(event.getParticipantLimit())) {
-            Collection<Request> requests = requestRepository.getRequestsByEventAndStatusWaiting(event.getId());
+            Collection<Request> requests = requestRepository.getRequestsByEventAndStatus(event.getId(),
+                    Status.WAITING.toString());
             requests.forEach((r) -> r.setStatus(Status.CANCELED));
         }
         return of(requestMapper.toRequestDto(request));
@@ -78,6 +79,16 @@ public class RequestMainService implements RequestService {
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
         request.setStatus(Status.CANCELED);
         return of(requestMapper.toRequestDto(request));
+    }
+
+    private void validateEventInitiator(Long initiatorId, Long eventId) {
+        if (!eventService.getEventById(eventId)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND))
+                .getInitiator()
+                .getId()
+                .equals(initiatorId)) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
+        }
     }
 
 }

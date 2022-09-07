@@ -1,0 +1,35 @@
+package ru.practicum.event.controller;
+
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.web.bind.annotation.*;
+import ru.practicum.event.EventService;
+import ru.practicum.event.dto.EventFullDto;
+import ru.practicum.event.dto.EventShortDto;
+
+import javax.validation.constraints.Positive;
+import javax.validation.constraints.PositiveOrZero;
+import java.util.Collection;
+
+import static org.springframework.http.HttpStatus.OK;
+
+@RestController
+@RequiredArgsConstructor
+@Slf4j
+@RequestMapping("/admin/events")
+public class EventAdminController {
+    private final EventService eventService;
+
+    @GetMapping()
+    @ResponseStatus(OK)
+    public Collection<EventFullDto> findEventsByUser(@RequestParam String[] states,
+                                                     @RequestParam Integer[] categoriesId,
+                                                     @RequestParam String rangeStart,
+                                                     @RequestParam String rangeEnd,
+                                                     @PositiveOrZero @RequestParam(name = "from", defaultValue = "0")
+                                                     Integer from,
+                                                     @Positive @RequestParam(name = "size", defaultValue = "10")
+                                                         Integer size) {
+        return eventService.findEventsByAdmin(states, categoriesId, rangeStart, rangeEnd, from, size);
+    }
+}

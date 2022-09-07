@@ -13,11 +13,16 @@ public interface EventService {
 
     Optional<EventFullDto> getEventById(Long eventId);
 
-    Collection<EventShortDto> findEventsByUser(Long userId);
+    Collection<EventShortDto> findEventsByInitiator(Long userId, Integer from, Integer size);
 
     Optional<EventShortDto> updateEventByInitiator(Long userId, EventShortDto event);
 
     Optional<EventFullDto> addEvent(Long userId, Event event);
+
+    Optional<EventShortDto> changeEventStateToCanceled(Long userId, Long eventId);
+
+    Collection<EventFullDto> findEventsByAdmin(String[] states, Integer[] categoriesId,
+                                               String rangeStart, String rangeEnd, Integer from, Integer size);
 
 
 }

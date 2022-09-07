@@ -11,6 +11,8 @@ import ru.practicum.event.dto.EventShortDto;
 import ru.practicum.request.RequestService;
 import ru.practicum.request.dto.RequestDto;
 
+import javax.validation.constraints.Positive;
+import javax.validation.constraints.PositiveOrZero;
 import java.util.Collection;
 import java.util.Optional;
 
@@ -26,8 +28,12 @@ public class EventPrivateController {
 
     @GetMapping()
     @ResponseStatus(OK)
-    public Collection<EventShortDto> findEventsByUser(@PathVariable Long userId) {
-        return eventService.findEventsByUser(userId);
+    public Collection<EventShortDto> findEventsByUser(@PathVariable Long userId,
+                                                      @PositiveOrZero @RequestParam(name = "from", defaultValue = "0")
+                                                      Integer from,
+                                                      @Positive @RequestParam(name = "size", defaultValue = "10")
+                                                          Integer size) {
+        return eventService.findEventsByInitiator(userId, from, size);
     }
 
     @PatchMapping()
@@ -55,15 +61,14 @@ public class EventPrivateController {
     @ResponseStatus(OK)
     public Optional<EventShortDto> changeEventStateToCanceled(@PathVariable Long userId,
                                                 @PathVariable Long eventId) {
-        return eventService.updateEventByInitiator(userId,
-                eventService.getEventById(eventId).get().setState(State.CANCELED);
+        return eventService.changeEventStateToCanceled(userId, eventId);
     }
 
     @GetMapping("/{eventId}/requests")
     @ResponseStatus(OK)
-    public Optional<RequestDto> findRequestByUser(@PathVariable Long userId,
+    public Collection<RequestDto> findRequestsOfEventInitiator(@PathVariable Long userId,
                                                   @PathVariable Long eventId) {
-        return requestService.getUserRequestOfEvent(userId, eventId);
+        return requestService.getRequestsOfEventInitiator(userId, eventId);
     }
 
     @PatchMapping("/{eventId}/requests/{reqId}/confirm")

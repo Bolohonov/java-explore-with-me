@@ -1,13 +1,18 @@
 package ru.practicum.request.repository;
 
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
 import ru.practicum.request.Request;
+import ru.practicum.request.Status;
 
 import java.util.Collection;
 import java.util.Optional;
 
 public interface RequestRepository extends JpaRepository<Request, Long> {
     Collection<Request> getRequestsByRequester(Long requesterId);
-    Optional<Request> getRequestByRequesterAndEvent(Long requesterId, Long eventId);
-    Collection<Request> getRequestsByEventAndStatusWaiting(Long eventId);
+    Collection<Request> getRequestsByEvent(Long eventId);
+
+    @Query("select r from Request as r  " +
+            "where (r.event = ?1 and r.status = ?2) order by r.id")
+    Collection<Request> getRequestsByEventAndStatus(Long eventId, String status);
 }
