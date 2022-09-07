@@ -63,6 +63,20 @@ public class EventPrivateController {
     @ResponseStatus(OK)
     public Optional<RequestDto> findRequestByUser(@PathVariable Long userId,
                                                   @PathVariable Long eventId) {
-        return requestService.;
+        return requestService.getUserRequestOfEvent(userId, eventId);
+    }
+
+    @PatchMapping("/{eventId}/requests/{reqId}/confirm")
+    @ResponseStatus(OK)
+    public Optional<RequestDto> confirmRequest(@PathVariable Long userId,
+                                                  @PathVariable Long reqId) {
+        return requestService.confirmRequest(userId, reqId);
+    }
+
+    @PatchMapping("/{eventId}/requests/{reqId}/reject")
+    @ResponseStatus(OK)
+    public Optional<RequestDto> rejectRequest(@PathVariable Long userId,
+                                               @PathVariable Long reqId) {
+        return requestService.rejectRequest(userId, reqId);
     }
 }

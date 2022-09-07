@@ -29,4 +29,8 @@ public class User {
      * адрес электронной почты
      */
     private String email;
+    /**
+     * Статус активации аккаунта
+     */
+    private boolean activation;
 }
