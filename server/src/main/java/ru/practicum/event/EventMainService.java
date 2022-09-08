@@ -39,9 +39,7 @@ public class EventMainService implements EventService {
     @Transactional(readOnly = true)
     @Override
     public Optional<EventFullDto> getEventById(Long eventId) {
-        Event event = eventRepository.findById(eventId).orElseThrow(() -> {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND);
-        });
+        Event event = getEventFromRepository(eventId);
         return of(eventMapper.toEventFullDto(event));
     }
 
@@ -81,9 +79,7 @@ public class EventMainService implements EventService {
 
     @Override
     public Optional<EventShortDto> changeEventStateToCanceled(Long userId, Long eventId) {
-        Event event = eventRepository.findById(eventId).orElseThrow(() -> {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND);
-        });
+        Event event = getEventFromRepository(eventId);
         if (!event.getState().equals(State.PENDING)) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
         }
@@ -92,34 +88,78 @@ public class EventMainService implements EventService {
     }
 
     @Override
-    public Collection<EventFullDto> findEventsByAdmin(String[] states, Integer[] categoriesId,
+    public Collection<EventFullDto> findEventsByAdmin(String[] states, Long[] categoriesId,
                                                String rangeStart, String rangeEnd, Integer from, Integer size) {
         Collection<Event> events = eventRepository.findEventsByState(states);
 
         return eventMapper.toEventFullDto(events);
     }
 
+    @Override
+    public Optional<EventShortDto> updateEventByAdmin(Long eventId, Event newEvent) {
+        getEventFromRepository(eventId);
+        newEvent.setId(eventId);
+        return of(eventMapper.toEventShortDto(eventRepository.save(newEvent)));
+    }
+
+    @Override
+    public Optional<EventFullDto> publishEventByAdmin(Long eventId, Event newEvent) {
+        validateEventForPublishing(eventId, newEvent);
+        return of(eventMapper.toEventFullDto(eventRepository.save(newEvent)));
+    }
+
+    @Override
+    public Optional<EventFullDto> rejectEventByAdmin(Long eventId, Event newEvent) {
+        validateEventForRejecting(eventId);
+        return of(eventMapper.toEventFullDto(eventRepository.save(newEvent)));
+    }
+
+    private Event getEventFromRepository(Long eventId) {
+        return eventRepository.findById(eventId).orElseThrow(() -> {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND);
+        });
+    }
+
     private Integer getPageNumber(Integer from, Integer size) {
         return from % size;
     }
 
-    public void validateEventDate(EventShortDto event) {
+    private void validateEventDate(EventShortDto event) {
         if (!event.getEventDate().isAfter(LocalDateTime.now().plusHours(2L))) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
         }
     }
 
-    public void validateEventDate(Event event) {
+    private void validateEventDate(Event event) {
         if (!event.getEventDate().isAfter(LocalDateTime.now().plusHours(2L))) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
         }
     }
 
-    public void validateUserActivation(Long userId) {
+    private void validateUserActivation(Long userId) {
         if (!userService.getUserById(userId)
                 .orElseThrow(() -> new UserNotFoundException("Пользователь не найден"))
                 .isActivation()) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
         }
     }
+
+    private void validateEventForPublishing(Long eventId, Event newEvent) {
+        Event event = getEventFromRepository(eventId);
+        if (newEvent.getEventDate().isBefore(LocalDateTime.now().plusHours(1L))) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
+        }
+        if (!event.getState().equals(State.PENDING)) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
+        }
+    }
+
+    private void validateEventForRejecting(Long eventId) {
+        Event event = getEventFromRepository(eventId);
+        if (!event.getState().equals(State.PUBLISHED)) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
+        }
+    }
+
+
 }

@@ -9,4 +9,10 @@ public interface CategoryService {
     Collection<CategoryDto> getCategories(Integer from, Integer size);
 
     Optional<CategoryDto> getCategoryById(Long catId);
+
+    Optional<CategoryDto> updateCategoryByAdmin(Category category);
+
+    Optional<CategoryDto> addCategoryByAdmin(Category category);
+
+    void deleteCategoryByAdmin(Long catId);
 }

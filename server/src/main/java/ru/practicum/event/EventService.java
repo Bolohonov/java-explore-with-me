@@ -21,8 +21,14 @@ public interface EventService {
 
     Optional<EventShortDto> changeEventStateToCanceled(Long userId, Long eventId);
 
-    Collection<EventFullDto> findEventsByAdmin(String[] states, Integer[] categoriesId,
+    Collection<EventFullDto> findEventsByAdmin(String[] states, Long[] categoriesId,
                                                String rangeStart, String rangeEnd, Integer from, Integer size);
+
+    Optional<EventShortDto> updateEventByAdmin(Long eventId, Event newEvent);
+
+    Optional<EventFullDto> publishEventByAdmin(Long eventId, Event newEvent);
+
+    Optional<EventFullDto> rejectEventByAdmin(Long eventId, Event newEvent);
 
 
 }
