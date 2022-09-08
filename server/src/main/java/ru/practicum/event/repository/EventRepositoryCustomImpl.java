@@ -1,8 +1,6 @@
 package ru.practicum.event.repository;
 
-import org.springframework.data.jpa.repository.Query;
 import ru.practicum.event.Event;
-import ru.practicum.event.State;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
@@ -17,17 +15,26 @@ public class EventRepositoryCustomImpl implements EventRepositoryCustom {
     private EntityManager entityManager;
 
     @Override
-    public Collection<Event> getEventsByStates(Set<String> states) {
+    public Collection<Event> getEventsByStates(Set<Long> ids, Set<String> states, Set<Long> setOfCategories) {
         CriteriaBuilder cb = entityManager.getCriteriaBuilder();
         CriteriaQuery<Event> query = cb.createQuery(Event.class);
         Root<Event> event = query.from(Event.class);
-        List<Predicate> predicates = new ArrayList<>();
-        for (String state : states) {
-            predicates.add(cb.equal(event.get("state").as(String.class), state));
-        }
         query.select(event)
-                .where(cb.or(predicates.toArray(new Predicate[predicates.size()])));
+                .where(cb.or(getPredicates(cb, event, Long.class, ids, "initiatorId")),
+                        cb.or(getPredicates(cb, event, String.class, states, "state")),
+                        cb.or(getPredicates(cb, event, Long.class, setOfCategories, "category")));
         return entityManager.createQuery(query)
                 .getResultList();
+    }
+
+    private <T> Predicate[] getPredicates(CriteriaBuilder cb, Root<Event> event,
+                                       Class <T> valueType, Set<T> set, String pathField) {
+        List<Predicate> predicates = new ArrayList<>();
+        if (!set.isEmpty()) {
+            for (T value : set) {
+                predicates.add(cb.or(cb.equal(event.get(pathField).as(valueType), value)));
+            }
+        }
+        return predicates.toArray(new Predicate[predicates.size()]);
     }
 }

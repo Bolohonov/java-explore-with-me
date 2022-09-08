@@ -5,6 +5,7 @@ import ru.practicum.event.dto.EventFullDto;
 import ru.practicum.event.dto.EventShortDto;
 
 import java.util.Collection;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
@@ -21,7 +22,7 @@ public interface EventService {
 
     Optional<EventShortDto> changeEventStateToCanceled(Long userId, Long eventId);
 
-    Collection<EventFullDto> findEventsByAdmin(String[] states, Long[] categoriesId,
+    Collection<EventFullDto> findEventsByAdmin(List<Long> users, List<String> states, List<Long> categories,
                                                String rangeStart, String rangeEnd, Integer from, Integer size);
 
     Optional<EventShortDto> updateEventByAdmin(Long eventId, Event newEvent);

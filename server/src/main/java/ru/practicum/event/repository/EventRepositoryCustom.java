@@ -7,5 +7,5 @@ import java.util.Collection;
 import java.util.Set;
 
 public interface EventRepositoryCustom {
-    Collection<Event> getEventsByStates(Set<String> states);
+    Collection<Event> getEventsByStates(Set<Long> ids, Set<String> states, Set<Long> setOfCategories);
 }

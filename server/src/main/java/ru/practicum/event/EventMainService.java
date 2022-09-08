@@ -89,13 +89,25 @@ public class EventMainService implements EventService {
     }
 
     @Override
-    public Collection<EventFullDto> findEventsByAdmin(String[] states, Long[] categoriesId,
+    public Collection<EventFullDto> findEventsByAdmin(List<Long> users, List<String> states, List<Long> categories,
                                                String rangeStart, String rangeEnd, Integer from, Integer size) {
-        Set<String> set = new HashSet<>();
-        for (String state: states) {
-            set.add(state);
+        Set<Long> setOfUsers = new HashSet<>();
+        Set<String> setOfStates = new HashSet<>();
+        Set<Long> setOfCategories = new HashSet<>();
+        if (users != null) {
+            setOfUsers.addAll(users);
         }
-        Collection<Event> events = eventRepository.getEventsByStates(set);
+        if (states != null) {
+            for (String state : states) {
+                setOfStates.add(state);
+            }
+        }
+        if (categories != null) {
+            for (Long categoryId : categories) {
+                setOfCategories.add(categoryId);
+            }
+        }
+        Collection<Event> events = eventRepository.getEventsByStates(setOfUsers, setOfStates, setOfCategories);
         return eventMapper.toEventFullDto(events);
     }
 

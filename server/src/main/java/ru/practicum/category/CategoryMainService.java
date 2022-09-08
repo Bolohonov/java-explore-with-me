@@ -13,8 +13,7 @@ import ru.practicum.category.dto.CategoryMapper;
 import ru.practicum.category.repository.CategoryRepository;
 import ru.practicum.event.EventService;
 
-import java.util.Collection;
-import java.util.Optional;
+import java.util.*;
 
 import static java.util.Optional.of;
 
@@ -64,8 +63,8 @@ public class CategoryMainService implements CategoryService {
     public void deleteCategoryByAdmin(Long catId) {
         Category categoryToDelete = getCategoryFromRepository(catId);
         if (!eventService
-                .findEventsByAdmin(null,
-                        new Long[] {catId},  null, null, 0, 1).isEmpty()) {
+                .findEventsByAdmin(null, null,
+                        Arrays.asList(catId),  null, null, 0, 1).isEmpty()) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
         }
         categoryRepository.delete(categoryToDelete);

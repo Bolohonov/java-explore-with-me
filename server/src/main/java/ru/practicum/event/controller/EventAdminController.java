@@ -12,6 +12,7 @@ import javax.validation.Valid;
 import javax.validation.constraints.Positive;
 import javax.validation.constraints.PositiveOrZero;
 import java.util.Collection;
+import java.util.List;
 import java.util.Optional;
 
 import static org.springframework.http.HttpStatus.OK;
@@ -25,15 +26,16 @@ public class EventAdminController {
 
     @GetMapping
     @ResponseStatus(OK)
-    public Collection<EventFullDto> findEventsByUser(@RequestParam(required = false) String[] states,
-                                                     @RequestParam(required = false) Long[] categoriesId,
+    public Collection<EventFullDto> findEventsByUser(@RequestParam(required = false) List<Long> users,
+                                                     @RequestParam(required = false) List<String> states,
+                                                     @RequestParam(required = false) List<Long> categories,
                                                      @RequestParam(required = false) String rangeStart,
                                                      @RequestParam(required = false) String rangeEnd,
                                                      @PositiveOrZero @RequestParam(name = "from", defaultValue = "0")
                                                      Integer from,
                                                      @Positive @RequestParam(name = "size", defaultValue = "10")
                                                          Integer size) {
-        return eventService.findEventsByAdmin(states, categoriesId, rangeStart, rangeEnd, from, size);
+        return eventService.findEventsByAdmin(users, states, categories, rangeStart, rangeEnd, from, size);
     }
 
     @PutMapping("/{eventId}")
