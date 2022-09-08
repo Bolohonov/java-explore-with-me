@@ -16,8 +16,8 @@ import ru.practicum.user.UserService;
 import ru.practicum.user.exceptions.UserNotFoundException;
 
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.*;
-import java.util.stream.Collectors;
 
 import static java.util.Optional.of;
 
@@ -74,7 +74,7 @@ public class EventMainService implements EventService {
     public Optional<EventFullDto> addEvent(Long userId, Event event) {
         validateUserActivation(userId);
         validateEventDate(event);
-        setDefaultFileds(userId, event);
+        setDefaultFields(userId, event);
         return of(eventMapper.toEventFullDto(eventRepository.save(event)));
     }
 
@@ -91,23 +91,12 @@ public class EventMainService implements EventService {
     @Override
     public Collection<EventFullDto> findEventsByAdmin(List<Long> users, List<String> states, List<Long> categories,
                                                String rangeStart, String rangeEnd, Integer from, Integer size) {
-        Set<Long> setOfUsers = new HashSet<>();
-        Set<String> setOfStates = new HashSet<>();
-        Set<Long> setOfCategories = new HashSet<>();
-        if (users != null) {
-            setOfUsers.addAll(users);
-        }
-        if (states != null) {
-            for (String state : states) {
-                setOfStates.add(state);
-            }
-        }
-        if (categories != null) {
-            for (Long categoryId : categories) {
-                setOfCategories.add(categoryId);
-            }
-        }
-        Collection<Event> events = eventRepository.getEventsByStates(setOfUsers, setOfStates, setOfCategories);
+        Collection<Event> events = eventRepository.getEventsByStates(
+                getSetAndValidateParams(Long.class, users),
+                getSetAndValidateParams(String.class, states),
+                getSetAndValidateParams(Long.class, categories),
+                getAndValidateTimeRange(rangeStart, rangeEnd)
+                );
         return eventMapper.toEventFullDto(events);
     }
 
@@ -177,10 +166,32 @@ public class EventMainService implements EventService {
         }
     }
 
-    private void setDefaultFileds(Long userId, Event event) {
+    private void setDefaultFields(Long userId, Event event) {
         event.setInitiatorId(userId);
         event.setState(State.PENDING);
         event.setCreatedOn(LocalDateTime.now());
+    }
+
+    private <T> Set<T> getSetAndValidateParams(Class<T> type, List<T> list) {
+        Set<T> set = new HashSet<>();
+        if (list != null) {
+            set.addAll(list);
+        }
+        return set;
+    }
+
+    private Map<String, LocalDateTime> getAndValidateTimeRange(String rangeStart, String rangeEnd) {
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSSz", Locale.US);
+        Map<String, LocalDateTime> timeMap = new HashMap<>();
+        if (rangeStart != null) {
+            LocalDateTime parsedStart = LocalDateTime.parse(rangeStart, formatter);
+            timeMap.put("start", parsedStart);
+        }
+        if (rangeEnd != null) {
+            LocalDateTime parsedEnd = LocalDateTime.parse(rangeEnd, formatter);
+            timeMap.put("end", parsedEnd);
+        }
+        return timeMap;
     }
 
 
