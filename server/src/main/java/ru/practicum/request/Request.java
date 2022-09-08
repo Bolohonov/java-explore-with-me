@@ -40,5 +40,6 @@ public class Request {
     /**
      * Статус заявки
      */
+    @Enumerated(EnumType.STRING)
     private Status status;
 }

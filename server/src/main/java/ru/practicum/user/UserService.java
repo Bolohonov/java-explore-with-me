@@ -1,16 +1,16 @@
 package ru.practicum.user;
 
+import ru.practicum.user.dto.UserDto;
+
 import java.util.Collection;
 import java.util.Optional;
 
 public interface UserService {
-    Collection<User> getUsers(Integer[] ids, Integer from, Integer size);
+    Collection<UserDto> getUsers(Integer[] ids, Integer from, Integer size);
 
-    User saveUser(User user);
+    UserDto saveUser(User user);
 
-    Optional<User> getUserById(Long userId);
-
-    Optional<User> updateUser(Long id, User user);
+    Optional<UserDto> getUserById(Long userId);
 
     void deleteUser(Long userId);
 }

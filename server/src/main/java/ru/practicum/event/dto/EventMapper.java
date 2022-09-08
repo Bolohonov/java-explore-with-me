@@ -2,10 +2,8 @@ package ru.practicum.event.dto;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
-import ru.practicum.category.CategoryService;
 import ru.practicum.category.repository.CategoryRepository;
 import ru.practicum.event.Event;
-import ru.practicum.event.EventService;
 import ru.practicum.user.UserService;
 
 import java.util.ArrayList;
@@ -22,9 +20,9 @@ public class EventMapper {
                 event.getId(),
                 event.getTitle(),
                 event.getAnnotation(),
-                new EventFullDto.CategoryDto(event.getCategoryId(),
-                        categoryRepository.findById(event.getCategoryId()).get().getName()),
-                event.getConfirmedRequests(),
+                new EventFullDto.CategoryDto(event.getCategory(),
+                        categoryRepository.findById(event.getCategory()).get().getName()),
+                event.getConfirmedRequests() != null ? event.getConfirmedRequests() : null,
                 event.getCreatedOn(),
                 event.getDescription(),
                 event.getEventDate(),
@@ -52,8 +50,8 @@ public class EventMapper {
                 event.getId(),
                 event.getTitle(),
                 event.getAnnotation(),
-                new EventShortDto.CategoryDto(event.getCategoryId(),
-                        categoryRepository.findById(event.getCategoryId()).get().getName()),
+                new EventShortDto.CategoryDto(event.getCategory(),
+                        categoryRepository.findById(event.getCategory()).get().getName()),
                 event.getConfirmedRequests(),
                 event.getEventDate(),
                 new EventShortDto.UserShortDto(event.getInitiatorId(),

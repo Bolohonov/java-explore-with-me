@@ -46,7 +46,7 @@ public class EventPrivateController {
     @PostMapping()
     @ResponseStatus(OK)
     public Optional<EventFullDto> addNewEvent(@PathVariable Long userId,
-                                                        @RequestBody Event event) {
+                                              @RequestBody Event event) {
         return eventService.addEvent(userId, event);
     }
 

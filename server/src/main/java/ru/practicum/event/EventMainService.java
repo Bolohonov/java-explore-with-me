@@ -32,7 +32,8 @@ public class EventMainService implements EventService {
     @Transactional(readOnly = true)
     @Override
     public Collection<EventShortDto> getEvents(Map<String, String> allParams) {
-        return Collections.emptyList();
+        //TODO
+        return eventMapper.toEventShortDto(eventRepository.findAll());
     }
 
     @Transactional(readOnly = true)
@@ -73,6 +74,7 @@ public class EventMainService implements EventService {
     public Optional<EventFullDto> addEvent(Long userId, Event event) {
         validateUserActivation(userId);
         validateEventDate(event);
+        setDefaultFileds(userId, event);
         return of(eventMapper.toEventFullDto(eventRepository.save(event)));
     }
 
@@ -90,9 +92,10 @@ public class EventMainService implements EventService {
     public Collection<EventFullDto> findEventsByAdmin(String[] states, Long[] categoriesId,
                                                String rangeStart, String rangeEnd, Integer from, Integer size) {
         Set<String> set = new HashSet<>();
-        set.addAll(Arrays.stream(states).collect(Collectors.toList()));
+        for (String state: states) {
+            set.add(state);
+        }
         Collection<Event> events = eventRepository.getEventsByStates(set);
-
         return eventMapper.toEventFullDto(events);
     }
 
@@ -140,7 +143,7 @@ public class EventMainService implements EventService {
     private void validateUserActivation(Long userId) {
         if (!userService.getUserById(userId)
                 .orElseThrow(() -> new UserNotFoundException("Пользователь не найден"))
-                .isActivation()) {
+                .getActivation().equals(Boolean.TRUE)) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
         }
     }
@@ -160,6 +163,12 @@ public class EventMainService implements EventService {
         if (!event.getState().equals(State.PUBLISHED)) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
         }
+    }
+
+    private void setDefaultFileds(Long userId, Event event) {
+        event.setInitiatorId(userId);
+        event.setState(State.PENDING);
+        event.setCreatedOn(LocalDateTime.now());
     }
 
 

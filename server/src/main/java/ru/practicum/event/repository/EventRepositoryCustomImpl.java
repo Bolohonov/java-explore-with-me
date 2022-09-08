@@ -1,5 +1,6 @@
 package ru.practicum.event.repository;
 
+import org.springframework.data.jpa.repository.Query;
 import ru.practicum.event.Event;
 import ru.practicum.event.State;
 
@@ -20,18 +21,12 @@ public class EventRepositoryCustomImpl implements EventRepositoryCustom {
         CriteriaBuilder cb = entityManager.getCriteriaBuilder();
         CriteriaQuery<Event> query = cb.createQuery(Event.class);
         Root<Event> event = query.from(Event.class);
-        System.out.println("!!!!!!!!!!!!!!!!!!!!!!!!");
-
-        Path<State> statePath = event.get("state");
-
         List<Predicate> predicates = new ArrayList<>();
-        for (String st : states) {
-            State state = State.valueOf(st);
-            predicates.add(cb.equal(event.get("state"), state));
+        for (String state : states) {
+            predicates.add(cb.equal(event.get("state").as(String.class), state));
         }
         query.select(event)
                 .where(cb.or(predicates.toArray(new Predicate[predicates.size()])));
-
         return entityManager.createQuery(query)
                 .getResultList();
     }

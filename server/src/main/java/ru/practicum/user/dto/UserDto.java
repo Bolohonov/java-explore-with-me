@@ -18,4 +18,8 @@ public class UserDto {
      * адрес электронной почты
      */
     private String email;
+    /**
+     * Статус активации аккаунта
+     */
+    private Boolean activation;
 }

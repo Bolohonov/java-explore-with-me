@@ -34,5 +34,5 @@ public class User {
     /**
      * Статус активации аккаунта
      */
-    private boolean activation;
+    private Boolean activation;
 }

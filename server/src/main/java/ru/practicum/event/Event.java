@@ -22,31 +22,37 @@ public class Event {
     /**
      * Заголовок события
      */
+    @Column(name = "title")
     private String title;
     /**
      * Краткое описание
      */
+    @Column(name = "annotation")
     private String annotation;
     /**
      * Категория
      */
     @Column(name = "category_id")
-    private Long categoryId;
+    private Long category;
     /**
      * Количество одобренных заявок на участие в данном событии
      */
+    @Column(name = "confirmed_requests")
     private Long confirmedRequests;
     /**
      * Дата и время создания события
      */
+    @Column(name = "created_on")
     private LocalDateTime createdOn;
     /**
      * Полное описание события
      */
+    @Column(name = "description")
     private String description;
     /**
      * Дата и время на которые намечено событие
      */
+    @Column(name = "event_date")
     private LocalDateTime eventDate;
     /**
      * Инициатор события
@@ -56,25 +62,32 @@ public class Event {
     /**
      * Нужно ли оплачивать участие
      */
+    @Column(name = "paid")
     private Boolean paid;
     /**
      * Ограничение на количество участников. Значение 0 - означает отсутствие ограничения
      */
+    @Column(name = "participant_limit")
     private Integer participantLimit;
     /**
      * Дата и время публикации события
      */
+    @Column(name = "published_on")
     private LocalDateTime publishedOn;
     /**
      * Нужна ли пре-модерация заявок на участие
      */
+    @Column(name = "request_moderation")
     private Boolean requestModeration;
     /**
      * Список состояний жизненного цикла события
      */
+    @Enumerated(EnumType.STRING)
+    @Column(name = "state")
     private State state;
     /**
      * Количество просмотрев события
      */
+    @Column(name = "views")
     private Long views;
 }
