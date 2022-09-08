@@ -4,7 +4,7 @@ import java.util.Collection;
 import java.util.Optional;
 
 public interface UserService {
-    Collection<User> getUsers();
+    Collection<User> getUsers(Integer[] ids, Integer from, Integer size);
 
     User saveUser(User user);
 

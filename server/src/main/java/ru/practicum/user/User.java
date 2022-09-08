@@ -3,8 +3,10 @@ package ru.practicum.user;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
+import org.springframework.boot.context.properties.bind.DefaultValue;
 
 import javax.persistence.*;
+import javax.validation.constraints.Email;
 
 /**
  * класс с описанием пользователя - User //

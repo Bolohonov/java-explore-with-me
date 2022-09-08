@@ -8,7 +8,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
-import ru.practicum.category.CategoryService;
 import ru.practicum.event.dto.EventFullDto;
 import ru.practicum.event.dto.EventMapper;
 import ru.practicum.event.dto.EventShortDto;
@@ -18,6 +17,7 @@ import ru.practicum.user.exceptions.UserNotFoundException;
 
 import java.time.LocalDateTime;
 import java.util.*;
+import java.util.stream.Collectors;
 
 import static java.util.Optional.of;
 
@@ -28,7 +28,6 @@ public class EventMainService implements EventService {
     private final EventRepository eventRepository;
     private final EventMapper eventMapper;
     private final UserService userService;
-    private final CategoryService categoryService;
 
     @Transactional(readOnly = true)
     @Override
@@ -90,7 +89,9 @@ public class EventMainService implements EventService {
     @Override
     public Collection<EventFullDto> findEventsByAdmin(String[] states, Long[] categoriesId,
                                                String rangeStart, String rangeEnd, Integer from, Integer size) {
-        Collection<Event> events = eventRepository.findEventsByState(states);
+        Set<String> set = new HashSet<>();
+        set.addAll(Arrays.stream(states).collect(Collectors.toList()));
+        Collection<Event> events = eventRepository.getEventsByStates(set);
 
         return eventMapper.toEventFullDto(events);
     }

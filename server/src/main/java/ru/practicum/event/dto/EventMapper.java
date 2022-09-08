@@ -3,6 +3,7 @@ package ru.practicum.event.dto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 import ru.practicum.category.CategoryService;
+import ru.practicum.category.repository.CategoryRepository;
 import ru.practicum.event.Event;
 import ru.practicum.event.EventService;
 import ru.practicum.user.UserService;
@@ -14,7 +15,7 @@ import java.util.Collection;
 @RequiredArgsConstructor
 public class EventMapper {
     private final UserService userService;
-    private final CategoryService categoryService;
+    private final CategoryRepository categoryRepository;
 
     public EventFullDto toEventFullDto(Event event) {
         return new EventFullDto(
@@ -22,7 +23,7 @@ public class EventMapper {
                 event.getTitle(),
                 event.getAnnotation(),
                 new EventFullDto.CategoryDto(event.getCategoryId(),
-                        categoryService.getCategoryById(event.getCategoryId()).get().getName()),
+                        categoryRepository.findById(event.getCategoryId()).get().getName()),
                 event.getConfirmedRequests(),
                 event.getCreatedOn(),
                 event.getDescription(),
@@ -52,7 +53,7 @@ public class EventMapper {
                 event.getTitle(),
                 event.getAnnotation(),
                 new EventShortDto.CategoryDto(event.getCategoryId(),
-                        categoryService.getCategoryById(event.getCategoryId()).get().getName()),
+                        categoryRepository.findById(event.getCategoryId()).get().getName()),
                 event.getConfirmedRequests(),
                 event.getEventDate(),
                 new EventShortDto.UserShortDto(event.getInitiatorId(),

@@ -2,17 +2,17 @@ package ru.practicum.user;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 import ru.practicum.user.exceptions.UserNotFoundException;
 import ru.practicum.user.repository.UserRepository;
 
-import java.util.Collection;
-import java.util.Optional;
+import java.util.*;
 
 import static java.util.Optional.of;
-import static java.util.Optional.ofNullable;
 import static org.springframework.http.HttpStatus.BAD_REQUEST;
 
 @Slf4j
@@ -24,11 +24,19 @@ public class UserServiceImpl implements UserService {
 
     @Transactional(readOnly = true)
     @Override
-    public Collection<User> getUsers() {
-        return userRepository.findAll();
+    public Collection<User> getUsers(Integer[] ids, Integer from, Integer size) {
+        PageRequest pageRequest = PageRequest.of(this.getPageNumber(from, size), size,
+                Sort.by("id").ascending());
+        Set<Long> idSet = new HashSet<>();
+        for (Integer id : ids) {
+            idSet.add(id.longValue());
+        }
+        Iterable<User> usersPage = userRepository.getUsersByIds(idSet, pageRequest);
+        Collection<User> users = new ArrayList<>();
+        usersPage.forEach(users::add);
+        return users;
     }
 
-    @Transactional(readOnly = true)
     @Override
     public User saveUser(User user) {
         return userRepository.save(user);
@@ -70,5 +78,9 @@ public class UserServiceImpl implements UserService {
             user.setId(id);
         }
         return user;
+    }
+
+    private Integer getPageNumber(Integer from, Integer size) {
+        return from % size;
     }
 }

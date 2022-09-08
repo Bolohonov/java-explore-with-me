@@ -25,10 +25,10 @@ public class EventAdminController {
 
     @GetMapping
     @ResponseStatus(OK)
-    public Collection<EventFullDto> findEventsByUser(@RequestParam String[] states,
-                                                     @RequestParam Long[] categoriesId,
-                                                     @RequestParam String rangeStart,
-                                                     @RequestParam String rangeEnd,
+    public Collection<EventFullDto> findEventsByUser(@RequestParam(required = false) String[] states,
+                                                     @RequestParam(required = false) Long[] categoriesId,
+                                                     @RequestParam(required = false) String rangeStart,
+                                                     @RequestParam(required = false) String rangeEnd,
                                                      @PositiveOrZero @RequestParam(name = "from", defaultValue = "0")
                                                      Integer from,
                                                      @Positive @RequestParam(name = "size", defaultValue = "10")

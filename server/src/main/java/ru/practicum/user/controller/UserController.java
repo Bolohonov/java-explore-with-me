@@ -2,30 +2,32 @@ package ru.practicum.user.controller;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
-import ru.practicum.request.RequestService;
-import ru.practicum.request.dto.RequestDto;
 import ru.practicum.user.User;
 import ru.practicum.user.UserService;
 
+import javax.validation.Valid;
+import javax.validation.constraints.Positive;
+import javax.validation.constraints.PositiveOrZero;
 import java.util.Collection;
-import java.util.Optional;
 
 import static org.springframework.http.HttpStatus.CREATED;
 import static org.springframework.http.HttpStatus.OK;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping(path = "/users")
+@RequestMapping(path = "/admin/users")
 @Slf4j
 public class UserController {
     private final UserService userService;
-    private final RequestService requestService;
 
     @GetMapping
     @ResponseStatus(OK)
-    public Collection<User> getAllUsers() {
-        return userService.getUsers();
+    public Collection<User> getUsers(@RequestParam Integer[] ids,
+                                     @PositiveOrZero @RequestParam(defaultValue = "0") Integer from,
+                                     @Positive @RequestParam(defaultValue = "10") Integer size) {
+        return userService.getUsers(ids, from, size);
     }
 
     @PostMapping
@@ -51,25 +53,4 @@ public class UserController {
     public void deleteUser(@PathVariable Long id) {
         userService.deleteUser(id);
     }
-
-    @GetMapping("/{userId}/requests")
-    @ResponseStatus(OK)
-    public Collection<RequestDto> findUserRequests(@PathVariable Long userId) {
-        return requestService.getUserRequests(userId);
-    }
-
-    @GetMapping("/{userId}/requests/{eventId}")
-    @ResponseStatus(OK)
-    public Optional<RequestDto> addRequest(@PathVariable Long userId,
-                                           @PathVariable Long eventId) {
-        return requestService.addNewRequest(userId, eventId);
-    }
-
-    @PatchMapping("/{userId}/requests/{requestId}/cancel")
-    @ResponseStatus(OK)
-    public Optional<RequestDto> cancelRequest(@PathVariable Long userId,
-                                           @PathVariable Long requestId) {
-        return requestService.revokeRequest(userId, requestId);
-    }
-
 }
