@@ -14,6 +14,8 @@ public interface EventService {
 
     Optional<EventFullDto> getEventById(Long eventId);
 
+    Optional<EventFullDto> getPublishedEventById(Long eventId);
+
     Collection<EventShortDto> findEventsByInitiator(Long userId, Integer from, Integer size);
 
     Optional<EventShortDto> updateEventByInitiator(Long userId, EventShortDto event);

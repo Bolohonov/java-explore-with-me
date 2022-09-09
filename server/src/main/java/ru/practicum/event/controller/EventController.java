@@ -44,6 +44,6 @@ public class EventController {
     @GetMapping("/{eventId}")
     @ResponseStatus(OK)
     public Optional<EventFullDto> findEventById(@PathVariable Long eventId) {
-        return eventService.getEventById(eventId);
+        return eventService.getPublishedEventById(eventId);
     }
 }

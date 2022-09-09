@@ -34,12 +34,21 @@ public class EventMainService implements EventService {
     public Collection<EventShortDto> getEvents(String text, List<Long> categories, Boolean paid, String rangeStart,
                                                String rangeEnd, Boolean onlyAvailable, String sort,
                                                Integer from, Integer size) {
-        //TODO
         return eventMapper.toEventShortDto(eventRepository.getEvents(text,
                 getSetAndValidateParams(Long.class, categories), paid,
                 getAndValidateTimeRangeWithDefault(rangeStart, rangeEnd),
                 onlyAvailable,
                 getSortString(sort), from, size));
+    }
+
+    @Transactional(readOnly = true)
+    @Override
+    public Optional<EventFullDto> getPublishedEventById(Long eventId) {
+        Event event = getEventFromRepository(eventId);
+        if (event.getPublishedOn() == null) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND);
+        }
+        return of(eventMapper.toEventFullDto(event));
     }
 
     @Transactional(readOnly = true)
