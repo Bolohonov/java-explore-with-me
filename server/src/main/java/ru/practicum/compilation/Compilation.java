@@ -6,6 +6,7 @@ import lombok.ToString;
 import org.hibernate.annotations.Type;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotBlank;
 import java.util.Collection;
 
 @Entity
@@ -24,6 +25,7 @@ public class Compilation {
      * Заголовок события
      */
     @Column(name = "title")
+    @NotBlank
     private String title;
     /**
      * Закреплена ли подборка на главной странице сайта

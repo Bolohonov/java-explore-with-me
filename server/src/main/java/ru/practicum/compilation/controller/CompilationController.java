@@ -5,11 +5,11 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 import ru.practicum.compilation.CompilationService;
 import ru.practicum.compilation.dto.CompilationDto;
-import ru.practicum.event.dto.EventShortDto;
 
 import javax.validation.constraints.Positive;
 import javax.validation.constraints.PositiveOrZero;
 import java.util.Collection;
+import java.util.Optional;
 
 import static org.springframework.http.HttpStatus.OK;
 
@@ -27,7 +27,11 @@ public class CompilationController {
             @PositiveOrZero @RequestParam(name = "from", defaultValue = "0") Integer from,
             @Positive @RequestParam(name = "size", defaultValue = "10") Integer size) {
         return compilationService.getCompilations(pinned, from, size);
+    }
 
-
+    @GetMapping("/{compilationId}")
+    @ResponseStatus(OK)
+    public Optional<CompilationDto> findCompilationById(@PathVariable Long compilationId) {
+        return compilationService.getCompilationById(compilationId);
     }
 }
