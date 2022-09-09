@@ -8,6 +8,7 @@ import ru.practicum.request.Request;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.stream.Collectors;
 
 @Component
 @RequiredArgsConstructor
@@ -23,10 +24,8 @@ public class RequestMapper {
     }
 
     public static Collection<RequestDto> toRequestDto(Collection<Request> requests) {
-        Collection<RequestDto> dtos = new ArrayList<>();
-        for (Request request : requests) {
-            dtos.add(toRequestDto(request));
-        }
-        return dtos;
+        return requests.stream()
+                .map(RequestMapper::toRequestDto)
+                .collect(Collectors.toList());
     }
 }

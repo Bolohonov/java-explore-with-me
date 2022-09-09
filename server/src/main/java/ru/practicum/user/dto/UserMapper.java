@@ -6,6 +6,7 @@ import ru.practicum.user.User;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.stream.Collectors;
 
 @Component
 @RequiredArgsConstructor
@@ -26,10 +27,8 @@ public class UserMapper {
     }
 
     public static Collection<UserDto> toUserDto(Collection<User> users) {
-        Collection<UserDto> dtos = new ArrayList<>();
-        for (User user : users) {
-            dtos.add(toUserDto(user));
-        }
-        return dtos;
+        return users.stream()
+                .map(UserMapper::toUserDto)
+                .collect(Collectors.toList());
     }
 }

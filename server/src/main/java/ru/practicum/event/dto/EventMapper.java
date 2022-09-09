@@ -8,6 +8,7 @@ import ru.practicum.user.UserService;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.stream.Collectors;
 
 @Component
 @RequiredArgsConstructor
@@ -38,11 +39,9 @@ public class EventMapper {
     }
 
     public Collection<EventFullDto> toEventFullDto(Collection<Event> events) {
-        Collection<EventFullDto> dtos = new ArrayList<>();
-        for (Event event : events) {
-            dtos.add(toEventFullDto(event));
-        }
-        return dtos;
+        return events.stream()
+                .map(e -> toEventFullDto(e))
+                .collect(Collectors.toList());
     }
 
     public EventShortDto toEventShortDto(Event event) {
@@ -62,10 +61,8 @@ public class EventMapper {
     }
 
     public Collection<EventShortDto> toEventShortDto(Collection<Event> events) {
-        Collection<EventShortDto> dtos = new ArrayList<>();
-        for (Event event : events) {
-            dtos.add(toEventShortDto(event));
-        }
-        return dtos;
+        return events.stream()
+                .map(e -> toEventShortDto(e))
+                .collect(Collectors.toList());
     }
 }

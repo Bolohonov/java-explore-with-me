@@ -18,7 +18,7 @@ import static java.util.Optional.of;
 @Slf4j
 @Service
 @RequiredArgsConstructor
-public class UserServiceImpl implements UserService {
+public class UserMainService implements UserService {
     private final UserRepository userRepository;
 
     @Transactional(readOnly = true)

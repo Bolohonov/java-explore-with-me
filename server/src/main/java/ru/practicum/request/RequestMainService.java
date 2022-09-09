@@ -22,12 +22,11 @@ import static java.util.Optional.of;
 @RequiredArgsConstructor
 public class RequestMainService implements RequestService {
     private final RequestRepository requestRepository;
-    private final RequestMapper requestMapper;
     private final EventService eventService;
 
     @Override
     public Collection<RequestDto> getUserRequests(Long userId) {
-        return requestMapper.toRequestDto(requestRepository.getRequestsByRequester(userId));
+        return RequestMapper.toRequestDto(requestRepository.getRequestsByRequester(userId));
     }
 
     @Override
@@ -38,7 +37,7 @@ public class RequestMainService implements RequestService {
                 .requester(userId)
                 .status(Status.WAITING)
                 .build();
-        return of(requestMapper.toRequestDto(requestRepository.save(request)));
+        return of(RequestMapper.toRequestDto(requestRepository.save(request)));
     }
 
     @Override
@@ -46,13 +45,13 @@ public class RequestMainService implements RequestService {
         Request request = requestRepository.findById(requestId)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
         request.setStatus(Status.CANCELED);
-        return of(requestMapper.toRequestDto(request));
+        return of(RequestMapper.toRequestDto(request));
     }
 
     @Override
     public Collection<RequestDto> getRequestsOfEventInitiator(Long initiatorId, Long eventId) {
         validateEventInitiator(initiatorId, eventId);
-        return requestMapper.toRequestDto(requestRepository
+        return RequestMapper.toRequestDto(requestRepository
                 .getRequestsByEvent(eventId));
     }
 
@@ -70,7 +69,7 @@ public class RequestMainService implements RequestService {
                     Status.WAITING.toString());
             requests.forEach((r) -> r.setStatus(Status.CANCELED));
         }
-        return of(requestMapper.toRequestDto(request));
+        return of(RequestMapper.toRequestDto(request));
     }
 
     @Override
@@ -78,7 +77,7 @@ public class RequestMainService implements RequestService {
         Request request = requestRepository.findById(requestId)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
         request.setStatus(Status.CANCELED);
-        return of(requestMapper.toRequestDto(request));
+        return of(RequestMapper.toRequestDto(request));
     }
 
     private void validateEventInitiator(Long initiatorId, Long eventId) {
