@@ -6,3 +6,4 @@ INSERT INTO public.categories (name) VALUES ('Рыбалка');
 INSERT INTO public.categories (name) VALUES ('Охота');
 INSERT INTO public.categories (name) VALUES ('Театр');
 INSERT INTO public.categories (name) VALUES ('Кино');
+

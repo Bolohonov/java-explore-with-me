@@ -1,16 +1,16 @@
 package ru.practicum.event;
 
-import org.springframework.web.bind.annotation.PathVariable;
 import ru.practicum.event.dto.EventFullDto;
 import ru.practicum.event.dto.EventShortDto;
 
 import java.util.Collection;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 
 public interface EventService {
-    Collection<EventShortDto> getEvents(Map<String, String> allParams);
+    Collection<EventShortDto> getEvents(String text, List<Long> categories, Boolean paid, String rangeStart,
+                                        String rangeEnd, Boolean onlyAvailable, String sort,
+                                        Integer from, Integer size);
 
     Optional<EventFullDto> getEventById(Long eventId);
 

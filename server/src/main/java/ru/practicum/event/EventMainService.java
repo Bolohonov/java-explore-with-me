@@ -31,9 +31,15 @@ public class EventMainService implements EventService {
 
     @Transactional(readOnly = true)
     @Override
-    public Collection<EventShortDto> getEvents(Map<String, String> allParams) {
+    public Collection<EventShortDto> getEvents(String text, List<Long> categories, Boolean paid, String rangeStart,
+                                               String rangeEnd, Boolean onlyAvailable, String sort,
+                                               Integer from, Integer size) {
         //TODO
-        return eventMapper.toEventShortDto(eventRepository.findAll());
+        return eventMapper.toEventShortDto(eventRepository.getEvents(text,
+                getSetAndValidateParams(Long.class, categories), paid,
+                getAndValidateTimeRange(rangeStart, rangeEnd),
+                onlyAvailable,
+                getSortString(sort), from, size));
     }
 
     @Transactional(readOnly = true)
@@ -91,11 +97,13 @@ public class EventMainService implements EventService {
     @Override
     public Collection<EventFullDto> findEventsByAdmin(List<Long> users, List<String> states, List<Long> categories,
                                                String rangeStart, String rangeEnd, Integer from, Integer size) {
-        Collection<Event> events = eventRepository.getEventsByStates(
+        Collection<Event> events = eventRepository.getEventsByAdmin(
                 getSetAndValidateParams(Long.class, users),
                 getSetAndValidateParams(String.class, states),
                 getSetAndValidateParams(Long.class, categories),
-                getAndValidateTimeRange(rangeStart, rangeEnd)
+                getAndValidateTimeRange(rangeStart, rangeEnd),
+                from,
+                size
                 );
         return eventMapper.toEventFullDto(events);
     }
@@ -181,7 +189,8 @@ public class EventMainService implements EventService {
     }
 
     private Map<String, LocalDateTime> getAndValidateTimeRange(String rangeStart, String rangeEnd) {
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSSz", Locale.US);
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSSz",
+                Locale.getDefault());
         Map<String, LocalDateTime> timeMap = new HashMap<>();
         if (rangeStart != null) {
             LocalDateTime parsedStart = LocalDateTime.parse(rangeStart, formatter);
@@ -194,5 +203,16 @@ public class EventMainService implements EventService {
         return timeMap;
     }
 
+    private String getSortString(String sort) {
+        String result = "id";
+        if (sort != null && sort.equals("EVENT_DATE")) {
+            result = "eventDate";
 
+        }
+        if (sort != null && sort.equals("VIEWS")) {
+            result = "views";
+
+        }
+        return result;
+    }
 }
