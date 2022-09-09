@@ -1,39 +1,25 @@
-package ru.practicum.compilation;
+package ru.practicum.compilation.dto;
 
-import lombok.Getter;
-import lombok.Setter;
-import lombok.ToString;
-import org.hibernate.annotations.Type;
-
-import javax.persistence.*;
+import lombok.*;
 import java.util.Collection;
 
-@Entity
-@Table(name = "compilations", schema = "public")
-@Getter
-@Setter
-@ToString
-public class Compilation {
+@Data
+@Builder
+public class CompilationDto {
     /**
      * уникальный идентификатор
      */
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     /**
      * Заголовок события
      */
-    @Column(name = "title")
     private String title;
     /**
      * Закреплена ли подборка на главной странице сайта
      */
-    @Column(name = "pinned")
     private Boolean pinned;
     /**
      * Список идентификаторов событий входящих в подборку
      */
-    @Column(name = "events")
-    @Type(type = "bigint[]")
     private Collection<Long> events;
 }
