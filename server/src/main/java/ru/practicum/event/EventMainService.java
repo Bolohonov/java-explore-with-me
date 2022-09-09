@@ -37,7 +37,7 @@ public class EventMainService implements EventService {
         //TODO
         return eventMapper.toEventShortDto(eventRepository.getEvents(text,
                 getSetAndValidateParams(Long.class, categories), paid,
-                getAndValidateTimeRange(rangeStart, rangeEnd),
+                getAndValidateTimeRangeWithDefault(rangeStart, rangeEnd),
                 onlyAvailable,
                 getSortString(sort), from, size));
     }
@@ -178,6 +178,9 @@ public class EventMainService implements EventService {
         event.setInitiatorId(userId);
         event.setState(State.PENDING);
         event.setCreatedOn(LocalDateTime.now());
+        if (event.getParticipantLimit() == null) {
+            event.setParticipantLimit(0);
+        }
     }
 
     private <T> Set<T> getSetAndValidateParams(Class<T> type, List<T> list) {
@@ -195,6 +198,23 @@ public class EventMainService implements EventService {
         if (rangeStart != null) {
             LocalDateTime parsedStart = LocalDateTime.parse(rangeStart, formatter);
             timeMap.put("start", parsedStart);
+        }
+        if (rangeEnd != null) {
+            LocalDateTime parsedEnd = LocalDateTime.parse(rangeEnd, formatter);
+            timeMap.put("end", parsedEnd);
+        }
+        return timeMap;
+    }
+
+    private Map<String, LocalDateTime> getAndValidateTimeRangeWithDefault(String rangeStart, String rangeEnd) {
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSSz",
+                Locale.getDefault());
+        Map<String, LocalDateTime> timeMap = new HashMap<>();
+        if (rangeStart != null) {
+            LocalDateTime parsedStart = LocalDateTime.parse(rangeStart, formatter);
+            timeMap.put("start", parsedStart);
+        } else {
+            timeMap.put("start", LocalDateTime.now());
         }
         if (rangeEnd != null) {
             LocalDateTime parsedEnd = LocalDateTime.parse(rangeEnd, formatter);

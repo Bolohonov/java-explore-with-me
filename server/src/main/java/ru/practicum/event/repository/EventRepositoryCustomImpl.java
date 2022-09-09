@@ -26,13 +26,13 @@ public class EventRepositoryCustomImpl implements EventRepositoryCustom {
         Root<Event> event = query.from(Event.class);
         List<String> pathFields = Arrays.asList("annotation", "description");
         CriteriaQuery<Event> select = query.select(event)
-                .where(cb.or(getSearchPredicates(cb, event, pathFields, text)),
-                        cb.or(getPredicatesEqual(cb, event,
-                                Long.class, setOfCategories, "category")),
+                .where(cb.isNotNull(event.get("publishedOn")),
+                        cb.or(getSearchPredicates(cb, event, pathFields, text)),
+                        cb.or(getPredicatesEqual(cb, event, Long.class, setOfCategories, "category")),
                         getPredicateEqual(cb, event, Boolean.class, paid, "paid"),
                         cb.and(getTimePredicates(cb, event, timeMap)),
-                        cb.or(getAvailablePredicate(cb, event, onlyAvailable))
-                ).orderBy(cb.desc(event.get(sort)));
+                        getAvailablePredicate(cb, event, onlyAvailable))
+                .orderBy(cb.desc(event.get(sort)));
 
         return getResultWithPagination(cb, select, from, size);
     }
@@ -93,21 +93,13 @@ public class EventRepositoryCustomImpl implements EventRepositoryCustom {
         return predicates.toArray(new Predicate[predicates.size()]);
     }
 
-    private Predicate[] getAvailablePredicate(CriteriaBuilder cb, Root<Event> event, Boolean onlyAvailable) {
-        List<Predicate> predicates = new ArrayList<>();
-        if (onlyAvailable == null) {
-            predicates.add(cb.conjunction());
-        } else {
-            if (onlyAvailable.equals(Boolean.TRUE)) {
-                predicates.add(cb.or(cb.greaterThan(event.get("participantLimit")
-                        .as(Long.class), event.get("confirmedRequests"))));
-            }
-            if (onlyAvailable.equals(Boolean.FALSE)) {
-                predicates.add(cb.or(cb.greaterThan(event.get("participantLimit")
-                        .as(Long.class), event.get("confirmedRequests"))));
-            }
+    private Predicate getAvailablePredicate(CriteriaBuilder cb, Root<Event> event, Boolean onlyAvailable) {
+        Predicate predicate = cb.conjunction();
+        if (onlyAvailable != null && onlyAvailable.equals(Boolean.TRUE)) {
+            predicate = cb.or(cb.equal(event.get("participantLimit"), 0),
+                    cb.lessThan(event.get("confirmedRequests"), event.get("participantLimit")));
         }
-        return predicates.toArray(new Predicate[predicates.size()]);
+        return predicate;
     }
 
     private Predicate[] getSearchPredicates(CriteriaBuilder cb,
