@@ -33,8 +33,9 @@ CREATE TABLE IF NOT EXISTS events (
  state event_state,
  views BIGINT,
  CONSTRAINT pk_event PRIMARY KEY (id),
- CONSTRAINT FK_EVENT_ON_INITIATOR FOREIGN KEY (initiator_id) REFERENCES users (id),
- CONSTRAINT FK_EVENT_ON_CATEGORY FOREIGN KEY (category_id) REFERENCES categories (id)
+ CONSTRAINT FK_EVENT_ON_INITIATOR
+     FOREIGN KEY (initiator_id) REFERENCES users (id) ON DELETE CASCADE,
+ CONSTRAINT FK_EVENT_ON_CATEGORY FOREIGN KEY (category_id) REFERENCES categories (id) ON DELETE CASCADE
 );
 
 CREATE CAST (CHARACTER VARYING as event_state) WITH INOUT AS IMPLICIT;
@@ -48,8 +49,8 @@ CREATE TABLE IF NOT EXISTS requests (
   requester_id BIGINT NOT NULL,
   status request_status,
   CONSTRAINT pk_request PRIMARY KEY (id),
-  CONSTRAINT FK_REQUEST_ON_REQUESTER FOREIGN KEY (requester_id) REFERENCES users (id),
-  CONSTRAINT FK_REQUEST_ON_EVENT FOREIGN KEY (event_id) REFERENCES events (id)
+  CONSTRAINT FK_REQUEST_ON_REQUESTER FOREIGN KEY (requester_id) REFERENCES users (id) ON DELETE CASCADE,
+  CONSTRAINT FK_REQUEST_ON_EVENT FOREIGN KEY (event_id) REFERENCES events (id) ON DELETE CASCADE
 );
 
 CREATE CAST (CHARACTER VARYING as request_status) WITH INOUT AS IMPLICIT;
@@ -66,6 +67,8 @@ CREATE TABLE IF NOT EXISTS events_in_compilations (
     event_id BIGINT NOT NULL,
     compilation_id BIGINT NOT NULL,
     CONSTRAINT pk_events_in_compilations PRIMARY KEY (event_id, compilation_id),
-    CONSTRAINT FK_events_in_compilations_to_events FOREIGN KEY (event_id) REFERENCES events (id),
-    CONSTRAINT FK_events_in_compilations_to_compilations FOREIGN KEY (compilation_id) REFERENCES compilations (id)
+    CONSTRAINT FK_events_in_compilations_to_events
+        FOREIGN KEY (event_id) REFERENCES events (id) ON DELETE CASCADE,
+    CONSTRAINT FK_events_in_compilations_to_compilations
+        FOREIGN KEY (compilation_id) REFERENCES compilations (id) ON DELETE CASCADE
 );

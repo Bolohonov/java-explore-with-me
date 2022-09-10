@@ -8,6 +8,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
+import ru.practicum.error.ApiError;
 import ru.practicum.event.dto.EventFullDto;
 import ru.practicum.event.dto.EventMapper;
 import ru.practicum.event.dto.EventShortDto;
@@ -148,7 +149,9 @@ public class EventMainService implements EventService {
 
     private void validateEventDate(EventShortDto event) {
         if (!event.getEventDate().isAfter(LocalDateTime.now().plusHours(2L))) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
+            throw new ApiError(HttpStatus.BAD_REQUEST, "Field: " +
+                    "eventDate. Error: must be a date in the present or in the future. Value: %s",
+                    event.getEventDate().toString());
         }
     }
 
