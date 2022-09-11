@@ -9,8 +9,6 @@ import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.DefaultUriBuilderFactory;
 import ru.practicum.client.dto.EndpointHitDto;
 
-import java.util.Map;
-
 public class StatisticsClient extends BaseClient {
     private static final String API_PREFIX = "/hit";
 

@@ -1,6 +1,5 @@
 package ru.practicum.event.repository;
 
-import org.springframework.data.jpa.repository.Query;
 import ru.practicum.event.Event;
 
 import javax.persistence.EntityManager;
@@ -57,16 +56,6 @@ public class EventRepositoryCustomImpl implements EventRepositoryCustom {
 
         return getResultWithPagination(cb, select, from, size);
     }
-
-//    @Override
-//    public Long getEventsViews() {
-//        CriteriaBuilder cb = entityManager.getCriteriaBuilder();
-//        CriteriaQuery<Long> cr = cb.createQuery(Long.class);
-//        Root<Event> event = cr.from(Event.class);
-//        cr.select(cb.sum(event.get("views").as(Long.class)));
-//        TypedQuery<Long> typedQuery = entityManager.createQuery(cr);
-//        return typedQuery.getSingleResult();
-//    }
 
     private <T> Predicate[] getPredicatesEqual(CriteriaBuilder cb, Root<Event> event,
                                                Class <T> valueType, Set<T> set, String pathField) {

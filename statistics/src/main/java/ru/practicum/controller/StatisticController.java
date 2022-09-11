@@ -4,13 +4,17 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.server.ResponseStatusException;
 import ru.practicum.StatisticService;
 import ru.practicum.model.EndpointHit;
+import ru.practicum.model.ViewStats;
+import ru.practicum.model.dto.EndpointHitDto;
 
 import javax.validation.Valid;
+import java.util.Collection;
 import java.util.List;
-import java.util.Optional;
 
+import static org.springframework.http.HttpStatus.BAD_REQUEST;
 import static org.springframework.http.HttpStatus.OK;
 
 @RestController
@@ -23,17 +27,19 @@ public class StatisticController {
 
     @PostMapping("/hit")
     @ResponseStatus(OK)
-    public EndpointHit addNewEndpointHit(
+    public EndpointHitDto addNewEndpointHit(
             @RequestBody @Valid EndpointHit endpointHit) {
-        return statisticService.addEndpointHit(endpointHit);
+        return statisticService.addEndpointHit(endpointHit).orElseThrow(
+                () -> new ResponseStatusException(BAD_REQUEST)
+        );
     }
 
     @GetMapping("/stats")
     @ResponseStatus(OK)
-    public Long getStatistics(@RequestParam Long start,
-                                     @RequestParam Long end,
-                                     @RequestParam List<String> uris,
-                                     @RequestParam Boolean unique) {
+    public Collection<ViewStats> getStatistics(@RequestParam Long start,
+                                               @RequestParam Long end,
+                                               @RequestParam List<String> uris,
+                                               @RequestParam Boolean unique) {
         return statisticService.getStats(start, end, uris, unique);
     }
 }

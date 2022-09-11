@@ -8,7 +8,7 @@ import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
 
 @Entity
-@Table(name = "endpoint_hits", schema = "public")
+@Table(name = "hits", schema = "public")
 @Getter
 @Setter
 @ToString
