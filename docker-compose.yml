@@ -1,15 +1,55 @@
 version: '3.1'
 services:
-  stats-server:
+  statistics:
+    build: stats-server
+    container_name: stats_container
     ports:
       - "9090:9090"
+    depends_on:
+      - server
+      - stats-db
+    environment:
+      - STAT_DB_URL=jdbc:postgresql://postgresql:6542/stat
+      - STATS_POSTGRES_USER=root
+      - STATS_POSTGRES_PASSWORD=root
 
   stats-db:
     image: postgres:14-alpine
+    restart: always
+    container_name: postgresql_stats
+    ports:
+        - "6542:5432"
+    depends_on:
+    - ewm-db
+    - server
+    volumes:
+    - ./sql/create_tables.sql:/docker-entrypoint-initdb.d/schema_stats.sql
+    environment:
+      - STATS_URL=http://server:9090
+      - STATS_POSTGRES_USER=root
+      - STATS_POSTGRES_PASSWORD=root
 
-  ewm-service:
+  server:
+    build: ewm
+    container_name: ewm_container
     ports:
       - "8080:8080"
+    depends_on:
+      - ewm-db
+    environment:
+      - STATS_SERVER_URL=http://statistics:9090
+      - EWM_DB_URL=jdbc:postgresql://postgresql:6541/ewm
+      - EWM_POSTGRES_USER=root
+      - EWM_POSTGRES_PASSWORD=root
 
   ewm-db:
     image: postgres:14-alpine
+    restart: always
+    container_name: postgresql_ewm
+    ports:
+        - "6541:5432"
+    volumes:
+        - ./sql/create_tables.sql:/docker-entrypoint-initdb.d/schema_ewm.sql
+    environment:
+      - EWM_POSTGRES_USER=root
+      - EWM_POSTGRES_PASSWORD=root

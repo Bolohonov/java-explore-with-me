@@ -5,6 +5,7 @@ import lombok.Setter;
 import lombok.ToString;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotBlank;
 
 @Entity
 @Table(name = "endpoint_hits", schema = "public")
@@ -17,6 +18,15 @@ public class EndpointHit {
     @Column(name = "id", nullable = false)
     private Long id;
 
+    @NotBlank
+    String app;
 
+    @NotBlank
+    String uri;
 
+    @NotBlank
+    String ip;
+
+    @NotBlank
+    Long timestamp;
 }

@@ -35,11 +35,13 @@ public class EventMainService implements EventService {
     public Collection<EventShortDto> getEvents(String text, List<Long> categories, Boolean paid, String rangeStart,
                                                String rangeEnd, Boolean onlyAvailable, String sort,
                                                Integer from, Integer size) {
-        return eventMapper.toEventShortDto(eventRepository.getEvents(text,
+        Collection<Event> events = eventRepository.getEvents(text,
                 getSetAndValidateParams(Long.class, categories), paid,
                 getAndValidateTimeRangeWithDefault(rangeStart, rangeEnd),
                 onlyAvailable,
-                getSortString(sort), from, size));
+                getSortString(sort), from, size);
+        events.stream().forEach(e -> e.addView());
+        return eventMapper.toEventShortDto(events);
     }
 
     @Transactional(readOnly = true)
@@ -49,6 +51,7 @@ public class EventMainService implements EventService {
         if (event.getPublishedOn() == null) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND);
         }
+        event.addView();
         return of(eventMapper.toEventFullDto(event));
     }
 

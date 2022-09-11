@@ -90,4 +90,12 @@ public class Event {
      */
     @Column(name = "views")
     private Long views;
+
+    public void addView() {
+        if (views != null) {
+            ++views;
+        } else {
+            views = 1L;
+        }
+    }
 }
