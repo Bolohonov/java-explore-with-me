@@ -38,11 +38,10 @@ public class StatisticService implements StatisticsService {
                 results.add(ViewStats.builder()
                         .app("ExploreWithMe")
                         .uri(entry.getKey())
-                        .hits(entry.getValue().stream()
-                                .collect(Collectors.groupingBy(EndpointHit::getIp))
-                                .values()
+                        .hits((long) entry.getValue()
                                 .stream()
-                                .count())
+                                .collect(Collectors.groupingBy(EndpointHit::getIp))
+                                .size())
                         .build()
                 );
             }
@@ -52,7 +51,7 @@ public class StatisticService implements StatisticsService {
                     .forEach(m -> results.add(ViewStats.builder()
                             .app("ExploreWithMe")
                             .uri(m.getKey())
-                            .hits(Long.valueOf(m.getValue().size()))
+                            .hits((long) m.getValue().size())
                             .build()));
         }
         return results;
