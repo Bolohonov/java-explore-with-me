@@ -4,16 +4,22 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
 import org.hibernate.annotations.Type;
+import org.hibernate.annotations.TypeDef;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
-import java.util.Collection;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Table(name = "compilations", schema = "public")
 @Getter
 @Setter
 @ToString
+@TypeDef(
+        name = "list-array",
+        typeClass = ArrayList.class
+)
 public class Compilation {
     /**
      * уникальный идентификатор
@@ -35,7 +41,7 @@ public class Compilation {
     /**
      * Список идентификаторов событий входящих в подборку
      */
-    @Column(name = "events")
-    @Type(type = "bigint[]")
-    private Collection<Long> events;
+    @ElementCollection
+    @Type(type = "list-array")
+    private List<Long> events_in;
 }

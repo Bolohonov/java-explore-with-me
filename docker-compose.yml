@@ -10,8 +10,8 @@ services:
       - stats-db
     environment:
       - STAT_DB_URL=jdbc:postgresql://postgresql:6542/stat
-      - STATS_POSTGRES_USER=root
-      - STATS_POSTGRES_PASSWORD=root
+      - POSTGRES_USER=root
+      - POSTGRES_PASSWORD=root
 
   stats-db:
     image: postgres:14-alpine
@@ -23,11 +23,11 @@ services:
     - ewm-db
     - server
     volumes:
-    - ./sql/create_tables.sql:/docker-entrypoint-initdb.d/schema_stats.sql
+    - ./sql/schema_stat.sql:/docker-entrypoint-initdb.d/init.sql
     environment:
       - STATS_URL=http://server:9090
-      - STATS_POSTGRES_USER=root
-      - STATS_POSTGRES_PASSWORD=root
+      - POSTGRES_USER=root
+      - POSTGRES_PASSWORD=root
 
   server:
     build: ewm
@@ -37,10 +37,10 @@ services:
     depends_on:
       - ewm-db
     environment:
-      - STATS_SERVER_URL=http://statistics:9090
-      - EWM_DB_URL=jdbc:postgresql://postgresql:6541/ewm
-      - EWM_POSTGRES_USER=root
-      - EWM_POSTGRES_PASSWORD=root
+      - SERVER_URL=http://statistics:9090
+      - SERVER_DB_URL=jdbc:postgresql://postgresql:6541/ewm
+      - POSTGRES_USER=root
+      - POSTGRES_PASSWORD=root
 
   ewm-db:
     image: postgres:14-alpine
@@ -49,7 +49,7 @@ services:
     ports:
         - "6541:5432"
     volumes:
-        - ./sql/create_tables.sql:/docker-entrypoint-initdb.d/schema_ewm.sql
+        - ./sql/schema_ewm.sql:/docker-entrypoint-initdb.d/init.sql
     environment:
-      - EWM_POSTGRES_USER=root
-      - EWM_POSTGRES_PASSWORD=root
+      - POSTGRES_USER=root
+      - POSTGRES_PASSWORD=root

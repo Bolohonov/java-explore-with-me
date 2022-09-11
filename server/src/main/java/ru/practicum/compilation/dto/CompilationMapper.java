@@ -4,7 +4,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 import ru.practicum.compilation.Compilation;
 
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.stream.Collectors;
 
@@ -16,7 +15,7 @@ public class CompilationMapper {
                 compilation.getId(),
                 compilation.getTitle(),
                 compilation.getPinned(),
-                compilation.getEvents()
+                compilation.getEvents_in()
         );
     }
 

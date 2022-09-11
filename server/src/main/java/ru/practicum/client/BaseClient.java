@@ -2,7 +2,6 @@ package ru.practicum.client;
 
 
 import java.util.List;
-import java.util.Map;
 
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;

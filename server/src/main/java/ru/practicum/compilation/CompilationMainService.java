@@ -50,12 +50,12 @@ public class CompilationMainService implements CompilationService {
 
     @Override
     public boolean removeEventFromCompilation(Long compId, Long eventId) {
-        return getById(compId).getEvents().remove(eventId);
+        return getById(compId).getEvents_in().remove(eventId);
     }
 
     @Override
     public boolean addEventToCompilation(Long compId, Long eventId) {
-        return getById(compId).getEvents().add(eventId);
+        return getById(compId).getEvents_in().add(eventId);
     }
 
     @Override
