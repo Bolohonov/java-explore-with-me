@@ -10,9 +10,6 @@ import ru.practicum.compilation.CompilationService;
 import ru.practicum.compilation.dto.CompilationDto;
 
 import javax.validation.Valid;
-import javax.validation.constraints.Positive;
-import javax.validation.constraints.PositiveOrZero;
-import java.util.Collection;
 import java.util.Optional;
 
 import static org.springframework.http.HttpStatus.BAD_REQUEST;
@@ -25,6 +22,7 @@ import static org.springframework.http.HttpStatus.OK;
 @Validated
 public class CompilationAdminController {
     private final CompilationService compilationService;
+
     @PostMapping
     @ResponseStatus(OK)
     public Optional<CompilationDto> addNewCompilation(
@@ -64,7 +62,7 @@ public class CompilationAdminController {
         }
     }
 
-    @PatchMapping("/{compId}/events/{eventId}")
+    @PatchMapping("/{compId}/pin")
     @ResponseStatus(OK)
     public void addCompilationToHomePage(@PathVariable Long compId,
                                       @PathVariable Long eventId) {

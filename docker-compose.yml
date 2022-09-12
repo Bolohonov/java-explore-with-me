@@ -1,44 +1,16 @@
 version: '3.1'
 services:
-  statistics:
-    build: stats-server
-    container_name: stats_container
-    ports:
-      - "9090:9090"
-    depends_on:
-      - server
-      - stats-db
-    environment:
-      - STAT_DB_URL=jdbc:postgresql://postgresql:6542/stat
-      - POSTGRES_USER=root
-      - POSTGRES_PASSWORD=root
-
-  stats-db:
-    image: postgres:14-alpine
-    restart: always
-    container_name: postgresql_stats
-    ports:
-        - "6542:5432"
-    depends_on:
-    - ewm-db
-    - server
-    volumes:
-    - ./sql/schema_stat.sql:/docker-entrypoint-initdb.d/init.sql
-    environment:
-      - STATS_URL=http://server:9090
-      - POSTGRES_USER=root
-      - POSTGRES_PASSWORD=root
-
-  server:
-    build: ewm
-    container_name: ewm_container
+  ewm-server:
+    image: ewm-server
+    build: ewm-server
+    container_name: ewm_server_container
     ports:
       - "8080:8080"
     depends_on:
       - ewm-db
     environment:
-      - SERVER_URL=http://statistics:9090
-      - SERVER_DB_URL=jdbc:postgresql://postgresql:6541/ewm
+      - STATS_URL=http://ewm-statistics:9090
+      - SERVER_DB_URL=jdbc:postgresql://ewm-db:5432/root
       - POSTGRES_USER=root
       - POSTGRES_PASSWORD=root
 
@@ -50,6 +22,36 @@ services:
         - "6541:5432"
     volumes:
         - ./sql/schema_ewm.sql:/docker-entrypoint-initdb.d/init.sql
+    environment:
+      - POSTGRES_USER=root
+      - POSTGRES_PASSWORD=root
+
+  ewm-statistics:
+    image: ewm-statistics
+    build: ewm-statistics
+    container_name: ewm_stats_container
+    ports:
+      - "9090:9090"
+    depends_on:
+      - ewm-server
+      - stats-db
+    environment:
+      - STAT_DB_URL=jdbc:postgresql://stats-db:5433/root
+      - POSTGRES_USER=root
+      - POSTGRES_PASSWORD=root
+
+  stats-db:
+    image: postgres:14-alpine
+    restart: always
+    container_name: postgresql_stats
+    ports:
+      - "6542:5433"
+    depends_on:
+      - ewm-db
+      - ewm-server
+    volumes:
+      - ./sql/schema_stat.sql:/docker-entrypoint-initdb.d/init.sql
+    command: -p 5433
     environment:
       - POSTGRES_USER=root
       - POSTGRES_PASSWORD=root
