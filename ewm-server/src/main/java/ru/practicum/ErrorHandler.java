@@ -4,9 +4,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
-import ru.practicum.user.exceptions.UserNotFoundException;
+import ru.practicum.error.ApiError;
 
-import java.security.Timestamp;
+import javax.servlet.http.HttpServletResponse;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -14,26 +14,11 @@ import java.util.UUID;
 
 @RestControllerAdvice
 public class ErrorHandler {
-//    @ExceptionHandler
-//    @ResponseStatus(HttpStatus.NOT_FOUND)
-//    public ErrorResponse handleAccessToItemException(final AccessToItemException e) {
-//        return new ErrorResponse(
-//                e.getMessage()
-//        );
-//    }
-//
-//    @ExceptionHandler
-//    @ResponseStatus(HttpStatus.NOT_FOUND)
-//    public ErrorResponse handleAccessToBookingException(final AccessToBookingException e) {
-//        return new ErrorResponse(
-//                e.getMessage()
-//        );
-//    }
-//
     @ExceptionHandler
     @ResponseStatus(HttpStatus.NOT_FOUND)
-    public ErrorResponse handleUserNotFoundException(final UserNotFoundException e) {
+    public ErrorResponse handleUserNotFoundException(final ApiError e, HttpServletResponse response) {
         List<String> err = new ArrayList<>();
+        response.setStatus(e.getStatus().value());
         for (StackTraceElement stack : e.getStackTrace()) {
             err.add("Класс: " + stack.getClassName() + ", " + "метод: " + stack.getMethodName());
         }
@@ -42,16 +27,8 @@ public class ErrorHandler {
                 .errors(err)
                 .message(e.getClass().toString())
                 .reason(e.getMessage())
-                .status(HttpStatus.NOT_FOUND.toString())
+                .status(e.getStatus().toString())
                 .timestamp(LocalDateTime.now().toString())
                 .build();
     }
-//
-//    @ExceptionHandler
-//    @ResponseStatus(HttpStatus.NOT_FOUND)
-//    public ErrorResponse handleItemNotFoundException(final ItemNotFoundException e) {
-//        return new ErrorResponse(
-//                e.getMessage()
-//        );
-//    }
 }

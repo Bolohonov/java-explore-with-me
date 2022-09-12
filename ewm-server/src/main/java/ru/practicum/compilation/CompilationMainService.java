@@ -10,6 +10,7 @@ import org.springframework.web.server.ResponseStatusException;
 import ru.practicum.compilation.dto.CompilationDto;
 import ru.practicum.compilation.dto.CompilationMapper;
 import ru.practicum.compilation.repository.CompilationRepository;
+import ru.practicum.error.ApiError;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -72,7 +73,8 @@ public class CompilationMainService implements CompilationService {
 
     private Compilation getById(Long id) {
         return compilationRepository.findById(id).orElseThrow(
-                () -> new ResponseStatusException(HttpStatus.NOT_FOUND)
+                () -> new ApiError(HttpStatus.NOT_FOUND, "Подборка не найдена",
+                String.format("Подборка с id %s не найдена", id))
         );
     }
 

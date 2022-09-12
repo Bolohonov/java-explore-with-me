@@ -4,11 +4,12 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import ru.practicum.error.ApiError;
 import ru.practicum.user.dto.UserDto;
 import ru.practicum.user.dto.UserMapper;
-import ru.practicum.user.exceptions.UserNotFoundException;
 import ru.practicum.user.repository.UserRepository;
 
 import java.util.*;
@@ -20,6 +21,7 @@ import static java.util.Optional.of;
 @RequiredArgsConstructor
 public class UserMainService implements UserService {
     private final UserRepository userRepository;
+    private static final String ER_OBJ = "пользователь";
 
     @Transactional(readOnly = true)
     @Override
@@ -45,14 +47,18 @@ public class UserMainService implements UserService {
     @Override
     public Optional<UserDto> getUserById(Long userId) {
         return of(UserMapper.toUserDto(userRepository.findById(userId).orElseThrow(
-                () -> new UserNotFoundException("Пользователь не найден")
+                () -> new ApiError(HttpStatus.NOT_FOUND, "Пользователь не найден",
+                        String.format("При выполнении %s не найден %s c id %s",
+                                "getUserById", ER_OBJ, userId))
         )));
     }
 
     @Override
     public void deleteUser(Long userId) {
         if (!getUserById(userId).isPresent()) {
-            throw new UserNotFoundException("Пользователь не найден");
+            throw new ApiError(HttpStatus.NOT_FOUND, "Пользователь не найден",
+                    String.format("При выполнении %s не найден %s c id %s",
+                            "deleteUser", ER_OBJ, userId));
         }
         userRepository.deleteById(userId);
     }

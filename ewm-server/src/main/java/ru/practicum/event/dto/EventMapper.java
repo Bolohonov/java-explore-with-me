@@ -4,8 +4,10 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 import ru.practicum.category.repository.CategoryRepository;
 import ru.practicum.event.Event;
+import ru.practicum.event.State;
 import ru.practicum.user.UserService;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.stream.Collectors;
@@ -51,12 +53,32 @@ public class EventMapper {
                 event.getAnnotation(),
                 new EventShortDto.CategoryDto(event.getCategory(),
                         categoryRepository.findById(event.getCategory()).get().getName()),
-                event.getConfirmedRequests(),
+                event.getDescription(),
                 event.getEventDate(),
-                new EventShortDto.UserShortDto(event.getInitiatorId(),
-                        userService.getUserById(event.getInitiatorId()).get().getName()),
                 event.getPaid(),
-                event.getViews()
+                event.getParticipantLimit(),
+                event.getRequestModeration()
+        );
+    }
+
+    public Event fromEventShortDto(EventShortDto event, Long confirmedRequests, LocalDateTime createdOn,
+                                   Long initiatorId, LocalDateTime publishedOn, State state, Long views) {
+        return new Event(
+                event.getId(),
+                event.getTitle(),
+                event.getAnnotation(),
+                event.getCategory().getId(),
+                confirmedRequests,
+                createdOn,
+                event.getDescription(),
+                event.getEventDate(),
+                initiatorId,
+                event.getPaid(),
+                event.getParticipantLimit(),
+                publishedOn,
+                event.getRequestModeration(),
+                state,
+                views
         );
     }
 

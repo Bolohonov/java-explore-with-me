@@ -1,8 +1,6 @@
 package ru.practicum.event.dto;
 
 import lombok.*;
-import ru.practicum.event.State;
-
 import java.io.Serializable;
 import java.time.LocalDateTime;
 
@@ -26,26 +24,25 @@ public class EventShortDto {
      */
     private CategoryDto category;
     /**
-     * Количество одобренных заявок на участие в данном событии
+     * Описание события
      */
-    private Long confirmedRequests;
+    private String description;
     /**
      * Дата и время на которые намечено событие
      */
     private LocalDateTime eventDate;
     /**
-     * Инициатор события
-     */
-    private UserShortDto initiator;
-    /**
      * Нужно ли оплачивать участие
      */
     private Boolean paid;
     /**
-     * Количество просмотрев события
+     * Ограничение на количество участников. Значение 0 - означает отсутствие ограничения
      */
-    private Long views;
-
+    private Integer participantLimit;
+    /**
+     * Нужна ли пре-модерация заявок на участие
+     */
+    private Boolean requestModeration;
 
     @AllArgsConstructor
     @ToString

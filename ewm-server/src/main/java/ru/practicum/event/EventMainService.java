@@ -14,7 +14,6 @@ import ru.practicum.event.dto.EventMapper;
 import ru.practicum.event.dto.EventShortDto;
 import ru.practicum.event.repository.EventRepository;
 import ru.practicum.user.UserService;
-import ru.practicum.user.exceptions.UserNotFoundException;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -29,6 +28,7 @@ public class EventMainService implements EventService {
     private final EventRepository eventRepository;
     private final EventMapper eventMapper;
     private final UserService userService;
+    private static final String ER_OBJ = "событие";
 
     @Transactional(readOnly = true)
     @Override
@@ -49,7 +49,9 @@ public class EventMainService implements EventService {
     public Optional<EventFullDto> getPublishedEventById(Long eventId) {
         Event event = getEventFromRepository(eventId);
         if (event.getPublishedOn() == null) {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND);
+            throw new ApiError(HttpStatus.NOT_FOUND, "Событие не найдено",
+                    String.format("При выполнении %s не найден %s c id %s",
+                            "getPublishedEventById", ER_OBJ, eventId));
         }
         event.addView();
         return of(eventMapper.toEventFullDto(event));
@@ -75,18 +77,30 @@ public class EventMainService implements EventService {
 
     @Override
     public Optional<EventShortDto> updateEventByInitiator(Long userId, EventShortDto event) {
-        if (!getEventById(event.getId()).isPresent()) {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND);
+        Event oldEvent = getEventFromRepository(event.getId());
+        List<ApiError> errorsList = ApiError.getErrorsList();
+        try {
+            validateEventDate(event);
+        } catch (ApiError error) {
+            errorsList.add(error);
         }
-        validateEventDate(event);
         if (!getEventById(event.getId()).get().getInitiator().getId().equals(userId)) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
+            errorsList.add(new ApiError(HttpStatus.BAD_REQUEST, String.format("При выполнении %s произошла ошибка.",
+                    "update"), String.format("Пользователь с id %s не является инициатором события. Отказано в доступе",
+                            userId)));
         }
-        if (getEventById(event.getId()).get().getState().equals(State.PENDING)
-                || getEventById(event.getId()).get().getState().equals(State.CANCELED)) {
-            return null; //TODO add return
+        if (!getEventById(event.getId()).get().getState().equals(State.PENDING)
+                || !getEventById(event.getId()).get().getState().equals(State.CANCELED)) {
+            errorsList.add(new ApiError(HttpStatus.BAD_REQUEST, String.format("При выполнении %s произошла ошибка.",
+                    "update"), String.format("Событие с id %s уже имеет статус Опубликовано. Отказано в доступе",
+                    event.getId())));
         }
-        throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
+        if (!errorsList.isEmpty()) {
+            throw new ApiError(HttpStatus.BAD_REQUEST, "Ошибка при обновлении события",
+                    String.format("Во время обновления события %s произошли ошибки:",
+                            event.getId()), errorsList);
+        }
+        return of(updateEventInRepository(oldEvent, event));
     }
 
     @Override
@@ -142,8 +156,17 @@ public class EventMainService implements EventService {
 
     private Event getEventFromRepository(Long eventId) {
         return eventRepository.findById(eventId).orElseThrow(() -> {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND);
+            throw new ApiError(HttpStatus.NOT_FOUND, "Событие не найдено",
+                    String.format("Не найдено %s c id %s",
+                            ER_OBJ, eventId));
         });
+    }
+
+    private EventShortDto updateEventInRepository(Event oldEvent, EventShortDto event) {
+        oldEvent = eventMapper.fromEventShortDto(event, oldEvent.getConfirmedRequests(),
+        oldEvent.getCreatedOn(), oldEvent.getInitiatorId(), oldEvent.getPublishedOn(),
+                oldEvent.getState(), oldEvent.getViews());
+        return eventMapper.toEventShortDto(oldEvent);
     }
 
     private Integer getPageNumber(Integer from, Integer size) {
@@ -152,40 +175,47 @@ public class EventMainService implements EventService {
 
     private void validateEventDate(EventShortDto event) {
         if (!event.getEventDate().isAfter(LocalDateTime.now().plusHours(2L))) {
-            throw new ApiError(HttpStatus.BAD_REQUEST, "Field: " +
-                    "eventDate. Error: must be a date in the present or in the future. Value: %s",
-                    event.getEventDate().toString());
+            throw new ApiError(HttpStatus.BAD_REQUEST, "Поле eventDate указано неверно.",
+                    String.format("Error: must be a date in the present or in the future. Value: %s",
+                    event.getEventDate().toString()));
         }
     }
 
     private void validateEventDate(Event event) {
         if (!event.getEventDate().isAfter(LocalDateTime.now().plusHours(2L))) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
+            throw new ApiError(HttpStatus.BAD_REQUEST, "Поле eventDate указано неверно.",
+                    String.format("Error: must be a date in the present or in the future (plus 2 hours). " +
+                                    "Value: %s", event.getEventDate().toString()));
         }
     }
 
     private void validateUserActivation(Long userId) {
-        if (!userService.getUserById(userId)
-                .orElseThrow(() -> new UserNotFoundException("Пользователь не найден"))
+        if (!userService.getUserById(userId).get()
                 .getActivation().equals(Boolean.TRUE)) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
+            throw new ApiError(HttpStatus.BAD_REQUEST, "Пользователь не активирован.",
+                    String.format("Пользователь с id %s не может выполнить данное действие. " +
+                                    "Получите активацию от администратора", userId));
         }
     }
 
     private void validateEventForPublishing(Long eventId, Event newEvent) {
         Event event = getEventFromRepository(eventId);
         if (newEvent.getEventDate().isBefore(LocalDateTime.now().plusHours(1L))) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
+            throw new ApiError(HttpStatus.BAD_REQUEST, "Поле eventDate указано неверно.",
+                    String.format("Error: must be a date in the present or in the future (plus 1 hour). " +
+                                    "Value: %s", event.getEventDate().toString()));
         }
         if (!event.getState().equals(State.PENDING)) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
+            throw new ApiError(HttpStatus.BAD_REQUEST, "У события неверный статус",
+                    String.format("Error: событие должно иметь статус %s", State.PENDING));
         }
     }
 
     private void validateEventForRejecting(Long eventId) {
         Event event = getEventFromRepository(eventId);
         if (!event.getState().equals(State.PUBLISHED)) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
+            throw new ApiError(HttpStatus.BAD_REQUEST, "У события неверный статус",
+                    String.format("Error: событие должно иметь статус %s", State.PUBLISHED));
         }
     }
 

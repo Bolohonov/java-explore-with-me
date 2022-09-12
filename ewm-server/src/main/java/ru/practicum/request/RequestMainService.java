@@ -5,6 +5,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
+import ru.practicum.error.ApiError;
+import ru.practicum.event.Event;
 import ru.practicum.event.EventService;
 import ru.practicum.event.dto.EventFullDto;
 import ru.practicum.request.dto.RequestDto;
@@ -42,8 +44,7 @@ public class RequestMainService implements RequestService {
 
     @Override
     public Optional<RequestDto> revokeRequest(Long userId, Long requestId) {
-        Request request = requestRepository.findById(requestId)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
+        Request request = getRequestFromRepository(requestId);
         request.setStatus(Status.CANCELED);
         return of(RequestMapper.toRequestDto(request));
     }
@@ -57,14 +58,13 @@ public class RequestMainService implements RequestService {
 
     @Override
     public Optional<RequestDto> confirmRequest(Long userId, Long requestId) {
-        Request request = requestRepository.findById(requestId)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
+        Request request = getRequestFromRepository(requestId);
         EventFullDto event = eventService.getEventById(request.getEvent()).get();
         if (event.getConfirmedRequests() < event.getParticipantLimit()) {
             request.setStatus(Status.ACCEPTED);
             event.setConfirmedRequests(event.getConfirmedRequests() + 1L);
         }
-        if (event.getConfirmedRequests().equals(event.getParticipantLimit())) {
+        if (event.getConfirmedRequests().equals(event.getParticipantLimit().longValue())) {
             Collection<Request> requests = requestRepository.getRequestsByEventAndStatus(event.getId(),
                     Status.WAITING.toString());
             requests.forEach((r) -> r.setStatus(Status.CANCELED));
@@ -74,20 +74,28 @@ public class RequestMainService implements RequestService {
 
     @Override
     public Optional<RequestDto> rejectRequest(Long userId, Long requestId) {
-        Request request = requestRepository.findById(requestId)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
+        Request request = getRequestFromRepository(requestId);
         request.setStatus(Status.CANCELED);
         return of(RequestMapper.toRequestDto(request));
     }
 
     private void validateEventInitiator(Long initiatorId, Long eventId) {
         if (!eventService.getEventById(eventId)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND))
+                .get()
                 .getInitiator()
                 .getId()
                 .equals(initiatorId)) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
+            throw new ApiError(HttpStatus.BAD_REQUEST, "Действие не может быть выполнено",
+                    String.format("Пользователь с %s не является инициатором события c id %s. " +
+                                    "Действие отклонено.", initiatorId, eventId));
         }
+    }
+
+    private Request getRequestFromRepository(Long requestId) {
+        return requestRepository.findById(requestId).orElseThrow(() -> {
+            throw new ApiError(HttpStatus.NOT_FOUND, "Запрос не найден",
+                    String.format("При выполнении метода не найден %s c id %s. Проверьте id.", requestId));
+        });
     }
 
 }
