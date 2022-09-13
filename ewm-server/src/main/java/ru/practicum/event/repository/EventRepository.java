@@ -10,5 +10,4 @@ import java.util.Set;
 
 public interface EventRepository extends JpaRepository<Event, Long>, EventRepositoryCustom {
     Page<Event> findEventsByInitiatorId(Long initiatorId, Pageable pageable);
-    Set<Event> findAllByComps(Compilation compilation);
 }

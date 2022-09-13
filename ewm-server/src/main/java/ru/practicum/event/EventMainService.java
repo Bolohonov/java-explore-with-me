@@ -166,8 +166,7 @@ public class EventMainService implements EventService {
     private EventShortDto updateEventInRepository(Event oldEvent, EventShortDto event) {
         oldEvent = eventMapper.fromEventShortDto(event, oldEvent.getConfirmedRequests(),
         oldEvent.getCreatedOn(), oldEvent.getInitiatorId(), oldEvent.getPublishedOn(),
-                oldEvent.getState(), oldEvent.getViews(), oldEvent.getLocLat(), oldEvent.getLocLon(),
-                oldEvent.getComps());
+                oldEvent.getState(), oldEvent.getViews(), oldEvent.getLocLat(), oldEvent.getLocLon());
         return eventMapper.toEventShortDto(oldEvent);
     }
 
@@ -239,7 +238,7 @@ public class EventMainService implements EventService {
     }
 
     private Map<String, LocalDateTime> getAndValidateTimeRange(String rangeStart, String rangeEnd) {
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSSz",
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss.SS",
                 Locale.getDefault());
         Map<String, LocalDateTime> timeMap = new HashMap<>();
         if (rangeStart != null) {

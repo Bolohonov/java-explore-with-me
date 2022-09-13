@@ -1,6 +1,8 @@
 package ru.practicum.compilation.dto;
 
 import lombok.*;
+
+import javax.validation.constraints.NotBlank;
 import java.util.Collection;
 
 @Data
@@ -13,6 +15,7 @@ public class CompilationDto {
     /**
      * Заголовок события
      */
+    @NotBlank
     private String title;
     /**
      * Закреплена ли подборка на главной странице сайта

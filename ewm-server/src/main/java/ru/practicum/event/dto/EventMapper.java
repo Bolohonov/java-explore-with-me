@@ -66,7 +66,7 @@ public class EventMapper {
 
     public Event fromEventShortDto(EventShortDto event, Long confirmedRequests, LocalDateTime createdOn,
                                    Long initiatorId, LocalDateTime publishedOn, State state, Long views,
-                                   Double locLat, Double locLon, Set<Compilation> comps) {
+                                   Double locLat, Double locLon) {
         return new Event(
                 event.getId(),
                 event.getTitle(),
@@ -84,8 +84,7 @@ public class EventMapper {
                 state,
                 views,
                 locLat,
-                locLon,
-                comps
+                locLon
         );
     }
 

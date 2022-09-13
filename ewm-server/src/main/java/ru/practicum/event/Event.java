@@ -5,9 +5,8 @@ import ru.practicum.compilation.Compilation;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
+import java.util.HashSet;
 import java.util.Set;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 @Entity
 @Table(name = "events", schema = "public")
@@ -103,17 +102,6 @@ public class Event {
      */
     @Column(name = "loc_lon")
     private Double locLon;
-
-    @ManyToMany(cascade = CascadeType.ALL)
-    @JoinTable(name = "events_in_compilations",
-            joinColumns = @JoinColumn(name = "event_id"),
-            inverseJoinColumns = @JoinColumn(name = "compilation_id"))
-    private Set<Compilation> comps;
-
-//    public Event(Compilation... comps) {
-//        this.comps = Stream.of(comps).collect(Collectors.toSet());
-//        this.comps.forEach(x -> x.getEvents().add(this));
-//    }
 
     public void addView() {
         if (views != null) {

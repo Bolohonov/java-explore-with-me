@@ -3,6 +3,7 @@ package ru.practicum.category;
 import lombok.Data;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotBlank;
 
 @Entity
 @Table(name = "categories", schema = "public")
@@ -17,5 +18,6 @@ public class Category {
     /**
      * название категории
      */
+    @NotBlank
     private String name;
 }

@@ -19,14 +19,11 @@ public class ErrorHandler {
     public ErrorResponse handleUserNotFoundException(final ApiError e, HttpServletResponse response) {
         List<String> err = new ArrayList<>();
         response.setStatus(e.getStatus().value());
-        for (StackTraceElement stack : e.getStackTrace()) {
-            err.add("Класс: " + stack.getClassName() + ", " + "метод: " + stack.getMethodName());
-        }
         return ErrorResponse.builder()
                 .id(UUID.randomUUID().toString())
                 .errors(err)
-                .message(e.getClass().toString())
-                .reason(e.getMessage())
+                .message(e.getMessage())
+                .reason(e.getReason())
                 .status(e.getStatus().toString())
                 .timestamp(LocalDateTime.now().toString())
                 .build();

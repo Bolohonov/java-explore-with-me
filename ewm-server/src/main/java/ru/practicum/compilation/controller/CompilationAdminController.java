@@ -26,7 +26,7 @@ public class CompilationAdminController {
     @PostMapping
     @ResponseStatus(OK)
     public Optional<CompilationDto> addNewCompilation(
-            @RequestBody @Valid Compilation compilation) {
+            @RequestBody @Valid CompilationDto compilation) {
         return compilationService.addCompilation(compilation);
     }
 
@@ -64,9 +64,8 @@ public class CompilationAdminController {
 
     @PatchMapping("/{compId}/pin")
     @ResponseStatus(OK)
-    public void addCompilationToHomePage(@PathVariable Long compId,
-                                      @PathVariable Long eventId) {
-        if (!compilationService.addEventToCompilation(compId, eventId)) {
+    public void addCompilationToHomePage(@PathVariable Long compId) {
+        if (!compilationService.addCompilationToHomePage(compId)) {
             throw new ResponseStatusException(BAD_REQUEST);
         }
     }

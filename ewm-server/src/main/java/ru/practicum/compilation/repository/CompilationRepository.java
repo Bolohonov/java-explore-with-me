@@ -10,5 +10,4 @@ import java.util.Set;
 
 public interface CompilationRepository extends JpaRepository<Compilation, Long> {
     Page<Compilation> findCompilationsByPinned(Boolean pinned, Pageable pageable);
-    Set<Compilation> findAllByEvents(Event event);
 }
