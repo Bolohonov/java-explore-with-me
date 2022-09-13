@@ -3,12 +3,15 @@ package ru.practicum.event.dto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 import ru.practicum.category.repository.CategoryRepository;
+import ru.practicum.compilation.Compilation;
 import ru.practicum.event.Event;
 import ru.practicum.event.State;
 import ru.practicum.user.UserService;
 
 import java.time.LocalDateTime;
 import java.util.Collection;
+import java.util.HashSet;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 @Component
@@ -63,7 +66,7 @@ public class EventMapper {
 
     public Event fromEventShortDto(EventShortDto event, Long confirmedRequests, LocalDateTime createdOn,
                                    Long initiatorId, LocalDateTime publishedOn, State state, Long views,
-                                   Double locLat, Double locLon) {
+                                   Double locLat, Double locLon, Set<Compilation> comps) {
         return new Event(
                 event.getId(),
                 event.getTitle(),
@@ -81,7 +84,8 @@ public class EventMapper {
                 state,
                 views,
                 locLat,
-                locLon
+                locLon,
+                comps
         );
     }
 

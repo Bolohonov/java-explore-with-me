@@ -8,6 +8,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
+import ru.practicum.compilation.Compilation;
 import ru.practicum.error.ApiError;
 import ru.practicum.event.dto.EventFullDto;
 import ru.practicum.event.dto.EventMapper;
@@ -165,7 +166,8 @@ public class EventMainService implements EventService {
     private EventShortDto updateEventInRepository(Event oldEvent, EventShortDto event) {
         oldEvent = eventMapper.fromEventShortDto(event, oldEvent.getConfirmedRequests(),
         oldEvent.getCreatedOn(), oldEvent.getInitiatorId(), oldEvent.getPublishedOn(),
-                oldEvent.getState(), oldEvent.getViews(), oldEvent.getLocLat(), oldEvent.getLocLon());
+                oldEvent.getState(), oldEvent.getViews(), oldEvent.getLocLat(), oldEvent.getLocLon(),
+                oldEvent.getComps());
         return eventMapper.toEventShortDto(oldEvent);
     }
 
