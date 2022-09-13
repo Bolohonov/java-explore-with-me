@@ -1,8 +1,6 @@
 package ru.practicum.compilation;
 
-import lombok.Getter;
-import lombok.Setter;
-import lombok.ToString;
+import lombok.Data;
 import org.hibernate.annotations.Type;
 import org.hibernate.annotations.TypeDef;
 
@@ -13,9 +11,7 @@ import java.util.List;
 
 @Entity
 @Table(name = "compilations", schema = "public")
-@Getter
-@Setter
-@ToString
+@Data
 @TypeDef(
         name = "list-array",
         typeClass = ArrayList.class

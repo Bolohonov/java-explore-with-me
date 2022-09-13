@@ -22,7 +22,7 @@ import static org.springframework.http.HttpStatus.OK;
 @Slf4j
 @RequestMapping()
 @Validated
-public class StatisticController {
+public class StatisticsController {
     private final StatisticService statisticService;
 
     @PostMapping("/hit")

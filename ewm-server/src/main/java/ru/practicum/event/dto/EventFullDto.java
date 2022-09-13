@@ -69,6 +69,10 @@ public class EventFullDto {
      * Количество просмотрев события
      */
     private Long views;
+    /**
+     * Локация
+     */
+    private Location location;
 
 
     @AllArgsConstructor
@@ -99,5 +103,20 @@ public class EventFullDto {
          * название категории
          */
         private String name;
+    }
+
+    @AllArgsConstructor
+    @ToString
+    @Getter
+    @Setter
+    public static class Location implements Serializable {
+        /**
+         * Широта локации
+         */
+        Double lat;
+        /**
+         * Долгота локации
+         */
+        Double lon;
     }
 }

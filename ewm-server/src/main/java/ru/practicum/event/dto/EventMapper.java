@@ -8,7 +8,6 @@ import ru.practicum.event.State;
 import ru.practicum.user.UserService;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.stream.Collectors;
 
@@ -36,7 +35,8 @@ public class EventMapper {
                 event.getPublishedOn(),
                 event.getRequestModeration(),
                 event.getState(),
-                event.getViews()
+                event.getViews(),
+                new EventFullDto.Location(event.getLocLat(), event.getLocLon())
         );
     }
 
@@ -62,7 +62,8 @@ public class EventMapper {
     }
 
     public Event fromEventShortDto(EventShortDto event, Long confirmedRequests, LocalDateTime createdOn,
-                                   Long initiatorId, LocalDateTime publishedOn, State state, Long views) {
+                                   Long initiatorId, LocalDateTime publishedOn, State state, Long views,
+                                   Double locLat, Double locLon) {
         return new Event(
                 event.getId(),
                 event.getTitle(),
@@ -78,7 +79,9 @@ public class EventMapper {
                 publishedOn,
                 event.getRequestModeration(),
                 state,
-                views
+                views,
+                locLat,
+                locLon
         );
     }
 

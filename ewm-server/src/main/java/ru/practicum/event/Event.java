@@ -7,9 +7,7 @@ import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "events", schema = "public")
-@Getter
-@Setter
-@ToString
+@Data
 @NoArgsConstructor
 @AllArgsConstructor
 public class Event {
@@ -90,6 +88,16 @@ public class Event {
      */
     @Column(name = "views")
     private Long views;
+    /**
+     * Широта локации
+     */
+    @Column(name = "loc_lat")
+    private Double locLat;
+    /**
+     * Долгота локации
+     */
+    @Column(name = "loc_lon")
+    private Double locLon;
 
     public void addView() {
         if (views != null) {

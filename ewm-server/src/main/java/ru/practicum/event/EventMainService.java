@@ -165,7 +165,7 @@ public class EventMainService implements EventService {
     private EventShortDto updateEventInRepository(Event oldEvent, EventShortDto event) {
         oldEvent = eventMapper.fromEventShortDto(event, oldEvent.getConfirmedRequests(),
         oldEvent.getCreatedOn(), oldEvent.getInitiatorId(), oldEvent.getPublishedOn(),
-                oldEvent.getState(), oldEvent.getViews());
+                oldEvent.getState(), oldEvent.getViews(), oldEvent.getLocLat(), oldEvent.getLocLon());
         return eventMapper.toEventShortDto(oldEvent);
     }
 

@@ -32,6 +32,8 @@ CREATE TABLE IF NOT EXISTS events (
  request_moderation BOOLEAN,
  state event_state,
  views BIGINT,
+ loc_lat float4 NOT NULL,
+ loc_lon float4 NOT NULL,
  CONSTRAINT pk_event PRIMARY KEY (id),
  CONSTRAINT FK_EVENT_ON_INITIATOR
      FOREIGN KEY (initiator_id) REFERENCES users (id) ON DELETE CASCADE,

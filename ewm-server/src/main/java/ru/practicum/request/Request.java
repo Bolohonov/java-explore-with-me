@@ -7,9 +7,7 @@ import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "requests", schema = "public")
-@Getter
-@Setter
-@ToString
+@Data
 @NoArgsConstructor
 public class Request {
     @Builder
