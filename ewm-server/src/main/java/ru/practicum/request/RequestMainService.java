@@ -92,6 +92,7 @@ public class RequestMainService implements RequestService {
     }
 
     private void validateRequestForAdd(Long userId, Long eventId) {
+        log.info("Проверка события и запроса");
         EventFullDto event = eventService.getEventById(eventId).get();
         List<ApiError> errors = new ArrayList<>();
         if (requestRepository.getRequestByRequesterAndEvent(userId, eventId) != null) {
@@ -121,7 +122,8 @@ public class RequestMainService implements RequestService {
                     )
             );
         }
-        if (!event.getConfirmedRequests().equals(event.getParticipantLimit().longValue())) {
+        if (event.getConfirmedRequests() != null
+                && !event.getConfirmedRequests().equals(event.getParticipantLimit().longValue())) {
             errors.add(new ApiError(
                             HttpStatus.BAD_REQUEST,
                             "Ошибка запроса на участие",
@@ -133,11 +135,14 @@ public class RequestMainService implements RequestService {
             throw new ApiError(HttpStatus.BAD_REQUEST, "Ошибка запроса на участие",
                     "Получены ошибки при проверке условий запроса", errors);
         }
+        log.info("Запрос прошел проверки");
     }
 
     private void validateAndSetStatus(Long eventId, Request request) {
+        log.info("Установка статуса запроса");
         if (!eventService.getEventById(eventId).get().getRequestModeration()) {
             request.setStatus(Status.ACCEPTED);
+            log.info("Установлен статус ACCEPTED");
         }
     }
 

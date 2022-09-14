@@ -26,18 +26,22 @@ public class Request {
     /**
      * Дата и время создания заявки
      */
+    @Column(name = "created")
     private LocalDateTime created;
     /**
      * Идентификатор события
      */
+    @Column(name = "event_id")
     private Long event;
     /**
      * Идентификатор пользователя, отправившего заявку
      */
+    @Column(name = "requester_id")
     private Long requester;
     /**
      * Статус заявки
      */
     @Enumerated(EnumType.STRING)
+    @Column(name = "status")
     private Status status;
 }
