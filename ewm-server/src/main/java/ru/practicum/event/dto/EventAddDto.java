@@ -1,13 +1,11 @@
 package ru.practicum.event.dto;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import lombok.*;
-import org.springframework.format.annotation.DateTimeFormat;
 import ru.practicum.event.State;
 
 import java.io.Serializable;
 import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 
 @Data
 @AllArgsConstructor
@@ -43,8 +41,7 @@ public class EventAddDto {
     /**
      * Дата и время на которые намечено событие
      */
-    @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm", iso = DateTimeFormat.ISO.DATE_TIME)
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm")
+    @JsonDeserialize(using = EventDateDeserializer.class)
     private LocalDateTime eventDate;
     /**
      * Инициатор события
