@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 import ru.practicum.error.ApiError;
 import ru.practicum.event.Event;
@@ -26,11 +27,13 @@ public class RequestMainService implements RequestService {
     private final RequestRepository requestRepository;
     private final EventService eventService;
 
+    @Transactional(readOnly = true)
     @Override
     public Collection<RequestDto> getUserRequests(Long userId) {
         return RequestMapper.toRequestDto(requestRepository.getRequestsByRequester(userId));
     }
 
+    @Transactional
     @Override
     public Optional<RequestDto> addNewRequest(Long userId, Long eventId) {
         Request request = Request.builder()
@@ -42,6 +45,7 @@ public class RequestMainService implements RequestService {
         return of(RequestMapper.toRequestDto(requestRepository.save(request)));
     }
 
+    @Transactional
     @Override
     public Optional<RequestDto> revokeRequest(Long userId, Long requestId) {
         Request request = getRequestFromRepository(requestId);
@@ -49,6 +53,7 @@ public class RequestMainService implements RequestService {
         return of(RequestMapper.toRequestDto(request));
     }
 
+    @Transactional(readOnly = true)
     @Override
     public Collection<RequestDto> getRequestsOfEventInitiator(Long initiatorId, Long eventId) {
         validateEventInitiator(initiatorId, eventId);
@@ -56,6 +61,7 @@ public class RequestMainService implements RequestService {
                 .getRequestsByEvent(eventId));
     }
 
+    @Transactional
     @Override
     public Optional<RequestDto> confirmRequest(Long userId, Long requestId) {
         Request request = getRequestFromRepository(requestId);
@@ -72,6 +78,7 @@ public class RequestMainService implements RequestService {
         return of(RequestMapper.toRequestDto(request));
     }
 
+    @Transactional
     @Override
     public Optional<RequestDto> rejectRequest(Long userId, Long requestId) {
         Request request = getRequestFromRepository(requestId);

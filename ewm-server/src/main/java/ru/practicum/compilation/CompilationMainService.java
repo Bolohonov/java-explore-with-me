@@ -11,7 +11,6 @@ import ru.practicum.compilation.dto.CompilationDto;
 import ru.practicum.compilation.dto.CompilationMapper;
 import ru.practicum.compilation.repository.CompilationRepository;
 import ru.practicum.error.ApiError;
-import ru.practicum.event.Event;
 import ru.practicum.event.repository.EventRepository;
 
 import java.util.ArrayList;

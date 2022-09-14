@@ -38,6 +38,7 @@ public class UserMainService implements UserService {
         return UserMapper.toUserDto(users);
     }
 
+    @Transactional
     @Override
     public UserDto saveUser(User user) {
         return UserMapper.toUserDto(userRepository.save(user));
@@ -53,6 +54,7 @@ public class UserMainService implements UserService {
         )));
     }
 
+    @Transactional
     @Override
     public void deleteUser(Long userId) {
         if (!getUserById(userId).isPresent()) {

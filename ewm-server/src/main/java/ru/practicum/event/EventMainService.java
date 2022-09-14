@@ -8,7 +8,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
-import ru.practicum.compilation.Compilation;
 import ru.practicum.error.ApiError;
 import ru.practicum.event.dto.EventAddDto;
 import ru.practicum.event.dto.EventFullDto;
@@ -77,6 +76,7 @@ public class EventMainService implements EventService {
         return eventMapper.toEventShortDto(events);
     }
 
+    @Transactional
     @Override
     public Optional<EventShortDto> updateEventByInitiator(Long userId, EventShortDto event) {
         Event oldEvent = getEventFromRepository(event.getId());
@@ -105,15 +105,18 @@ public class EventMainService implements EventService {
         return of(updateEventInRepository(oldEvent, event));
     }
 
+    @Transactional
     @Override
     public Optional<EventFullDto> addEvent(Long userId, EventAddDto event) {
         validateUserActivation(userId);
         validateEventDate(event);
+        setNewEventState(event);
         Event newEvent = eventMapper.fromEventAddDto(event);
         setDefaultFields(userId, newEvent);
         return of(eventMapper.toEventFullDto(eventRepository.save(newEvent)));
     }
 
+    @Transactional
     @Override
     public Optional<EventShortDto> changeEventStateToCanceled(Long userId, Long eventId) {
         Event event = getEventFromRepository(eventId);
@@ -124,6 +127,7 @@ public class EventMainService implements EventService {
         return of(eventMapper.toEventShortDto(event));
     }
 
+    @Transactional
     @Override
     public Collection<EventFullDto> findEventsByAdmin(List<Long> users, List<String> states, List<Long> categories,
                                                String rangeStart, String rangeEnd, Integer from, Integer size) {
@@ -138,6 +142,7 @@ public class EventMainService implements EventService {
         return eventMapper.toEventFullDto(events);
     }
 
+    @Transactional
     @Override
     public Optional<EventShortDto> updateEventByAdmin(Long eventId, Event newEvent) {
         getEventFromRepository(eventId);
@@ -145,12 +150,14 @@ public class EventMainService implements EventService {
         return of(eventMapper.toEventShortDto(eventRepository.save(newEvent)));
     }
 
+    @Transactional
     @Override
     public Optional<EventFullDto> publishEventByAdmin(Long eventId, Event newEvent) {
         validateEventForPublishing(eventId, newEvent);
         return of(eventMapper.toEventFullDto(eventRepository.save(newEvent)));
     }
 
+    @Transactional
     @Override
     public Optional<EventFullDto> rejectEventByAdmin(Long eventId, Event newEvent) {
         validateEventForRejecting(eventId);
@@ -201,6 +208,16 @@ public class EventMainService implements EventService {
         }
     }
 
+    private void setNewEventState(EventAddDto event) {
+        if (event.getRequestModeration().equals(Boolean.FALSE)
+                || event.getParticipantLimit() == null || event.getParticipantLimit().equals(0L)) {
+            event.setPublishedOn(LocalDateTime.now());
+            event.setState(State.PUBLISHED);
+        } else {
+            event.setState(State.PENDING);
+        }
+    }
+
     private void validateEventForPublishing(Long eventId, Event newEvent) {
         Event event = getEventFromRepository(eventId);
         if (newEvent.getEventDate().isBefore(LocalDateTime.now().plusHours(1L))) {
@@ -224,7 +241,6 @@ public class EventMainService implements EventService {
 
     private void setDefaultFields(Long userId, Event event) {
         event.setInitiatorId(userId);
-        event.setState(State.PENDING);
         event.setCreatedOn(LocalDateTime.now());
         if (event.getParticipantLimit() == null) {
             event.setParticipantLimit(0);

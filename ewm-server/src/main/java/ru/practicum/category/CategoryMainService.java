@@ -11,6 +11,7 @@ import org.springframework.web.server.ResponseStatusException;
 import ru.practicum.category.dto.CategoryDto;
 import ru.practicum.category.dto.CategoryMapper;
 import ru.practicum.category.repository.CategoryRepository;
+import ru.practicum.error.ApiError;
 import ru.practicum.event.EventService;
 
 import java.util.*;
@@ -38,17 +39,20 @@ public class CategoryMainService implements CategoryService {
                 .toCategoryDto(getCategoryFromRepository(catId)));
     }
 
+    @Transactional
     @Override
     public Optional<CategoryDto> updateCategoryByAdmin(Category newCategory) {
         Category category = getCategoryFromRepository(newCategory.getId());
         try {
             category.setName(newCategory.getName());
         } catch (DuplicateKeyException e) {
-            new ResponseStatusException(HttpStatus.BAD_REQUEST);
+            new ApiError(HttpStatus.BAD_REQUEST, "Ошибка обновления названия категории",
+                    String.format("Название %s уже существует", newCategory.getName()));
         }
         return of(CategoryMapper.toCategoryDto(category));
     }
 
+    @Transactional
     @Override
     public Optional<CategoryDto> addCategoryByAdmin(Category newCategory) {
         try {
@@ -59,6 +63,7 @@ public class CategoryMainService implements CategoryService {
         return of(CategoryMapper.toCategoryDto(newCategory));
     }
 
+    @Transactional
     @Override
     public void deleteCategoryByAdmin(Long catId) {
         Category categoryToDelete = getCategoryFromRepository(catId);
