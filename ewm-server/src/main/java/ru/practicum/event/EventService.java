@@ -1,5 +1,6 @@
 package ru.practicum.event;
 
+import ru.practicum.event.dto.EventAddDto;
 import ru.practicum.event.dto.EventFullDto;
 import ru.practicum.event.dto.EventShortDto;
 
@@ -20,7 +21,7 @@ public interface EventService {
 
     Optional<EventShortDto> updateEventByInitiator(Long userId, EventShortDto event);
 
-    Optional<EventFullDto> addEvent(Long userId, Event event);
+    Optional<EventFullDto> addEvent(Long userId, EventAddDto event);
 
     Optional<EventShortDto> changeEventStateToCanceled(Long userId, Long eventId);
 

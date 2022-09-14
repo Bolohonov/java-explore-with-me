@@ -1,13 +1,16 @@
 package ru.practicum.event.dto;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
 import ru.practicum.category.repository.CategoryRepository;
 import ru.practicum.compilation.Compilation;
+import ru.practicum.error.ApiError;
 import ru.practicum.event.Event;
 import ru.practicum.event.State;
 import ru.practicum.user.UserService;
 
+import java.beans.Expression;
 import java.time.LocalDateTime;
 import java.util.Collection;
 import java.util.HashSet;
@@ -92,5 +95,31 @@ public class EventMapper {
         return events.stream()
                 .map(e -> toEventShortDto(e))
                 .collect(Collectors.toList());
+    }
+
+    public Event fromEventAddDto(EventAddDto event) throws ApiError {
+        if (event.getLocation() == null) {
+            throw new ApiError(HttpStatus.BAD_REQUEST,
+                    "Ошибка создания события", "Вы не указали локацию");
+        }
+        return new Event(
+                event.getId(),
+                event.getTitle(),
+                event.getAnnotation(),
+                event.getCategory(),
+                event.getConfirmedRequests(),
+                event.getCreatedOn(),
+                event.getDescription(),
+                event.getEventDate(),
+                event.getInitiator(),
+                event.getPaid(),
+                event.getParticipantLimit(),
+                event.getPublishedOn(),
+                event.getRequestModeration(),
+                event.getState(),
+                event.getViews(),
+                event.getLocation().getLat(),
+                event.getLocation().getLon()
+        );
     }
 }

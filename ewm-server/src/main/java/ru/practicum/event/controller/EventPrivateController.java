@@ -6,6 +6,7 @@ import org.springframework.web.bind.annotation.*;
 import ru.practicum.event.Event;
 import ru.practicum.event.EventService;
 import ru.practicum.event.State;
+import ru.practicum.event.dto.EventAddDto;
 import ru.practicum.event.dto.EventFullDto;
 import ru.practicum.event.dto.EventShortDto;
 import ru.practicum.request.RequestService;
@@ -46,7 +47,7 @@ public class EventPrivateController {
     @PostMapping()
     @ResponseStatus(OK)
     public Optional<EventFullDto> addNewEvent(@PathVariable Long userId,
-                                              @RequestBody Event event) {
+                                              @RequestBody EventAddDto event) {
         return eventService.addEvent(userId, event);
     }
 

@@ -2,14 +2,16 @@ package ru.practicum.event.dto;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.*;
+import org.springframework.format.annotation.DateTimeFormat;
 import ru.practicum.event.State;
 
 import java.io.Serializable;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 
 @Data
 @AllArgsConstructor
-public class EventFullDto {
+public class EventAddDto {
     /**
      * уникальный идентификатор
      */
@@ -25,7 +27,7 @@ public class EventFullDto {
     /**
      * Категория
      */
-    private CategoryDto category;
+    private Long category;
     /**
      * Количество одобренных заявок на участие в данном событии
      */
@@ -41,12 +43,13 @@ public class EventFullDto {
     /**
      * Дата и время на которые намечено событие
      */
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss", locale = "en_GB")
+    @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm", iso = DateTimeFormat.ISO.DATE_TIME)
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm")
     private LocalDateTime eventDate;
     /**
      * Инициатор события
      */
-    private UserShortDto initiator;
+    private Long initiator;
     /**
      * Нужно ли оплачивать участие
      */
@@ -74,38 +77,8 @@ public class EventFullDto {
     /**
      * Локация
      */
-    private Location location;
+    private EventFullDto.Location location;
 
-
-    @AllArgsConstructor
-    @ToString
-    @Getter
-    @Setter
-    public static class CategoryDto implements Serializable {
-        /**
-         * уникальный идентификатор
-         */
-        private Long id;
-        /**
-         * название категории
-         */
-        private String name;
-    }
-
-    @AllArgsConstructor
-    @ToString
-    @Getter
-    @Setter
-    public static class UserShortDto implements Serializable {
-        /**
-         * уникальный идентификатор
-         */
-        private Long id;
-        /**
-         * название категории
-         */
-        private String name;
-    }
 
     @AllArgsConstructor
     @ToString

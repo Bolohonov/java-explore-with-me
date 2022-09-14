@@ -10,6 +10,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 import ru.practicum.compilation.Compilation;
 import ru.practicum.error.ApiError;
+import ru.practicum.event.dto.EventAddDto;
 import ru.practicum.event.dto.EventFullDto;
 import ru.practicum.event.dto.EventMapper;
 import ru.practicum.event.dto.EventShortDto;
@@ -105,11 +106,12 @@ public class EventMainService implements EventService {
     }
 
     @Override
-    public Optional<EventFullDto> addEvent(Long userId, Event event) {
+    public Optional<EventFullDto> addEvent(Long userId, EventAddDto event) {
         validateUserActivation(userId);
         validateEventDate(event);
-        setDefaultFields(userId, event);
-        return of(eventMapper.toEventFullDto(eventRepository.save(event)));
+        Event newEvent = eventMapper.fromEventAddDto(event);
+        setDefaultFields(userId, newEvent);
+        return of(eventMapper.toEventFullDto(eventRepository.save(newEvent)));
     }
 
     @Override
@@ -182,7 +184,7 @@ public class EventMainService implements EventService {
         }
     }
 
-    private void validateEventDate(Event event) {
+    private void validateEventDate(EventAddDto event) {
         if (!event.getEventDate().isAfter(LocalDateTime.now().plusHours(2L))) {
             throw new ApiError(HttpStatus.BAD_REQUEST, "Поле eventDate указано неверно.",
                     String.format("Error: must be a date in the present or in the future (plus 2 hours). " +

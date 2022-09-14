@@ -27,12 +27,14 @@ public class CompilationAdminController {
     @ResponseStatus(OK)
     public Optional<CompilationDto> addNewCompilation(
             @RequestBody @Valid CompilationDto compilation) {
+        log.info("Пришел запрос на добавление новой подборки");
         return compilationService.addCompilation(compilation);
     }
 
     @DeleteMapping("/{compId}")
     @ResponseStatus(OK)
     public void removeCompilation(@PathVariable Long compId) {
+        log.info("Пришел запрос на удаление подборки");
         compilationService.deleteCompilation(compId);
     }
 
@@ -40,6 +42,7 @@ public class CompilationAdminController {
     @ResponseStatus(OK)
     public void removeEventFromCompilation(@PathVariable Long compId,
                                            @PathVariable Long eventId) {
+        log.info("Пришел запрос на удаление события из подборки");
         if (!compilationService.removeEventFromCompilation(compId, eventId)) {
             throw new ResponseStatusException(BAD_REQUEST);
         }
@@ -49,6 +52,7 @@ public class CompilationAdminController {
     @ResponseStatus(OK)
     public void addEventToCompilation(@PathVariable Long compId,
                                            @PathVariable Long eventId) {
+        log.info("Пришел запрос на добавление события в подборку");
         if (!compilationService.addEventToCompilation(compId, eventId)) {
             throw new ResponseStatusException(BAD_REQUEST);
         }
@@ -57,6 +61,7 @@ public class CompilationAdminController {
     @DeleteMapping("/{compId}/pin")
     @ResponseStatus(OK)
     public void removeCompilationFromHomePage(@PathVariable Long compId) {
+        log.info("Пришел запрос на удаление события с главной страницы");
         if (!compilationService.removeCompilationFromHomePage(compId)) {
             throw new ResponseStatusException(BAD_REQUEST);
         }
@@ -65,6 +70,7 @@ public class CompilationAdminController {
     @PatchMapping("/{compId}/pin")
     @ResponseStatus(OK)
     public void addCompilationToHomePage(@PathVariable Long compId) {
+        log.info("Пришел запрос на добавление события на главную страницу");
         if (!compilationService.addCompilationToHomePage(compId)) {
             throw new ResponseStatusException(BAD_REQUEST);
         }

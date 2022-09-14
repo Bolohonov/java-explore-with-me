@@ -1,5 +1,6 @@
 package ru.practicum.event.dto;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.*;
 import java.io.Serializable;
 import java.time.LocalDateTime;
@@ -30,6 +31,7 @@ public class EventShortDto {
     /**
      * Дата и время на которые намечено событие
      */
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss", locale = "en_GB")
     private LocalDateTime eventDate;
     /**
      * Нужно ли оплачивать участие
