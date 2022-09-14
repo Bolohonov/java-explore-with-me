@@ -36,6 +36,7 @@ public class EventMainService implements EventService {
     public Collection<EventShortDto> getEvents(String text, List<Long> categories, Boolean paid, String rangeStart,
                                                String rangeEnd, Boolean onlyAvailable, String sort,
                                                Integer from, Integer size) {
+        log.info("Получен запрос на вывод списка событий");
         Collection<Event> events = eventRepository.getEvents(text,
                 getSetAndValidateParams(Long.class, categories), paid,
                 getAndValidateTimeRangeWithDefault(rangeStart, rangeEnd),
@@ -48,6 +49,7 @@ public class EventMainService implements EventService {
     @Transactional(readOnly = true)
     @Override
     public Optional<EventFullDto> getPublishedEventById(Long eventId) {
+        log.info("Получен запрос на вывод списка опубликованных событий");
         Event event = getEventFromRepository(eventId);
         if (event.getPublishedOn() == null) {
             throw new ApiError(HttpStatus.NOT_FOUND, "Событие не найдено",
@@ -61,6 +63,7 @@ public class EventMainService implements EventService {
     @Transactional(readOnly = true)
     @Override
     public Optional<EventFullDto> getEventById(Long eventId) {
+        log.info("Получен запрос на поиск события");
         Event event = getEventFromRepository(eventId);
         return of(eventMapper.toEventFullDto(event));
     }
@@ -68,6 +71,7 @@ public class EventMainService implements EventService {
     @Transactional(readOnly = true)
     @Override
     public Collection<EventShortDto> findEventsByInitiator(Long userId, Integer from, Integer size) {
+        log.info("Получен запрос в сервис на поиск события по инициатору");
         PageRequest pageRequest = PageRequest.of(this.getPageNumber(from, size), size,
                 Sort.by("id").ascending());
         Iterable<Event> eventsPage = eventRepository.findEventsByInitiatorId(userId, pageRequest);
@@ -79,6 +83,7 @@ public class EventMainService implements EventService {
     @Transactional
     @Override
     public Optional<EventShortDto> updateEventByInitiator(Long userId, EventShortDto event) {
+        log.info("Получен запрос в сервис на обновление события инициатором");
         Event oldEvent = getEventFromRepository(event.getId());
         List<ApiError> errorsList = ApiError.getErrorsList();
         try {
@@ -108,6 +113,7 @@ public class EventMainService implements EventService {
     @Transactional
     @Override
     public Optional<EventFullDto> addEvent(Long userId, EventAddDto event) {
+        log.info("Получен запрос в сервис на добавление события");
         validateUserActivation(userId);
         validateEventDate(event);
         setNewEventState(event);
@@ -119,6 +125,7 @@ public class EventMainService implements EventService {
     @Transactional
     @Override
     public Optional<EventShortDto> changeEventStateToCanceled(Long userId, Long eventId) {
+        log.info("Получен запрос на отмену события");
         Event event = getEventFromRepository(eventId);
         if (!event.getState().equals(State.PENDING)) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
@@ -131,6 +138,7 @@ public class EventMainService implements EventService {
     @Override
     public Collection<EventFullDto> findEventsByAdmin(List<Long> users, List<String> states, List<Long> categories,
                                                String rangeStart, String rangeEnd, Integer from, Integer size) {
+        log.info("Получен запрос на вывод списка событий администратором");
         Collection<Event> events = eventRepository.getEventsByAdmin(
                 getSetAndValidateParams(Long.class, users),
                 getSetAndValidateParams(String.class, states),
@@ -145,6 +153,7 @@ public class EventMainService implements EventService {
     @Transactional
     @Override
     public Optional<EventShortDto> updateEventByAdmin(Long eventId, Event newEvent) {
+        log.info("Получен запрос на обновление списка событий администратором");
         getEventFromRepository(eventId);
         newEvent.setId(eventId);
         return of(eventMapper.toEventShortDto(eventRepository.save(newEvent)));
@@ -153,6 +162,7 @@ public class EventMainService implements EventService {
     @Transactional
     @Override
     public Optional<EventFullDto> publishEventByAdmin(Long eventId, Event newEvent) {
+        log.info("Получен запрос на публикацию события администратором");
         validateEventForPublishing(eventId, newEvent);
         return of(eventMapper.toEventFullDto(eventRepository.save(newEvent)));
     }
@@ -160,11 +170,13 @@ public class EventMainService implements EventService {
     @Transactional
     @Override
     public Optional<EventFullDto> rejectEventByAdmin(Long eventId, Event newEvent) {
+        log.info("Получен запрос на отмену события администратором");
         validateEventForRejecting(eventId);
         return of(eventMapper.toEventFullDto(eventRepository.save(newEvent)));
     }
 
     private Event getEventFromRepository(Long eventId) {
+        log.info("Получить событие с id {} из репозитория", eventId);
         return eventRepository.findById(eventId).orElseThrow(() -> {
             throw new ApiError(HttpStatus.NOT_FOUND, "Событие не найдено",
                     String.format("Не найдено %s c id %s",
@@ -173,6 +185,7 @@ public class EventMainService implements EventService {
     }
 
     private EventShortDto updateEventInRepository(Event oldEvent, EventShortDto event) {
+        log.info("Обновить событие в репозитории");
         oldEvent = eventMapper.fromEventShortDto(event, oldEvent.getConfirmedRequests(),
         oldEvent.getCreatedOn(), oldEvent.getInitiatorId(), oldEvent.getPublishedOn(),
                 oldEvent.getState(), oldEvent.getViews(), oldEvent.getLocLat(), oldEvent.getLocLon());
@@ -184,6 +197,7 @@ public class EventMainService implements EventService {
     }
 
     private void validateEventDate(EventShortDto event) {
+        log.info("Проверка даты события");
         if (!event.getEventDate().isAfter(LocalDateTime.now().plusHours(2L))) {
             throw new ApiError(HttpStatus.BAD_REQUEST, "Поле eventDate указано неверно.",
                     String.format("Error: must be a date in the present or in the future. Value: %s",
@@ -192,6 +206,7 @@ public class EventMainService implements EventService {
     }
 
     private void validateEventDate(EventAddDto event) {
+        log.info("Проверка даты события");
         if (!event.getEventDate().isAfter(LocalDateTime.now().plusHours(2L))) {
             throw new ApiError(HttpStatus.BAD_REQUEST, "Поле eventDate указано неверно.",
                     String.format("Error: must be a date in the present or in the future (plus 2 hours). " +
@@ -200,6 +215,7 @@ public class EventMainService implements EventService {
     }
 
     private void validateUserActivation(Long userId) {
+        log.info("Проверка акцивации пользователя");
         if (!userService.getUserById(userId).get()
                 .getActivation().equals(Boolean.TRUE)) {
             throw new ApiError(HttpStatus.BAD_REQUEST, "Пользователь не активирован.",
@@ -209,6 +225,7 @@ public class EventMainService implements EventService {
     }
 
     private void setNewEventState(EventAddDto event) {
+        log.info("Проверка и установка статуса события");
         if (event.getRequestModeration().equals(Boolean.FALSE)
                 || event.getParticipantLimit() == null || event.getParticipantLimit().equals(0L)) {
             event.setPublishedOn(LocalDateTime.now());
@@ -219,6 +236,7 @@ public class EventMainService implements EventService {
     }
 
     private void validateEventForPublishing(Long eventId, Event newEvent) {
+        log.info("Проверка события перед публикацией");
         Event event = getEventFromRepository(eventId);
         if (newEvent.getEventDate().isBefore(LocalDateTime.now().plusHours(1L))) {
             throw new ApiError(HttpStatus.BAD_REQUEST, "Поле eventDate указано неверно.",
@@ -232,6 +250,7 @@ public class EventMainService implements EventService {
     }
 
     private void validateEventForRejecting(Long eventId) {
+        log.info("Проверка события для отклонения");
         Event event = getEventFromRepository(eventId);
         if (!event.getState().equals(State.PUBLISHED)) {
             throw new ApiError(HttpStatus.BAD_REQUEST, "У события неверный статус",
@@ -240,6 +259,7 @@ public class EventMainService implements EventService {
     }
 
     private void setDefaultFields(Long userId, Event event) {
+        log.info("Установка полей события по умолчанию");
         event.setInitiatorId(userId);
         event.setCreatedOn(LocalDateTime.now());
         if (event.getParticipantLimit() == null) {
@@ -256,6 +276,7 @@ public class EventMainService implements EventService {
     }
 
     private Map<String, LocalDateTime> getAndValidateTimeRange(String rangeStart, String rangeEnd) {
+        log.info("Получение временного интервала в eventService");
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss.SS",
                 Locale.getDefault());
         Map<String, LocalDateTime> timeMap = new HashMap<>();
@@ -271,6 +292,7 @@ public class EventMainService implements EventService {
     }
 
     private Map<String, LocalDateTime> getAndValidateTimeRangeWithDefault(String rangeStart, String rangeEnd) {
+        log.info("Получение временного интервала в eventService по умолчанию");
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSSz",
                 Locale.getDefault());
         Map<String, LocalDateTime> timeMap = new HashMap<>();

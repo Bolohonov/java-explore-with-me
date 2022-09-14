@@ -28,6 +28,7 @@ public class CategoryMainService implements CategoryService {
     @Transactional(readOnly = true)
     @Override
     public Collection<CategoryDto> getCategories(Integer from, Integer size) {
+        log.info("Получен запрос на вывод списка категорий");
         PageRequest pageRequest = PageRequest.of(this.getPageNumber(from, size), size);
         return CategoryMapper.toCategoryDto(categoryRepository.findAll(pageRequest));
     }
@@ -35,6 +36,7 @@ public class CategoryMainService implements CategoryService {
     @Transactional(readOnly = true)
     @Override
     public Optional<CategoryDto> getCategoryById(Long catId) {
+        log.info("Получен запрос на вывод категории");
         return of(CategoryMapper
                 .toCategoryDto(getCategoryFromRepository(catId)));
     }
@@ -42,6 +44,7 @@ public class CategoryMainService implements CategoryService {
     @Transactional
     @Override
     public Optional<CategoryDto> updateCategoryByAdmin(Category newCategory) {
+        log.info("Получен запрос на обновление категории");
         Category category = getCategoryFromRepository(newCategory.getId());
         try {
             category.setName(newCategory.getName());
@@ -55,6 +58,7 @@ public class CategoryMainService implements CategoryService {
     @Transactional
     @Override
     public Optional<CategoryDto> addCategoryByAdmin(Category newCategory) {
+        log.info("Получен запрос на добавление категории");
         try {
             categoryRepository.save(newCategory);
         } catch (DuplicateKeyException e) {
@@ -66,6 +70,7 @@ public class CategoryMainService implements CategoryService {
     @Transactional
     @Override
     public void deleteCategoryByAdmin(Long catId) {
+        log.info("Получен запрос на удаление категории");
         Category categoryToDelete = getCategoryFromRepository(catId);
         if (!eventService
                 .findEventsByAdmin(null, null,

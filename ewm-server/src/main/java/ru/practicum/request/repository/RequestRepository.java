@@ -11,6 +11,7 @@ import java.util.Optional;
 public interface RequestRepository extends JpaRepository<Request, Long> {
     Collection<Request> getRequestsByRequester(Long requesterId);
     Collection<Request> getRequestsByEvent(Long eventId);
+    Request getRequestByRequesterAndEvent(Long requesterId, Long EventId);
 
     @Query("select r from Request as r  " +
             "where (r.event = ?1 and r.status = ?2) order by r.id")

@@ -9,13 +9,16 @@ import org.springframework.web.server.ResponseStatusException;
 import ru.practicum.error.ApiError;
 import ru.practicum.event.Event;
 import ru.practicum.event.EventService;
+import ru.practicum.event.State;
 import ru.practicum.event.dto.EventFullDto;
 import ru.practicum.request.dto.RequestDto;
 import ru.practicum.request.dto.RequestMapper;
 import ru.practicum.request.repository.RequestRepository;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 import java.util.Optional;
 
 import static java.util.Optional.of;
@@ -36,12 +39,14 @@ public class RequestMainService implements RequestService {
     @Transactional
     @Override
     public Optional<RequestDto> addNewRequest(Long userId, Long eventId) {
+        validateRequestForAdd(userId, eventId);
         Request request = Request.builder()
                 .created(LocalDateTime.now())
                 .event(eventId)
                 .requester(userId)
                 .status(Status.WAITING)
                 .build();
+        validateAndSetStatus(eventId, request);
         return of(RequestMapper.toRequestDto(requestRepository.save(request)));
     }
 
@@ -84,6 +89,56 @@ public class RequestMainService implements RequestService {
         Request request = getRequestFromRepository(requestId);
         request.setStatus(Status.CANCELED);
         return of(RequestMapper.toRequestDto(request));
+    }
+
+    private void validateRequestForAdd(Long userId, Long eventId) {
+        EventFullDto event = eventService.getEventById(eventId).get();
+        List<ApiError> errors = new ArrayList<>();
+        if (requestRepository.getRequestByRequesterAndEvent(userId, eventId) != null) {
+            errors.add(new ApiError(
+                    HttpStatus.BAD_REQUEST,
+                    "Ошибка запроса на участие",
+                    String.format("Пользователь с id %s уже отправил запрос на участие в событии с id %s",
+                    userId, eventId)
+                    )
+            );
+        }
+        if (event.getInitiator().getId().equals(userId)) {
+            errors.add(new ApiError(
+                            HttpStatus.BAD_REQUEST,
+                            "Ошибка запроса на участие",
+                            String.format("Пользователь с id %s является инициатором события с id %s. " +
+                                            "Запрос на участие не требуется",
+                                    userId, eventId)
+                    )
+            );
+        }
+        if (!event.getState().equals(State.PUBLISHED)) {
+            errors.add(new ApiError(
+                            HttpStatus.BAD_REQUEST,
+                            "Ошибка запроса на участие",
+                            String.format("Событие с id %s еще не опубликовано", eventId)
+                    )
+            );
+        }
+        if (!event.getConfirmedRequests().equals(event.getParticipantLimit().longValue())) {
+            errors.add(new ApiError(
+                            HttpStatus.BAD_REQUEST,
+                            "Ошибка запроса на участие",
+                            String.format("В событии с id %s достигнут лимит участников", eventId)
+                    )
+            );
+        }
+        if (!errors.isEmpty()) {
+            throw new ApiError(HttpStatus.BAD_REQUEST, "Ошибка запроса на участие",
+                    "Получены ошибки при проверке условий запроса", errors);
+        }
+    }
+
+    private void validateAndSetStatus(Long eventId, Request request) {
+        if (!eventService.getEventById(eventId).get().getRequestModeration()) {
+            request.setStatus(Status.ACCEPTED);
+        }
     }
 
     private void validateEventInitiator(Long initiatorId, Long eventId) {

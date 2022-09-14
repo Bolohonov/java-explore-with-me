@@ -24,10 +24,10 @@ public class RequestController {
         return requestService.getUserRequests(userId);
     }
 
-    @GetMapping("/{userId}/requests/{eventId}")
+    @PostMapping("/{userId}/requests")
     @ResponseStatus(OK)
     public Optional<RequestDto> addRequest(@PathVariable Long userId,
-                                           @PathVariable Long eventId) {
+                                           @RequestParam Long eventId) {
         return requestService.addNewRequest(userId, eventId);
     }
 

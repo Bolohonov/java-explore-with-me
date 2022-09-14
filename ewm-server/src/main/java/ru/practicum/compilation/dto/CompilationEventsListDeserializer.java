@@ -1,4 +1,4 @@
-package ru.practicum.event.dto;
+package ru.practicum.compilation.dto;
 
 import com.fasterxml.jackson.core.JacksonException;
 import com.fasterxml.jackson.core.JsonParser;
@@ -11,17 +11,19 @@ import org.springframework.boot.jackson.JsonComponent;
 import java.io.IOException;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.Collections;
+import java.util.List;
 import java.util.Locale;
 
 @Slf4j
 @JsonComponent
-public class EventDateDeserializer extends JsonDeserializer<LocalDateTime> {
+public class CompilationEventsListDeserializer extends JsonDeserializer<List<Long>> {
     @Override
-    public LocalDateTime deserialize(JsonParser jp, DeserializationContext deserializationContext) throws IOException, JacksonException {
+    public List<Long> deserialize(JsonParser jp, DeserializationContext deserializationContext) throws IOException, JacksonException {
+        log.info("Deserialization of CompilationEventsList");
         JsonNode node = jp.getCodec().readTree(jp);
         String str = node.asText();
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss",
-                Locale.getDefault());
-        return LocalDateTime.parse(str, formatter);
+        System.out.println(str);
+        return Collections.emptyList();
     }
 }

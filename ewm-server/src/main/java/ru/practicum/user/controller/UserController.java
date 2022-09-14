@@ -32,7 +32,7 @@ public class UserController {
     }
 
     @PostMapping
-    @ResponseStatus(CREATED)
+    @ResponseStatus(OK)
     public UserDto saveNewUser(@RequestBody User user) {
         return userService.saveUser(user);
     }

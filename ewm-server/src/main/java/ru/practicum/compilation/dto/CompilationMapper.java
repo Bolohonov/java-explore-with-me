@@ -1,6 +1,7 @@
 package ru.practicum.compilation.dto;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
@@ -16,11 +17,13 @@ import java.util.stream.Collectors;
 
 @Component
 @RequiredArgsConstructor
+@Slf4j
 public class CompilationMapper {
     private final EventRepository eventRepository;
 
     @Transactional
     public CompilationDto toCompilationDto(Compilation compilation) {
+        log.info("Получен запрос на конвертацию подборки");
         return new CompilationDto(
                 compilation.getId(),
                 compilation.getTitle(),
@@ -39,6 +42,7 @@ public class CompilationMapper {
 
     @Transactional
     public Compilation fromCompilationDto(CompilationDto compilationDto) {
+        log.info("Получен запрос на конвертацию в подборку");
         Set<Event> events = new HashSet<>();
         compilationDto.getEvents()
                 .stream()

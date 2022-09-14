@@ -41,6 +41,7 @@ public class UserMainService implements UserService {
     @Transactional
     @Override
     public UserDto saveUser(User user) {
+        user.setActivation(Boolean.TRUE);
         return UserMapper.toUserDto(userRepository.save(user));
     }
 

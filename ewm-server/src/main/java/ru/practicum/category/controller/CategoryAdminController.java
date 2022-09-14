@@ -32,7 +32,7 @@ public class CategoryAdminController {
     }
 
     @DeleteMapping("/{catId}")
-    @ResponseStatus(NO_CONTENT)
+    @ResponseStatus(OK)
     public void deleteCategory(@PathVariable Long catId) {
         categoryService.deleteCategoryByAdmin(catId);
     }

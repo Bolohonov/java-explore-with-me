@@ -49,9 +49,12 @@ public class EventAdminController {
     @PatchMapping("/{eventId}/publish")
     @ResponseStatus(OK)
     public Optional<EventFullDto> publishEvent(@PathVariable Long eventId,
-                                               @RequestBody @Valid Event newEvent) {
-        return eventService.publishEventByAdmin(eventId, newEvent);
-
+                                               //@RequestBody @Valid Event newEvent) {
+                                               @RequestBody String str) {
+        log.info("Поступил запрос на публикацю события");
+        System.out.println(str);
+        //return eventService.publishEventByAdmin(eventId, newEvent);
+        return Optional.empty();
     }
 
     @PatchMapping("/{eventId}/reject")

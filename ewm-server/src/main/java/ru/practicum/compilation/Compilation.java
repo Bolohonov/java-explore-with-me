@@ -2,6 +2,7 @@ package ru.practicum.compilation;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 import ru.practicum.event.Event;
 
 import javax.persistence.*;
@@ -12,6 +13,7 @@ import java.util.*;
 @Table(name = "compilations", schema = "public")
 @Data
 @AllArgsConstructor
+@NoArgsConstructor
 public class Compilation {
     /**
      * уникальный идентификатор
@@ -35,5 +37,5 @@ public class Compilation {
     @JoinTable(name = "events_in_compilations",
             joinColumns = @JoinColumn(name = "compilation_id"),
             inverseJoinColumns = @JoinColumn(name = "event_id"))
-    private Set<Event> events = new HashSet<>();
+    private Set<Event> events;
 }

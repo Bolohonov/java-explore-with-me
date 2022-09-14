@@ -1,24 +1,22 @@
 package ru.practicum.event.dto;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
 import ru.practicum.category.repository.CategoryRepository;
-import ru.practicum.compilation.Compilation;
 import ru.practicum.error.ApiError;
 import ru.practicum.event.Event;
 import ru.practicum.event.State;
 import ru.practicum.user.UserService;
 
-import java.beans.Expression;
 import java.time.LocalDateTime;
 import java.util.Collection;
-import java.util.HashSet;
-import java.util.Set;
 import java.util.stream.Collectors;
 
 @Component
 @RequiredArgsConstructor
+@Slf4j
 public class EventMapper {
     private final UserService userService;
     private final CategoryRepository categoryRepository;
@@ -98,6 +96,7 @@ public class EventMapper {
     }
 
     public Event fromEventAddDto(EventAddDto event) throws ApiError {
+        log.info("Получено событие для конвертации");
         if (event.getLocation() == null) {
             throw new ApiError(HttpStatus.BAD_REQUEST,
                     "Ошибка создания события", "Вы не указали локацию");
