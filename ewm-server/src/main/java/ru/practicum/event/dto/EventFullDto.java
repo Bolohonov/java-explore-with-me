@@ -1,6 +1,8 @@
 package ru.practicum.event.dto;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import lombok.*;
 import ru.practicum.event.State;
 
@@ -41,7 +43,7 @@ public class EventFullDto {
     /**
      * Дата и время на которые намечено событие
      */
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss", locale = "en_GB")
+    @JsonDeserialize(using = EventDateDeserializer.class)
     private LocalDateTime eventDate;
     /**
      * Инициатор события

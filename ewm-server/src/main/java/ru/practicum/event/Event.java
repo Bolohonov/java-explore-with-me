@@ -1,6 +1,7 @@
 package ru.practicum.event;
 
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import lombok.*;
 import ru.practicum.event.dto.EventDateDeserializer;
 
@@ -8,10 +9,9 @@ import javax.persistence.*;
 import java.time.LocalDateTime;
 
 @Entity
-@Table(name = "events", schema = "public")
 @Data
-@EqualsAndHashCode(exclude = "comps")
-@NoArgsConstructor
+@Table(name = "events", schema = "public")
+@RequiredArgsConstructor
 @AllArgsConstructor
 public class Event {
     /**
