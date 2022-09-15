@@ -3,10 +3,10 @@ package ru.practicum.event.controller;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
-import ru.practicum.event.EventService;
 import ru.practicum.event.dto.EventAddDto;
 import ru.practicum.event.dto.EventFullDto;
 import ru.practicum.event.dto.EventShortDto;
+import ru.practicum.event.service.EventServicePrivate;
 import ru.practicum.request.RequestService;
 import ru.practicum.request.dto.RequestDto;
 
@@ -22,7 +22,7 @@ import static org.springframework.http.HttpStatus.OK;
 @Slf4j
 @RequestMapping("/users/{userId}/events")
 public class EventPrivateController {
-    private final EventService eventService;
+    private final EventServicePrivate eventService;
     private final RequestService requestService;
 
     @GetMapping()

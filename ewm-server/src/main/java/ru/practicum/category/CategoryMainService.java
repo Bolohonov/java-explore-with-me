@@ -12,7 +12,7 @@ import ru.practicum.category.dto.CategoryDto;
 import ru.practicum.category.dto.CategoryMapper;
 import ru.practicum.category.repository.CategoryRepository;
 import ru.practicum.error.ApiError;
-import ru.practicum.event.EventService;
+import ru.practicum.event.service.EventServiceAdmin;
 
 import java.util.*;
 
@@ -23,7 +23,7 @@ import static java.util.Optional.of;
 @Slf4j
 public class CategoryMainService implements CategoryService {
     private final CategoryRepository categoryRepository;
-    private final EventService eventService;
+    private final EventServiceAdmin eventService;
 
     @Transactional(readOnly = true)
     @Override
@@ -70,7 +70,7 @@ public class CategoryMainService implements CategoryService {
         log.info("Получен запрос на удаление категории");
         Category categoryToDelete = getCategoryFromRepository(catId);
         if (!eventService
-                .findEventsByAdmin(null, null,
+                .findEvents(null, null,
                         Arrays.asList(catId), null, null, 0, 1).isEmpty()) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
         }
@@ -78,7 +78,8 @@ public class CategoryMainService implements CategoryService {
     }
 
     private void validateName(Long id, String newName) {
-        if (!categoryRepository.findAllByName(newName).getId().equals(id)) {
+        if (categoryRepository.findAllByName(newName) != null
+                && !categoryRepository.findAllByName(newName).getId().equals(id)) {
             new ApiError(HttpStatus.BAD_REQUEST, "Ошибка обновления названия категории",
                     String.format("Название %s уже существует", newName));
         }

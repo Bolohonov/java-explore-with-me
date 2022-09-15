@@ -4,9 +4,10 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 import ru.practicum.event.Event;
-import ru.practicum.event.EventService;
+import ru.practicum.event.dto.EventAddDto;
 import ru.practicum.event.dto.EventFullDto;
 import ru.practicum.event.dto.EventShortDto;
+import ru.practicum.event.service.EventServiceAdmin;
 
 import javax.validation.Valid;
 import javax.validation.constraints.Positive;
@@ -22,7 +23,7 @@ import static org.springframework.http.HttpStatus.OK;
 @Slf4j
 @RequestMapping("/admin/events")
 public class EventAdminController {
-    private final EventService eventService;
+    private final EventServiceAdmin eventService;
 
     @GetMapping
     @ResponseStatus(OK)
@@ -35,15 +36,15 @@ public class EventAdminController {
                                                      Integer from,
                                                      @Positive @RequestParam(name = "size", defaultValue = "10")
                                                      Integer size) {
-        return eventService.findEventsByAdmin(users, states, categories, rangeStart, rangeEnd, from, size);
+        return eventService.findEvents(users, states, categories, rangeStart, rangeEnd, from, size);
     }
 
     @PutMapping("/{eventId}")
     @ResponseStatus(OK)
     public Optional<EventShortDto> updateEvent(@PathVariable Long eventId,
-                                               @RequestBody @Valid Event newEvent) {
+                                               @RequestBody Event event) {
         log.info("Поступил запрос на обновление события администратором");
-        return eventService.updateEventByAdmin(eventId, newEvent);
+        return eventService.updateEvent(eventId, event);
     }
 
     @PatchMapping("/{eventId}/publish")
@@ -51,7 +52,7 @@ public class EventAdminController {
     public Optional<EventFullDto> publishEvent(@PathVariable Long eventId,
                                                @RequestBody @Valid Event newEvent) {
         log.info("Поступил запрос на публикацию события");
-        return eventService.publishEventByAdmin(eventId, newEvent);
+        return eventService.publishEvent(eventId, newEvent);
     }
 
     @PatchMapping("/{eventId}/reject")
@@ -59,6 +60,6 @@ public class EventAdminController {
     public Optional<EventFullDto> rejectEvent(@PathVariable Long eventId,
                                               @RequestBody @Valid Event newEvent) {
         log.info("Поступил запрос на отклонение публикации события");
-        return eventService.rejectEventByAdmin(eventId, newEvent);
+        return eventService.rejectEvent(eventId, newEvent);
     }
 }

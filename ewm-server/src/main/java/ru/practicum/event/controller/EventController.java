@@ -4,9 +4,9 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 import ru.practicum.client.StatisticsClient;
-import ru.practicum.event.EventService;
 import ru.practicum.event.dto.EventFullDto;
 import ru.practicum.event.dto.EventShortDto;
+import ru.practicum.event.service.EventServicePublic;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.constraints.Positive;
@@ -22,7 +22,7 @@ import static org.springframework.http.HttpStatus.OK;
 @Slf4j
 @RequestMapping("/events")
 public class EventController {
-    private final EventService eventService;
+    private final EventServicePublic eventService;
     private final StatisticsClient statisticsClient;
 
     @GetMapping

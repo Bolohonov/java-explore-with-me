@@ -6,9 +6,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.error.ApiError;
-import ru.practicum.event.EventService;
 import ru.practicum.event.State;
 import ru.practicum.event.dto.EventFullDto;
+import ru.practicum.event.service.EventServicePrivate;
 import ru.practicum.request.dto.RequestDto;
 import ru.practicum.request.dto.RequestMapper;
 import ru.practicum.request.repository.RequestRepository;
@@ -26,7 +26,7 @@ import static java.util.Optional.of;
 @RequiredArgsConstructor
 public class RequestMainService implements RequestService {
     private final RequestRepository requestRepository;
-    private final EventService eventService;
+    private final EventServicePrivate eventService;
 
     @Transactional(readOnly = true)
     @Override
