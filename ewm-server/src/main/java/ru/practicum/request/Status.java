@@ -8,9 +8,9 @@ public enum Status {
     /**
      * Запрос подтвержден
      */
-    ACCEPTED,
+    CONFIRMED,
     /**
      * В архиве
      */
-    CANCELED
+    REJECTED
 }

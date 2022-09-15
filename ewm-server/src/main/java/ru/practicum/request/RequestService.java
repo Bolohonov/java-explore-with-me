@@ -14,7 +14,7 @@ public interface RequestService {
 
     Collection<RequestDto> getRequestsOfEventInitiator(Long initiatorId, Long eventId);
 
-    Optional<RequestDto> confirmRequest(Long userId, Long requestId);
+    Optional<RequestDto> confirmRequest(Long userId, Long eventId, Long requestId);
 
     Optional<RequestDto> rejectRequest(Long userId, Long requestId);
 }

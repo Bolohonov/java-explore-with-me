@@ -73,8 +73,9 @@ public class EventPrivateController {
     @PatchMapping("/{eventId}/requests/{reqId}/confirm")
     @ResponseStatus(OK)
     public Optional<RequestDto> confirmRequest(@PathVariable Long userId,
+                                               @PathVariable Long eventId,
                                                @PathVariable Long reqId) {
-        return requestService.confirmRequest(userId, reqId);
+        return requestService.confirmRequest(userId, eventId, reqId);
     }
 
     @PatchMapping("/{eventId}/requests/{reqId}/reject")

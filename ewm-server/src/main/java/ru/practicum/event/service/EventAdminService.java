@@ -8,7 +8,6 @@ import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.error.ApiError;
 import ru.practicum.event.Event;
 import ru.practicum.event.State;
-import ru.practicum.event.dto.EventAddDto;
 import ru.practicum.event.dto.EventFullDto;
 import ru.practicum.event.dto.EventMapper;
 import ru.practicum.event.dto.EventShortDto;
@@ -105,7 +104,7 @@ public class EventAdminService implements EventServiceAdmin {
 
     private void validateEventForRejecting(Event event) {
         log.info("Проверка события для отклонения");
-        if (!event.getState().equals(State.PUBLISHED)) {
+        if (!event.getState().equals(State.PENDING)) {
             throw new ApiError(HttpStatus.BAD_REQUEST, "У события неверный статус",
                     String.format("Error: событие должно иметь статус %s", State.PUBLISHED));
         }

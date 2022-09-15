@@ -2,7 +2,6 @@ package ru.practicum;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ExceptionHandler;
-import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import ru.practicum.error.ApiError;
 
@@ -13,8 +12,7 @@ import java.util.UUID;
 @RestControllerAdvice
 public class ErrorHandler {
     @ExceptionHandler
-    @ResponseStatus(HttpStatus.NOT_FOUND)
-    public ErrorResponse handleUserNotFoundException(final ApiError e, HttpServletResponse response) {
+    public ErrorResponse handleApiError(final ApiError e, HttpServletResponse response) {
         StringBuffer sb = new StringBuffer();
         e.getSubErrors().forEach(error -> sb.append(error.toString()));
         response.setStatus(e.getStatus().value());
@@ -27,4 +25,18 @@ public class ErrorHandler {
                 .timestamp(LocalDateTime.now().toString())
                 .build();
     }
+//TODO
+//    @ExceptionHandler
+//    public ErrorResponse handleInternalServerError(final Throwable e, HttpServletResponse response) {
+//        StringBuffer sb = new StringBuffer();
+//        response.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());
+//        return ErrorResponse.builder()
+//                .id(UUID.randomUUID().toString())
+//                .errors(sb.toString())
+//                .message(e.getMessage())
+//                .reason("Произошла ошибка на сервере")
+//                .status(HttpStatus.INTERNAL_SERVER_ERROR.toString())
+//                .timestamp(LocalDateTime.now().toString())
+//                .build();
+//    }
 }

@@ -52,7 +52,7 @@ public class RequestMainService implements RequestService {
     @Override
     public Optional<RequestDto> revokeRequest(Long userId, Long requestId) {
         Request request = getRequestFromRepository(requestId);
-        request.setStatus(Status.CANCELED);
+        request.setStatus(Status.REJECTED);
         return of(RequestMapper.toRequestDto(request));
     }
 
@@ -66,17 +66,21 @@ public class RequestMainService implements RequestService {
 
     @Transactional
     @Override
-    public Optional<RequestDto> confirmRequest(Long userId, Long requestId) {
+    public Optional<RequestDto> confirmRequest(Long userId, Long eventId, Long requestId) {
         Request request = getRequestFromRepository(requestId);
-        EventFullDto event = eventService.getEventById(request.getEvent()).get();
-        if (event.getConfirmedRequests() < event.getParticipantLimit()) {
-            request.setStatus(Status.ACCEPTED);
-            event.setConfirmedRequests(event.getConfirmedRequests() + 1L);
-        }
-        if (event.getConfirmedRequests().equals(event.getParticipantLimit().longValue())) {
-            Collection<Request> requests = requestRepository.getRequestsByEventAndStatus(event.getId(),
-                    Status.WAITING.toString());
-            requests.forEach((r) -> r.setStatus(Status.CANCELED));
+        EventFullDto event = eventService.getEventById(eventId).get();
+        if (event.getConfirmedRequests() != null) {
+            if (event.getConfirmedRequests() < event.getParticipantLimit()) {
+                request.setStatus(Status.CONFIRMED);
+                event.setConfirmedRequests(event.getConfirmedRequests() + 1L);
+                checkLimitAndRejectOtherRequests(event);
+            } else {
+                checkLimitAndRejectOtherRequests(event);
+            }
+        } else {
+            request.setStatus(Status.CONFIRMED);
+            event.setConfirmedRequests(1L);
+            checkLimitAndRejectOtherRequests(event);
         }
         return of(RequestMapper.toRequestDto(request));
     }
@@ -85,7 +89,7 @@ public class RequestMainService implements RequestService {
     @Override
     public Optional<RequestDto> rejectRequest(Long userId, Long requestId) {
         Request request = getRequestFromRepository(requestId);
-        request.setStatus(Status.CANCELED);
+        request.setStatus(Status.REJECTED);
         return of(RequestMapper.toRequestDto(request));
     }
 
@@ -139,7 +143,7 @@ public class RequestMainService implements RequestService {
     private void validateAndSetStatus(Long eventId, Request request) {
         log.info("Установка статуса запроса");
         if (!eventService.getEventById(eventId).get().getRequestModeration()) {
-            request.setStatus(Status.ACCEPTED);
+            request.setStatus(Status.CONFIRMED);
             log.info("Установлен статус ACCEPTED");
         }
     }
@@ -153,6 +157,14 @@ public class RequestMainService implements RequestService {
             throw new ApiError(HttpStatus.BAD_REQUEST, "Действие не может быть выполнено",
                     String.format("Пользователь с %s не является инициатором события c id %s. " +
                             "Действие отклонено.", initiatorId, eventId));
+        }
+    }
+
+    private void checkLimitAndRejectOtherRequests(EventFullDto event) {
+        if (event.getConfirmedRequests().equals(event.getParticipantLimit().longValue())) {
+            Collection<Request> requests = requestRepository.getRequestsByEventAndStatus(event.getId(),
+                    Status.WAITING.toString());
+            requests.forEach((r) -> r.setStatus(Status.REJECTED));
         }
     }
 
