@@ -14,7 +14,7 @@ import javax.validation.constraints.NotNull;
 @ToString
 public class EndpointHit {
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id", nullable = false)
     private Long id;
 
