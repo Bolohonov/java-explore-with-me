@@ -5,7 +5,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
-import ru.practicum.compilation.Compilation;
 import ru.practicum.compilation.CompilationService;
 import ru.practicum.compilation.dto.CompilationDto;
 
@@ -51,7 +50,7 @@ public class CompilationAdminController {
     @PatchMapping("/{compId}/events/{eventId}")
     @ResponseStatus(OK)
     public void addEventToCompilation(@PathVariable Long compId,
-                                           @PathVariable Long eventId) {
+                                      @PathVariable Long eventId) {
         log.info("Пришел запрос на добавление события в подборку");
         if (!compilationService.addEventToCompilation(compId, eventId)) {
             throw new ResponseStatusException(BAD_REQUEST);

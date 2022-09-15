@@ -34,7 +34,7 @@ public class EventAdminController {
                                                      @PositiveOrZero @RequestParam(name = "from", defaultValue = "0")
                                                      Integer from,
                                                      @Positive @RequestParam(name = "size", defaultValue = "10")
-                                                         Integer size) {
+                                                     Integer size) {
         return eventService.findEventsByAdmin(users, states, categories, rangeStart, rangeEnd, from, size);
     }
 
@@ -42,23 +42,23 @@ public class EventAdminController {
     @ResponseStatus(OK)
     public Optional<EventShortDto> updateEvent(@PathVariable Long eventId,
                                                @RequestBody @Valid Event newEvent) {
+        log.info("Поступил запрос на обновление события администратором");
         return eventService.updateEventByAdmin(eventId, newEvent);
-
     }
 
     @PatchMapping("/{eventId}/publish")
     @ResponseStatus(OK)
     public Optional<EventFullDto> publishEvent(@PathVariable Long eventId,
                                                @RequestBody @Valid Event newEvent) {
-        log.info("Поступил запрос на публикацю события");
+        log.info("Поступил запрос на публикацию события");
         return eventService.publishEventByAdmin(eventId, newEvent);
     }
 
     @PatchMapping("/{eventId}/reject")
     @ResponseStatus(OK)
     public Optional<EventFullDto> rejectEvent(@PathVariable Long eventId,
-                                               @RequestBody @Valid Event newEvent) {
+                                              @RequestBody @Valid Event newEvent) {
+        log.info("Поступил запрос на отклонение публикации события");
         return eventService.rejectEventByAdmin(eventId, newEvent);
-
     }
 }

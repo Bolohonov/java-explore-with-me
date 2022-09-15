@@ -46,12 +46,8 @@ public class CategoryMainService implements CategoryService {
     public Optional<CategoryDto> updateCategoryByAdmin(Category newCategory) {
         log.info("Получен запрос на обновление категории");
         Category category = getCategoryFromRepository(newCategory.getId());
-        try {
-            category.setName(newCategory.getName());
-        } catch (DuplicateKeyException e) {
-            new ApiError(HttpStatus.BAD_REQUEST, "Ошибка обновления названия категории",
-                    String.format("Название %s уже существует", newCategory.getName()));
-        }
+        validateName(newCategory.getId(), newCategory.getName());
+        category.setName(newCategory.getName());
         return of(CategoryMapper.toCategoryDto(category));
     }
 
@@ -74,10 +70,17 @@ public class CategoryMainService implements CategoryService {
         Category categoryToDelete = getCategoryFromRepository(catId);
         if (!eventService
                 .findEventsByAdmin(null, null,
-                        Arrays.asList(catId),  null, null, 0, 1).isEmpty()) {
+                        Arrays.asList(catId), null, null, 0, 1).isEmpty()) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
         }
         categoryRepository.delete(categoryToDelete);
+    }
+
+    private void validateName(Long id, String newName) {
+        if (!categoryRepository.findAllByName(newName).getId().equals(id)) {
+            new ApiError(HttpStatus.BAD_REQUEST, "Ошибка обновления названия категории",
+                    String.format("Название %s уже существует", newName));
+        }
     }
 
     private Integer getPageNumber(Integer from, Integer size) {

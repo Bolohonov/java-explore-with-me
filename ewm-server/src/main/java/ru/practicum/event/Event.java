@@ -1,7 +1,6 @@
 package ru.practicum.event;
 
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
-import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import lombok.*;
 import ru.practicum.event.dto.EventDateDeserializer;
 

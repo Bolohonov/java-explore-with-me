@@ -2,11 +2,8 @@ package ru.practicum.request.dto;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
-import ru.practicum.event.Event;
-import ru.practicum.event.dto.EventShortDto;
 import ru.practicum.request.Request;
 
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.stream.Collectors;
 

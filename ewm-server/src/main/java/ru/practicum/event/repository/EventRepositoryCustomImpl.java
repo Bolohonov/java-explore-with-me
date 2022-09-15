@@ -58,7 +58,7 @@ public class EventRepositoryCustomImpl implements EventRepositoryCustom {
     }
 
     private <T> Predicate[] getPredicatesEqual(CriteriaBuilder cb, Root<Event> event,
-                                               Class <T> valueType, Set<T> set, String pathField) {
+                                               Class<T> valueType, Set<T> set, String pathField) {
         List<Predicate> predicates = new ArrayList<>();
         if (!set.isEmpty()) {
             for (T value : set) {
@@ -71,7 +71,7 @@ public class EventRepositoryCustomImpl implements EventRepositoryCustom {
     }
 
     private <T> Predicate getPredicateEqual(CriteriaBuilder cb, Root<Event> event,
-                                               Class <T> valueType, T value, String pathField) {
+                                            Class<T> valueType, T value, String pathField) {
         if (value != null) {
             return cb.equal(event.get(pathField).as(valueType), value);
         }
@@ -117,7 +117,7 @@ public class EventRepositoryCustomImpl implements EventRepositoryCustom {
         return predicates.toArray(new Predicate[predicates.size()]);
     }
 
-    private <T> Long getCount(CriteriaBuilder cb, Class <T> valueType) {
+    private <T> Long getCount(CriteriaBuilder cb, Class<T> valueType) {
         CriteriaQuery<Long> countQuery = cb.createQuery(Long.class);
         countQuery.select(cb.count(countQuery.from(valueType)));
         return entityManager.createQuery(countQuery)

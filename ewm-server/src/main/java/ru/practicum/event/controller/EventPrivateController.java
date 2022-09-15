@@ -3,9 +3,7 @@ package ru.practicum.event.controller;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
-import ru.practicum.event.Event;
 import ru.practicum.event.EventService;
-import ru.practicum.event.State;
 import ru.practicum.event.dto.EventAddDto;
 import ru.practicum.event.dto.EventFullDto;
 import ru.practicum.event.dto.EventShortDto;
@@ -33,7 +31,7 @@ public class EventPrivateController {
                                                       @PositiveOrZero @RequestParam(name = "from", defaultValue = "0")
                                                       Integer from,
                                                       @Positive @RequestParam(name = "size", defaultValue = "10")
-                                                          Integer size) {
+                                                      Integer size) {
         return eventService.findEventsByInitiator(userId, from, size);
     }
 
@@ -61,28 +59,28 @@ public class EventPrivateController {
     @PatchMapping("/{eventId}")
     @ResponseStatus(OK)
     public Optional<EventShortDto> changeEventStateToCanceled(@PathVariable Long userId,
-                                                @PathVariable Long eventId) {
+                                                              @PathVariable Long eventId) {
         return eventService.changeEventStateToCanceled(userId, eventId);
     }
 
     @GetMapping("/{eventId}/requests")
     @ResponseStatus(OK)
     public Collection<RequestDto> findRequestsOfEventInitiator(@PathVariable Long userId,
-                                                  @PathVariable Long eventId) {
+                                                               @PathVariable Long eventId) {
         return requestService.getRequestsOfEventInitiator(userId, eventId);
     }
 
     @PatchMapping("/{eventId}/requests/{reqId}/confirm")
     @ResponseStatus(OK)
     public Optional<RequestDto> confirmRequest(@PathVariable Long userId,
-                                                  @PathVariable Long reqId) {
+                                               @PathVariable Long reqId) {
         return requestService.confirmRequest(userId, reqId);
     }
 
     @PatchMapping("/{eventId}/requests/{reqId}/reject")
     @ResponseStatus(OK)
     public Optional<RequestDto> rejectRequest(@PathVariable Long userId,
-                                               @PathVariable Long reqId) {
+                                              @PathVariable Long reqId) {
         return requestService.rejectRequest(userId, reqId);
     }
 }

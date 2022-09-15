@@ -50,7 +50,7 @@ public class CompilationMapper {
                         () -> new ApiError(HttpStatus.BAD_REQUEST, "Получен несуществующий id",
                                 String.format("Получен несуществующий id %s события " +
                                         "при попытке добавить подборку", id)
-                ))));
+                        ))));
         return new Compilation(
                 compilationDto.getId(),
                 compilationDto.getTitle(),

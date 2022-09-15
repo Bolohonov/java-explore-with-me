@@ -20,8 +20,8 @@ public class CategoryController {
 
     @GetMapping
     @ResponseStatus(OK)
-    public Collection<CategoryDto> findCategories(@RequestParam (defaultValue = "0") Integer from,
-                                                 @RequestParam (defaultValue = "10") Integer size) {
+    public Collection<CategoryDto> findCategories(@RequestParam(defaultValue = "0") Integer from,
+                                                  @RequestParam(defaultValue = "10") Integer size) {
         return categoryService.getCategories(from, size);
     }
 

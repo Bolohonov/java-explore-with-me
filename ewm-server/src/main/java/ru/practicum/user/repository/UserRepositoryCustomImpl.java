@@ -27,7 +27,7 @@ public class UserRepositoryCustomImpl implements UserRepositoryCustom {
         }
         query.select(user)
                 .where(cb.or(predicates.toArray(new Predicate[predicates.size()])));
-        List <User> users = entityManager.createQuery(query)
+        List<User> users = entityManager.createQuery(query)
                 .getResultList();
         return new PageImpl<>(users, pageable, users.size());
     }

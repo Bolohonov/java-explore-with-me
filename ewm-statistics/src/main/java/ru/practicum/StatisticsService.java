@@ -10,5 +10,6 @@ import java.util.Optional;
 
 public interface StatisticsService {
     Optional<EndpointHitDto> addEndpointHit(EndpointHit endpointHit);
+
     Collection<ViewStats> getStats(Long start, Long end, List<String> uris, Boolean unique);
 }

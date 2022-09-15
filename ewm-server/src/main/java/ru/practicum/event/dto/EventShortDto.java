@@ -2,6 +2,7 @@ package ru.practicum.event.dto;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.*;
+
 import java.io.Serializable;
 import java.time.LocalDateTime;
 

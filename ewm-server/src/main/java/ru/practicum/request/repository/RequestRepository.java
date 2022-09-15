@@ -3,14 +3,14 @@ package ru.practicum.request.repository;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import ru.practicum.request.Request;
-import ru.practicum.request.Status;
 
 import java.util.Collection;
-import java.util.Optional;
 
 public interface RequestRepository extends JpaRepository<Request, Long> {
     Collection<Request> getRequestsByRequester(Long requesterId);
+
     Collection<Request> getRequestsByEvent(Long eventId);
+
     Request getRequestByRequesterAndEvent(Long requesterId, Long EventId);
 
     @Query("select r from Request as r  " +

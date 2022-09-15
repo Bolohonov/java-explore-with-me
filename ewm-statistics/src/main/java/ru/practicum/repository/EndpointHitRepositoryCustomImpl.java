@@ -1,7 +1,6 @@
 package ru.practicum.repository;
 
 import ru.practicum.model.EndpointHit;
-import ru.practicum.model.ViewStats;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
@@ -44,7 +43,7 @@ public class EndpointHitRepositoryCustomImpl implements EndpointHitRepositoryCus
     }
 
     private <T> Predicate[] getPredicatesEqual(CriteriaBuilder cb, Root<EndpointHit> eHit,
-                                               Class <T> valueType, Set<T> set, String field) {
+                                               Class<T> valueType, Set<T> set, String field) {
         List<Predicate> predicates = new ArrayList<>();
         if (!set.isEmpty()) {
             for (T value : set) {

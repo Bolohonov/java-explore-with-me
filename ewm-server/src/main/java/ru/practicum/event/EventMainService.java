@@ -94,7 +94,7 @@ public class EventMainService implements EventService {
         if (!getEventById(event.getId()).get().getInitiator().getId().equals(userId)) {
             errorsList.add(new ApiError(HttpStatus.BAD_REQUEST, String.format("При выполнении %s произошла ошибка.",
                     "update"), String.format("Пользователь с id %s не является инициатором события. Отказано в доступе",
-                            userId)));
+                    userId)));
         }
         if (!getEventById(event.getId()).get().getState().equals(State.PENDING)
                 || !getEventById(event.getId()).get().getState().equals(State.CANCELED)) {
@@ -137,7 +137,7 @@ public class EventMainService implements EventService {
     @Transactional
     @Override
     public Collection<EventFullDto> findEventsByAdmin(List<Long> users, List<String> states, List<Long> categories,
-                                               String rangeStart, String rangeEnd, Integer from, Integer size) {
+                                                      String rangeStart, String rangeEnd, Integer from, Integer size) {
         log.info("Получен запрос на вывод списка событий администратором");
         Collection<Event> events = eventRepository.getEventsByAdmin(
                 getSetAndValidateParams(Long.class, users),
@@ -146,7 +146,7 @@ public class EventMainService implements EventService {
                 getAndValidateTimeRange(rangeStart, rangeEnd),
                 from,
                 size
-                );
+        );
         return eventMapper.toEventFullDto(events);
     }
 
@@ -187,7 +187,7 @@ public class EventMainService implements EventService {
     private EventShortDto updateEventInRepository(Event oldEvent, EventShortDto event) {
         log.info("Обновить событие в репозитории");
         oldEvent = eventMapper.fromEventShortDto(event, oldEvent.getConfirmedRequests(),
-        oldEvent.getCreatedOn(), oldEvent.getInitiatorId(), oldEvent.getPublishedOn(),
+                oldEvent.getCreatedOn(), oldEvent.getInitiatorId(), oldEvent.getPublishedOn(),
                 oldEvent.getState(), oldEvent.getViews(), oldEvent.getLocLat(), oldEvent.getLocLon());
         return eventMapper.toEventShortDto(oldEvent);
     }
@@ -201,7 +201,7 @@ public class EventMainService implements EventService {
         if (!event.getEventDate().isAfter(LocalDateTime.now().plusHours(2L))) {
             throw new ApiError(HttpStatus.BAD_REQUEST, "Поле eventDate указано неверно.",
                     String.format("Error: must be a date in the present or in the future. Value: %s",
-                    event.getEventDate().toString()));
+                            event.getEventDate().toString()));
         }
     }
 
@@ -210,7 +210,7 @@ public class EventMainService implements EventService {
         if (!event.getEventDate().isAfter(LocalDateTime.now().plusHours(2L))) {
             throw new ApiError(HttpStatus.BAD_REQUEST, "Поле eventDate указано неверно.",
                     String.format("Error: must be a date in the present or in the future (plus 2 hours). " +
-                                    "Value: %s", event.getEventDate().toString()));
+                            "Value: %s", event.getEventDate().toString()));
         }
     }
 
@@ -220,7 +220,7 @@ public class EventMainService implements EventService {
                 .getActivation().equals(Boolean.TRUE)) {
             throw new ApiError(HttpStatus.BAD_REQUEST, "Пользователь не активирован.",
                     String.format("Пользователь с id %s не может выполнить данное действие. " +
-                                    "Получите активацию от администратора", userId));
+                            "Получите активацию от администратора", userId));
         }
     }
 
@@ -241,7 +241,7 @@ public class EventMainService implements EventService {
         if (newEvent.getEventDate().isBefore(LocalDateTime.now().plusHours(1L))) {
             throw new ApiError(HttpStatus.BAD_REQUEST, "Поле eventDate указано неверно.",
                     String.format("Error: must be a date in the present or in the future (plus 1 hour). " +
-                                    "Value: %s", event.getEventDate().toString()));
+                            "Value: %s", event.getEventDate().toString()));
         }
         if (!event.getState().equals(State.PENDING)) {
             throw new ApiError(HttpStatus.BAD_REQUEST, "У события неверный статус",

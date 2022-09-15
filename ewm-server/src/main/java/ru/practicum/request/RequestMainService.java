@@ -5,9 +5,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.server.ResponseStatusException;
 import ru.practicum.error.ApiError;
-import ru.practicum.event.Event;
 import ru.practicum.event.EventService;
 import ru.practicum.event.State;
 import ru.practicum.event.dto.EventFullDto;
@@ -97,10 +95,10 @@ public class RequestMainService implements RequestService {
         List<ApiError> errors = new ArrayList<>();
         if (requestRepository.getRequestByRequesterAndEvent(userId, eventId) != null) {
             errors.add(new ApiError(
-                    HttpStatus.BAD_REQUEST,
-                    "Ошибка запроса на участие",
-                    String.format("Пользователь с id %s уже отправил запрос на участие в событии с id %s",
-                    userId, eventId)
+                            HttpStatus.BAD_REQUEST,
+                            "Ошибка запроса на участие",
+                            String.format("Пользователь с id %s уже отправил запрос на участие в событии с id %s",
+                                    userId, eventId)
                     )
             );
         }
@@ -154,7 +152,7 @@ public class RequestMainService implements RequestService {
                 .equals(initiatorId)) {
             throw new ApiError(HttpStatus.BAD_REQUEST, "Действие не может быть выполнено",
                     String.format("Пользователь с %s не является инициатором события c id %s. " +
-                                    "Действие отклонено.", initiatorId, eventId));
+                            "Действие отклонено.", initiatorId, eventId));
         }
     }
 
@@ -164,5 +162,4 @@ public class RequestMainService implements RequestService {
                     String.format("При выполнении метода не найден %s c id %s. Проверьте id.", requestId));
         });
     }
-
 }

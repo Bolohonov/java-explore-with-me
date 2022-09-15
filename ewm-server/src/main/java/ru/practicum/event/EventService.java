@@ -33,6 +33,4 @@ public interface EventService {
     Optional<EventFullDto> publishEventByAdmin(Long eventId, Event newEvent);
 
     Optional<EventFullDto> rejectEventByAdmin(Long eventId, Event newEvent);
-
-
 }

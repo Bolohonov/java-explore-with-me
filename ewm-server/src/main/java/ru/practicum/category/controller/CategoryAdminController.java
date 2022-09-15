@@ -10,7 +10,6 @@ import javax.validation.Valid;
 
 import java.util.Optional;
 
-import static org.springframework.http.HttpStatus.NO_CONTENT;
 import static org.springframework.http.HttpStatus.OK;
 
 @RestController

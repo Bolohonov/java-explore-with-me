@@ -84,7 +84,7 @@ public class CompilationMainService implements CompilationService {
         return getById(compId).getEvents().add(eventRepository.findById(eventId).orElseThrow(
                 () -> new ApiError(HttpStatus.NOT_FOUND, "Не найдено событие",
                         String.format("Не найдено событие с id %s при попытке добавления в подборку", eventId)
-        )));
+                )));
     }
 
     @Transactional
@@ -112,7 +112,7 @@ public class CompilationMainService implements CompilationService {
     private Compilation getById(Long id) {
         return compilationRepository.findById(id).orElseThrow(
                 () -> new ApiError(HttpStatus.NOT_FOUND, "Подборка не найдена",
-                String.format("Подборка с id %s не найдена", id))
+                        String.format("Подборка с id %s не найдена", id))
         );
     }
 

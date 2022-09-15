@@ -17,6 +17,7 @@ public class Request {
         this.requester = requester;
         this.status = status;
     }
+
     /**
      * уникальный идентификатор заявки
      */
