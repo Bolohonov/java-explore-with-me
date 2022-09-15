@@ -20,7 +20,6 @@ import static org.springframework.http.HttpStatus.OK;
 @RestController
 @RequiredArgsConstructor
 @Slf4j
-@RequestMapping()
 @Validated
 public class StatisticsController {
     private final StatisticService statisticService;

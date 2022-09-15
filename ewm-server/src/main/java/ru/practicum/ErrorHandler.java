@@ -8,8 +8,6 @@ import ru.practicum.error.ApiError;
 
 import javax.servlet.http.HttpServletResponse;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.UUID;
 
 @RestControllerAdvice
@@ -17,11 +15,12 @@ public class ErrorHandler {
     @ExceptionHandler
     @ResponseStatus(HttpStatus.NOT_FOUND)
     public ErrorResponse handleUserNotFoundException(final ApiError e, HttpServletResponse response) {
-        List<String> err = new ArrayList<>();
+        StringBuffer sb = new StringBuffer();
+        e.getSubErrors().forEach(error -> sb.append(error.toString()));
         response.setStatus(e.getStatus().value());
         return ErrorResponse.builder()
                 .id(UUID.randomUUID().toString())
-                .errors(err)
+                .errors(sb.toString())
                 .message(e.getMessage())
                 .reason(e.getReason())
                 .status(e.getStatus().toString())
