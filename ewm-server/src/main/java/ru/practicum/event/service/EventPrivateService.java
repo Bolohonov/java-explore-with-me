@@ -57,7 +57,7 @@ public class EventPrivateService implements EventServicePrivate {
 
     @Transactional
     @Override
-    public Optional<EventShortDto> updateEventByInitiator(Long userId, EventShortDto event) {
+    public Optional<EventFullDto> updateEventByInitiator(Long userId, EventShortDto event) {
         log.info("Получен запрос в сервис на обновление события инициатором");
         Event oldEvent = eventMainService.getEventFromRepository(event.getId());
         validateEventBeforeUpdateByInitiator(userId, event);
@@ -135,12 +135,12 @@ public class EventPrivateService implements EventServicePrivate {
         }
     }
 
-    private EventShortDto updateEventInRepository(Event oldEvent, EventShortDto event) {
+    private EventFullDto updateEventInRepository(Event oldEvent, EventShortDto event) {
         log.info("Обновить событие в репозитории");
         oldEvent = eventMapper.fromEventShortDto(event, oldEvent.getConfirmedRequests(),
                 oldEvent.getCreatedOn(), oldEvent.getInitiatorId(), oldEvent.getPublishedOn(),
                 oldEvent.getState(), oldEvent.getViews(), oldEvent.getLocLat(), oldEvent.getLocLon());
-        return eventMapper.toEventShortDto(oldEvent);
+        return eventMapper.toEventFullDto(oldEvent);
     }
 
     private void validateUserActivation(Long userId) {

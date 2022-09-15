@@ -12,7 +12,7 @@ public interface EventServicePrivate {
 
     Collection<EventShortDto> findEventsByInitiator(Long userId, Integer from, Integer size);
 
-    Optional<EventShortDto> updateEventByInitiator(Long userId, EventShortDto event);
+    Optional<EventFullDto> updateEventByInitiator(Long userId, EventShortDto event);
 
     Optional<EventFullDto> addEvent(Long userId, EventAddDto event);
 

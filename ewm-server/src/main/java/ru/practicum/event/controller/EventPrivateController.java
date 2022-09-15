@@ -37,8 +37,8 @@ public class EventPrivateController {
 
     @PatchMapping()
     @ResponseStatus(OK)
-    public Optional<EventShortDto> patchEventByInitiator(@PathVariable Long userId,
-                                                         @RequestBody EventShortDto event) {
+    public Optional<EventFullDto> patchEventByInitiator(@PathVariable Long userId,
+                                                        @RequestBody EventShortDto event) {
         return eventService.updateEventByInitiator(userId, event);
     }
 

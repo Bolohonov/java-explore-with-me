@@ -25,18 +25,18 @@ public class ErrorHandler {
                 .timestamp(LocalDateTime.now().toString())
                 .build();
     }
-//TODO
-//    @ExceptionHandler
-//    public ErrorResponse handleInternalServerError(final Throwable e, HttpServletResponse response) {
-//        StringBuffer sb = new StringBuffer();
-//        response.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());
-//        return ErrorResponse.builder()
-//                .id(UUID.randomUUID().toString())
-//                .errors(sb.toString())
-//                .message(e.getMessage())
-//                .reason("Произошла ошибка на сервере")
-//                .status(HttpStatus.INTERNAL_SERVER_ERROR.toString())
-//                .timestamp(LocalDateTime.now().toString())
-//                .build();
-//    }
+
+    @ExceptionHandler
+    public ErrorResponse handleInternalServerError(final Throwable e, HttpServletResponse response) {
+        StringBuffer sb = new StringBuffer();
+        response.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());
+        return ErrorResponse.builder()
+                .id(UUID.randomUUID().toString())
+                .errors(sb.toString())
+                .message(e.getMessage())
+                .reason("Произошла ошибка на сервере")
+                .status(HttpStatus.INTERNAL_SERVER_ERROR.toString())
+                .timestamp(LocalDateTime.now().toString())
+                .build();
+    }
 }
