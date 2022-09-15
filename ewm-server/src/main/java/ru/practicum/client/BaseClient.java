@@ -32,7 +32,7 @@ public class BaseClient {
         } catch (HttpStatusCodeException e) {
             return ResponseEntity.status(e.getStatusCode()).body(e.getResponseBodyAsByteArray());
         }
-        return prepareGatewayResponse(appResponse);
+        return prepareResponse(appResponse);
     }
 
     private HttpHeaders defaultHeaders() {
@@ -42,7 +42,7 @@ public class BaseClient {
         return headers;
     }
 
-    private static ResponseEntity<Object> prepareGatewayResponse(ResponseEntity<Object> response) {
+    private static ResponseEntity<Object> prepareResponse(ResponseEntity<Object> response) {
         if (response.getStatusCode().is2xxSuccessful()) {
             return response;
         }

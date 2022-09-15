@@ -57,7 +57,7 @@ public class EventPublicService implements EventServicePublic {
 
     private Map<String, LocalDateTime> getAndValidateTimeRangeWithDefault(String rangeStart, String rangeEnd) {
         log.info("Получение временного интервала в eventService по умолчанию");
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSSz",
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSSSSS",
                 Locale.getDefault());
         Map<String, LocalDateTime> timeMap = new HashMap<>();
         if (rangeStart != null) {

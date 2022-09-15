@@ -1,6 +1,7 @@
 package ru.practicum;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import ru.practicum.model.EndpointHit;
 import ru.practicum.model.ViewStats;
@@ -14,17 +15,20 @@ import java.util.stream.Collectors;
 import static java.util.Optional.ofNullable;
 
 @Service
+@Slf4j
 @RequiredArgsConstructor
 public class StatisticService implements StatisticsService {
     private final EndpointHitRepository endpointHitRepository;
 
     @Override
     public Optional<EndpointHitDto> addEndpointHit(EndpointHit endpointHit) {
+        log.info("Получен запрос в сервис на сохранение EndpointHit");
         return ofNullable(EndpointHitMapper.toEndpointHitDto(endpointHitRepository.save(endpointHit)));
     }
 
     @Override
     public Collection<ViewStats> getStats(Long start, Long end, List<String> uris, Boolean unique) {
+        log.info("Получен запрос в сервис на получение статистики");
         Collection<EndpointHit> eHits = endpointHitRepository.getEndpointHits(start, end, uris);
         return toViewStats(eHits, unique);
     }

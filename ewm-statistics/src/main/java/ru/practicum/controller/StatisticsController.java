@@ -28,6 +28,7 @@ public class StatisticsController {
     @ResponseStatus(OK)
     public EndpointHitDto addNewEndpointHit(
             @RequestBody @Valid EndpointHit endpointHit) {
+        log.info("Получен запрос в контроллер на сохранение EndpointHit");
         return statisticService.addEndpointHit(endpointHit).orElseThrow(
                 () -> new ResponseStatusException(BAD_REQUEST)
         );
@@ -39,6 +40,7 @@ public class StatisticsController {
                                                @RequestParam Long end,
                                                @RequestParam List<String> uris,
                                                @RequestParam Boolean unique) {
+        log.info("Получен запрос в контроллер на получение статистики");
         return statisticService.getStats(start, end, uris, unique);
     }
 }

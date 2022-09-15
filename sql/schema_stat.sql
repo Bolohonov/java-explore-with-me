@@ -3,6 +3,6 @@ CREATE TABLE IF NOT EXISTS hits (
     app VARCHAR(255) NOT NULL,
     uri VARCHAR(255) NOT NULL,
     ip VARCHAR(255) NOT NULL,
-    timestamp BIGINT NOT NULL,
+    timestamp VARCHAR(255) NOT NULL,
     CONSTRAINT pk_endpoint_hits PRIMARY KEY (id)
 );

@@ -9,6 +9,10 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.util.DefaultUriBuilderFactory;
 import ru.practicum.client.dto.EndpointHitDto;
 
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.util.Locale;
+
 @Service
 public class StatisticsClient extends BaseClient {
     private static final String API_PREFIX = "/hit";
@@ -28,7 +32,8 @@ public class StatisticsClient extends BaseClient {
                 .app("ExploreWithMe")
                 .uri(uri)
                 .ip(userIp)
-                .timestamp(System.currentTimeMillis() / 1000L)
+                .timestamp(LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss",
+                        Locale.getDefault())))
                 .build());
     }
 }

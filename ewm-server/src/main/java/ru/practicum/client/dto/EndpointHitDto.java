@@ -14,5 +14,5 @@ public class EndpointHitDto {
 
     String ip;
 
-    Long timestamp;
+    String timestamp;
 }
