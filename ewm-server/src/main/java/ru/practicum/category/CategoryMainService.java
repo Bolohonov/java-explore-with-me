@@ -43,8 +43,9 @@ public class CategoryMainService implements CategoryService {
 
     @Transactional
     @Override
-    public Optional<CategoryDto> updateCategoryByAdmin(Category newCategory) {
+    public Optional<CategoryDto> updateCategoryByAdmin(CategoryDto newCategory) {
         log.info("Получен запрос на обновление категории");
+        validateCategoryForUpdate(newCategory);
         Category category = getCategoryFromRepository(newCategory.getId());
         validateName(newCategory.getId(), newCategory.getName());
         category.setName(newCategory.getName());
@@ -87,9 +88,30 @@ public class CategoryMainService implements CategoryService {
         return from % size;
     }
 
+    private void validateCategoryForUpdate(CategoryDto cat) {
+        List<ApiError> errorsList = ApiError.getErrorsList();
+        if (cat.getId() == null) {
+            errorsList.add(new ApiError(HttpStatus.BAD_REQUEST, String.format("Ошибка обновления категории"),
+                    String.format("У категории в запросе отсутствует id"
+                    )));
+        }
+        if (cat.getName() == null) {
+            errorsList.add(new ApiError(HttpStatus.BAD_REQUEST, String.format("Ошибка обновления категории"),
+                    String.format("У категории в запросе отсутствует name"
+                    )));
+        }
+        if (!errorsList.isEmpty()) {
+            throw new ApiError(HttpStatus.BAD_REQUEST, "Ошибка при обновлении категории",
+                    String.format("Во время обновления категории произошли ошибки:"
+                    ));
+        }
+
+    }
+
     private Category getCategoryFromRepository(Long catId) {
         return categoryRepository.findById(catId).orElseThrow(
-                () -> new ResponseStatusException(HttpStatus.BAD_REQUEST)
-        );
+                () -> new ApiError(HttpStatus.NOT_FOUND, "Ошибка запроса категории",
+                        String.format("Категория с id %s не найдена. Проверьте id.", catId)
+                ));
     }
 }

@@ -10,7 +10,7 @@ public interface CategoryService {
 
     Optional<CategoryDto> getCategoryById(Long catId);
 
-    Optional<CategoryDto> updateCategoryByAdmin(Category category);
+    Optional<CategoryDto> updateCategoryByAdmin(CategoryDto category);
 
     Optional<CategoryDto> addCategoryByAdmin(Category category);
 

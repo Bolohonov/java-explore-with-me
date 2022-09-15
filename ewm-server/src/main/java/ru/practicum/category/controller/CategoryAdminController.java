@@ -20,7 +20,7 @@ public class CategoryAdminController {
 
     @PatchMapping
     @ResponseStatus(OK)
-    public Optional<CategoryDto> updateCategory(@RequestBody @Valid Category category) {
+    public Optional<CategoryDto> updateCategory(@RequestBody CategoryDto category) {
         return categoryService.updateCategoryByAdmin(category);
     }
 
