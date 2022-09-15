@@ -49,17 +49,15 @@ public class EventAdminController {
 
     @PatchMapping("/{eventId}/publish")
     @ResponseStatus(OK)
-    public Optional<EventFullDto> publishEvent(@PathVariable Long eventId,
-                                               @RequestBody @Valid Event newEvent) {
+    public Optional<EventFullDto> publishEvent(@PathVariable Long eventId) {
         log.info("Поступил запрос на публикацию события");
-        return eventService.publishEvent(eventId, newEvent);
+        return eventService.publishEvent(eventId);
     }
 
     @PatchMapping("/{eventId}/reject")
     @ResponseStatus(OK)
-    public Optional<EventFullDto> rejectEvent(@PathVariable Long eventId,
-                                              @RequestBody @Valid Event newEvent) {
+    public Optional<EventFullDto> rejectEvent(@PathVariable Long eventId) {
         log.info("Поступил запрос на отклонение публикации события");
-        return eventService.rejectEvent(eventId, newEvent);
+        return eventService.rejectEvent(eventId);
     }
 }

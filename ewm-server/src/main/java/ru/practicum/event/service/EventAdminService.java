@@ -55,18 +55,22 @@ public class EventAdminService implements EventServiceAdmin {
 
     @Transactional
     @Override
-    public Optional<EventFullDto> publishEvent(Long eventId, Event newEvent) {
+    public Optional<EventFullDto> publishEvent(Long eventId) {
         log.info("Получен запрос на публикацию события администратором");
-        validateEventForPublishing(eventId, newEvent);
-        return of(eventMapper.toEventFullDto(eventRepository.save(newEvent)));
+        Event event = eventMainService.getEventFromRepository(eventId);
+        validateEventForPublishing(event);
+        event.setPublishedOn(LocalDateTime.now());
+        return of(eventMapper.toEventFullDto(event));
     }
 
     @Transactional
     @Override
-    public Optional<EventFullDto> rejectEvent(Long eventId, Event newEvent) {
+    public Optional<EventFullDto> rejectEvent(Long eventId) {
         log.info("Получен запрос на отмену события администратором");
-        validateEventForRejecting(eventId);
-        return of(eventMapper.toEventFullDto(eventRepository.save(newEvent)));
+        Event event = eventMainService.getEventFromRepository(eventId);
+        validateEventForRejecting(event);
+        event.setState(State.CANCELED);
+        return of(eventMapper.toEventFullDto(event));
     }
 
     private Map<String, LocalDateTime> getAndValidateTimeRange(String rangeStart, String rangeEnd) {
@@ -85,10 +89,9 @@ public class EventAdminService implements EventServiceAdmin {
         return timeMap;
     }
 
-    private void validateEventForPublishing(Long eventId, Event newEvent) {
+    private void validateEventForPublishing(Event event) {
         log.info("Проверка события перед публикацией");
-        Event event = eventMainService.getEventFromRepository(eventId);
-        if (newEvent.getEventDate().isBefore(LocalDateTime.now().plusHours(1L))) {
+        if (event.getEventDate().isBefore(LocalDateTime.now().plusHours(1L))) {
             throw new ApiError(HttpStatus.BAD_REQUEST, "Поле eventDate указано неверно.",
                     String.format("Error: must be a date in the present or in the future (plus 1 hour). " +
                             "Value: %s", event.getEventDate().toString()));
@@ -99,9 +102,8 @@ public class EventAdminService implements EventServiceAdmin {
         }
     }
 
-    private void validateEventForRejecting(Long eventId) {
+    private void validateEventForRejecting(Event event) {
         log.info("Проверка события для отклонения");
-        Event event = eventMainService.getEventFromRepository(eventId);
         if (!event.getState().equals(State.PUBLISHED)) {
             throw new ApiError(HttpStatus.BAD_REQUEST, "У события неверный статус",
                     String.format("Error: событие должно иметь статус %s", State.PUBLISHED));

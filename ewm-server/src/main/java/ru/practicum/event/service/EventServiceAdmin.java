@@ -15,7 +15,7 @@ public interface EventServiceAdmin {
 
     Optional<EventShortDto> updateEvent(Long eventId, Event newEvent);
 
-    Optional<EventFullDto> publishEvent(Long eventId, Event newEvent);
+    Optional<EventFullDto> publishEvent(Long eventId);
 
-    Optional<EventFullDto> rejectEvent(Long eventId, Event newEvent);
+    Optional<EventFullDto> rejectEvent(Long eventId);
 }
