@@ -3,7 +3,7 @@ package ru.practicum.model.event.dto;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import lombok.*;
 import ru.practicum.model.event.State;
-import ru.practicum.model.event.mapper.EventDateDeserializer;
+import ru.practicum.model.event.EventDateDeserializer;
 
 import java.io.Serializable;
 import java.time.LocalDateTime;
