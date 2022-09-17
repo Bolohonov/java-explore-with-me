@@ -20,17 +20,17 @@ public class EndpointHit {
 
     @NotNull
     @Column(name = "app", nullable = false)
-    String app;
+    private String app;
 
     @NotNull
     @Column(name = "uri", nullable = false)
-    String uri;
+    private String uri;
 
     @NotNull
     @Column(name = "ip", nullable = false)
-    String ip;
+    private String ip;
 
     @NotNull
     @Column(name = "timestamp", nullable = false)
-    String timestamp;
+    private String timestamp;
 }

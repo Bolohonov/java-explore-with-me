@@ -35,8 +35,4 @@ public class ApiError extends RuntimeException {
         this.reason = reason;
         this.subErrors = subErrors;
     }
-
-    public static List<ApiError> getErrorsList() {
-        return new ArrayList<>();
-    }
 }
