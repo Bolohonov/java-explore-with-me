@@ -6,5 +6,8 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import ru.practicum.model.compilation.Compilation;
 
 public interface CompilationRepository extends JpaRepository<Compilation, Long> {
+    /**
+     * Найти подборки прикрепленные к главной странице
+     */
     Page<Compilation> findCompilationsByPinned(Boolean pinned, Pageable pageable);
 }

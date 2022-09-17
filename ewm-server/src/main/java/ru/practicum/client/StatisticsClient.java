@@ -13,6 +13,9 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Locale;
 
+/**
+ * клиент для отправки запросов на ewm-statistics
+ */
 @Service
 public class StatisticsClient extends BaseClient {
     private static final String API_PREFIX = "/hit";
