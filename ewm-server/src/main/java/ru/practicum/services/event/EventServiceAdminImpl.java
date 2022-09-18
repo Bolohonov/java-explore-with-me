@@ -25,7 +25,7 @@ import static java.util.Optional.of;
 public class EventServiceAdminImpl implements EventServiceAdmin {
     private final EventRepository eventRepository;
     private final EventMapper eventMapper;
-    private final EventMainService eventMainService;
+    private final EventServiceImpl eventService;
 
     @Transactional
     @Override
@@ -33,9 +33,9 @@ public class EventServiceAdminImpl implements EventServiceAdmin {
                                                String rangeStart, String rangeEnd, Integer from, Integer size) {
         log.info("Получен запрос на вывод списка событий администратором");
         Collection<Event> events = eventRepository.getEventsByAdmin(
-                eventMainService.getAndValidateParams(Long.class, users),
-                eventMainService.getAndValidateParams(String.class, states),
-                eventMainService.getAndValidateParams(Long.class, categories),
+                eventService.getSetOfParams(users),
+                eventService.getSetOfParams(states),
+                eventService.getSetOfParams(categories),
                 getAndValidateTimeRange(rangeStart, rangeEnd),
                 from,
                 size
@@ -47,7 +47,7 @@ public class EventServiceAdminImpl implements EventServiceAdmin {
     @Override
     public Optional<EventShortDto> updateEvent(Long eventId, Event newEvent) {
         log.info("Получен запрос на обновление списка событий администратором");
-        eventMainService.getEventFromRepository(eventId);
+        eventService.getEventFromRepository(eventId);
         newEvent.setId(eventId);
         return of(eventMapper.toEventShortDto(eventRepository.save(newEvent)));
     }
@@ -56,7 +56,7 @@ public class EventServiceAdminImpl implements EventServiceAdmin {
     @Override
     public Optional<EventFullDto> publishEvent(Long eventId) {
         log.info("Получен запрос на публикацию события администратором");
-        Event event = eventMainService.getEventFromRepository(eventId);
+        Event event = eventService.getEventFromRepository(eventId);
         validateEventForPublishing(event);
         event.setPublishedOn(LocalDateTime.now());
         event.setState(State.PUBLISHED);
@@ -67,7 +67,7 @@ public class EventServiceAdminImpl implements EventServiceAdmin {
     @Override
     public Optional<EventFullDto> rejectEvent(Long eventId) {
         log.info("Получен запрос на отмену события администратором");
-        Event event = eventMainService.getEventFromRepository(eventId);
+        Event event = eventService.getEventFromRepository(eventId);
         validateEventForRejecting(event);
         event.setState(State.CANCELED);
         return of(eventMapper.toEventFullDto(event));

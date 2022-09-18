@@ -1,4 +1,4 @@
-package ru.practicum.client.dto;
+package ru.practicum.services.client.dto;
 
 import lombok.*;
 

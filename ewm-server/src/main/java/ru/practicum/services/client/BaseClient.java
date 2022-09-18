@@ -1,4 +1,4 @@
-package ru.practicum.client;
+package ru.practicum.services.client;
 
 
 import java.util.List;

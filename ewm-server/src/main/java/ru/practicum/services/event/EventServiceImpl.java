@@ -13,10 +13,10 @@ import java.util.*;
 @Service
 @RequiredArgsConstructor
 @Slf4j
-public class EventMainService {
+public class EventServiceImpl implements EventService {
     private final EventRepository eventRepository;
 
-    Event getEventFromRepository(Long eventId) {
+    public Event getEventFromRepository(Long eventId) {
         log.info("Получить событие с id {} из репозитория", eventId);
         return eventRepository.findById(eventId).orElseThrow(() -> {
             throw new ApiError(HttpStatus.NOT_FOUND, "Событие не найдено",
@@ -25,7 +25,7 @@ public class EventMainService {
         });
     }
 
-    <T> Set<T> getAndValidateParams(Class<T> type, List<T> list) {
+    public <T> Set<T> getSetOfParams(List<T> list) {
         Set<T> set = new HashSet<>();
         if (list != null) {
             set.addAll(list);

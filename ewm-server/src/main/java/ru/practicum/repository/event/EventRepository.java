@@ -6,5 +6,8 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import ru.practicum.model.event.Event;
 
 public interface EventRepository extends JpaRepository<Event, Long>, EventRepositoryCustom {
+    /**
+     * Получить список событий по id инициатора
+     */
     Page<Event> findEventsByInitiatorId(Long initiatorId, Pageable pageable);
 }

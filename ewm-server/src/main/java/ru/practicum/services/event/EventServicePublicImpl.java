@@ -24,7 +24,7 @@ import static java.util.Optional.of;
 public class EventServicePublicImpl implements EventServicePublic {
     private final EventRepository eventRepository;
     private final EventMapper eventMapper;
-    private final EventMainService eventMainService;
+    private final EventServiceImpl eventService;
 
     @Transactional(readOnly = true)
     @Override
@@ -33,7 +33,7 @@ public class EventServicePublicImpl implements EventServicePublic {
                                                Integer from, Integer size) {
         log.info("Получен запрос на вывод списка событий");
         Collection<Event> events = eventRepository.getEvents(text,
-                eventMainService.getAndValidateParams(Long.class, categories), paid,
+                eventService.getSetOfParams(categories), paid,
                 getAndValidateTimeRangeWithDefault(rangeStart, rangeEnd),
                 onlyAvailable,
                 getSortString(sort), from, size);
@@ -45,7 +45,7 @@ public class EventServicePublicImpl implements EventServicePublic {
     @Override
     public Optional<EventFullDto> getPublishedEventById(Long eventId) {
         log.info("Получен запрос на вывод списка опубликованных событий");
-        Event event = eventMainService.getEventFromRepository(eventId);
+        Event event = eventService.getEventFromRepository(eventId);
         if (event.getPublishedOn() == null) {
             throw new ApiError(HttpStatus.NOT_FOUND, "Событие не найдено",
                     String.format("При выполнении %s не найдено событие c id %s",

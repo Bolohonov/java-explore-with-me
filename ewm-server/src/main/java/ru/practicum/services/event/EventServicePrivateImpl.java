@@ -32,14 +32,14 @@ import static java.util.Optional.of;
 public class EventServicePrivateImpl implements EventServicePrivate {
     private final EventRepository eventRepository;
     private final EventMapper eventMapper;
-    private final EventMainService eventMainService;
+    private final EventServiceImpl eventServiceImpl;
     private final UserService userService;
 
     @Transactional(readOnly = true)
     @Override
     public Optional<EventFullDto> getEventById(Long eventId) {
         log.info("Получен запрос на поиск события");
-        Event event = eventMainService.getEventFromRepository(eventId);
+        Event event = eventServiceImpl.getEventFromRepository(eventId);
         return of(eventMapper.toEventFullDto(event));
     }
 
@@ -59,7 +59,7 @@ public class EventServicePrivateImpl implements EventServicePrivate {
     @Override
     public Optional<EventFullDto> updateEventByInitiator(Long userId, EventShortDto event) {
         log.info("Получен запрос в сервис на обновление события инициатором");
-        Event oldEvent = eventMainService.getEventFromRepository(event.getId());
+        Event oldEvent = eventServiceImpl.getEventFromRepository(event.getId());
         validateEventBeforeUpdateByInitiator(userId, event);
         return of(updateEventInRepository(oldEvent, event));
     }
@@ -80,7 +80,7 @@ public class EventServicePrivateImpl implements EventServicePrivate {
     @Override
     public Optional<EventShortDto> changeEventStateToCanceled(Long userId, Long eventId) {
         log.info("Получен запрос на отмену события");
-        Event event = eventMainService.getEventFromRepository(eventId);
+        Event event = eventServiceImpl.getEventFromRepository(eventId);
         if (!event.getState().equals(State.PENDING)) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
         }

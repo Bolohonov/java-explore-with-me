@@ -8,13 +8,28 @@ import java.util.Collection;
 import java.util.Optional;
 
 public interface EventServicePrivate {
+    /**
+     * Получить событие по id
+     */
     Optional<EventFullDto> getEventById(Long eventId);
 
+    /**
+     * Получить список событий по id инициатора
+     */
     Collection<EventShortDto> findEventsByInitiator(Long userId, Integer from, Integer size);
 
+    /**
+     * Инициатор обновляет событие
+     */
     Optional<EventFullDto> updateEventByInitiator(Long userId, EventShortDto event);
 
+    /**
+     * Добавить событие
+     */
     Optional<EventFullDto> addEvent(Long userId, EventAddDto event);
 
+    /**
+     * Отменить событие - статус Canceled
+     */
     Optional<EventShortDto> changeEventStateToCanceled(Long userId, Long eventId);
 }

@@ -3,7 +3,7 @@ package ru.practicum.controllers.event;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
-import ru.practicum.client.StatisticsClient;
+import ru.practicum.services.client.StatisticsClient;
 import ru.practicum.model.event.dto.EventFullDto;
 import ru.practicum.model.event.dto.EventShortDto;
 import ru.practicum.services.event.EventServicePublic;
