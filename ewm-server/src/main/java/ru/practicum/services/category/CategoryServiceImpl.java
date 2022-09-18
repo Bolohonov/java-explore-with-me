@@ -2,7 +2,6 @@ package ru.practicum.services.category;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.dao.DuplicateKeyException;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -15,7 +14,6 @@ import ru.practicum.repository.category.CategoryRepository;
 import ru.practicum.errors.ApiError;
 import ru.practicum.services.event.EventServiceAdmin;
 
-import java.sql.SQLDataException;
 import java.util.*;
 
 import static java.util.Optional.of;
