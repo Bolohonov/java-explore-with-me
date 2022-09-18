@@ -20,7 +20,7 @@ public interface RequestRepository extends JpaRepository<Request, Long> {
     /**
      * Получить список запросов по id пользователя requesterId и id события eventId
      */
-    Request getRequestByRequesterAndEvent(Long requesterId, Long EventId);
+    Request getRequestByRequesterAndEvent(Long requesterId, Long eventId);
 
     /**
      * Получить список запросов по id события eventId и статусу status
