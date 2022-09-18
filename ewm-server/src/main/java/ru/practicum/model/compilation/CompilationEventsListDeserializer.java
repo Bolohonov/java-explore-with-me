@@ -1,6 +1,5 @@
 package ru.practicum.model.compilation;
 
-import com.fasterxml.jackson.core.JacksonException;
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.databind.DeserializationContext;
 import com.fasterxml.jackson.databind.JsonDeserializer;
@@ -16,8 +15,7 @@ import java.util.List;
 @JsonComponent
 public class CompilationEventsListDeserializer extends JsonDeserializer<List<Long>> {
     @Override
-    public List<Long> deserialize(JsonParser jp, DeserializationContext deserializationContext) throws IOException, JacksonException {
-        log.info("Deserialization of CompilationEventsList");
+    public List<Long> deserialize(JsonParser jp, DeserializationContext deserializationContext) throws IOException {
         JsonNode node = jp.getCodec().readTree(jp);
         String str = node.asText();
         System.out.println(str);

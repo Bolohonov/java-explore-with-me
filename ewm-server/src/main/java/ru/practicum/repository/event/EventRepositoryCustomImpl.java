@@ -128,7 +128,6 @@ public class EventRepositoryCustomImpl implements EventRepositoryCustom {
                                                       CriteriaQuery<Event> select,
                                                       Integer from,
                                                       Integer size) {
-        Collection<Event> resultList;
         int pageNumber = from % size;
         TypedQuery<Event> typedQuery = entityManager.createQuery(select);
         while (pageNumber < getCount(cb, Event.class).intValue()) {
@@ -137,7 +136,6 @@ public class EventRepositoryCustomImpl implements EventRepositoryCustom {
             typedQuery.getResultList();
             pageNumber += size;
         }
-        resultList = typedQuery.getResultList();
-        return resultList;
+        return typedQuery.getResultList();
     }
 }
