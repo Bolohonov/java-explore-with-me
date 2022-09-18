@@ -15,6 +15,7 @@ import ru.practicum.repository.category.CategoryRepository;
 import ru.practicum.errors.ApiError;
 import ru.practicum.services.event.EventServiceAdmin;
 
+import java.sql.SQLDataException;
 import java.util.*;
 
 import static java.util.Optional.of;
@@ -48,7 +49,6 @@ public class CategoryServiceImpl implements CategoryService {
         log.info("Получен запрос на обновление категории");
         validateCategoryForUpdate(newCategory);
         Category category = getCategoryFromRepository(newCategory.getId());
-        validateName(newCategory.getId(), newCategory.getName());
         category.setName(newCategory.getName());
         return of(CategoryMapper.toCategoryDto(category));
     }
@@ -57,11 +57,7 @@ public class CategoryServiceImpl implements CategoryService {
     @Override
     public Optional<CategoryDto> addCategoryByAdmin(Category newCategory) {
         log.info("Получен запрос на добавление категории");
-        try {
-            categoryRepository.save(newCategory);
-        } catch (DuplicateKeyException e) {
-            new ResponseStatusException(HttpStatus.BAD_REQUEST);
-        }
+        categoryRepository.save(newCategory);
         return of(CategoryMapper.toCategoryDto(newCategory));
     }
 
@@ -76,14 +72,6 @@ public class CategoryServiceImpl implements CategoryService {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
         }
         categoryRepository.delete(categoryToDelete);
-    }
-
-    private void validateName(Long id, String newName) {
-        if (categoryRepository.findAllByName(newName) != null
-                && !categoryRepository.findAllByName(newName).getId().equals(id)) {
-            new ApiError(HttpStatus.BAD_REQUEST, "Ошибка обновления названия категории",
-                    String.format("Название %s уже существует", newName));
-        }
     }
 
     private Integer getPageNumber(Integer from, Integer size) {
@@ -107,7 +95,6 @@ public class CategoryServiceImpl implements CategoryService {
                     String.format("Во время обновления категории произошли ошибки:"
                     ));
         }
-
     }
 
     private Category getCategoryFromRepository(Long catId) {

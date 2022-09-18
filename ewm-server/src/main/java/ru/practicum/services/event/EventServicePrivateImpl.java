@@ -156,7 +156,7 @@ public class EventServicePrivateImpl implements EventServicePrivate {
     private void setNewEventState(EventAddDto event) {
         log.info("Проверка и установка статуса события");
         if (event.getRequestModeration().equals(Boolean.FALSE)
-                || event.getParticipantLimit() == null || event.getParticipantLimit().equals(0L)) {
+                || event.getParticipantLimit() == null || event.getParticipantLimit() == 0L) {
             event.setPublishedOn(LocalDateTime.now());
             event.setState(State.PUBLISHED);
         } else {
