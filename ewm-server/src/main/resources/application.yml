@@ -11,9 +11,9 @@ server:
 spring:
     datasource:
         driverClassName: org.postgresql.Driver
-        password: password
-        url: jdbc:postgresql://localhost:5432/postgres
-        username: postgres
+        password: ${POSTGRES_PASSWORD}
+        url: ${SERVER_DB_URL}
+        username: ${POSTGRES_USER}
     jpa:
         hibernate:
             ddl-auto: none
@@ -22,4 +22,4 @@ spring:
                 dialect: org.hibernate.dialect.PostgreSQLDialect
                 format_sql: true
 statistics:
-    url: http://ewm-statistics:9090
+    url: ${STATS_URL}
