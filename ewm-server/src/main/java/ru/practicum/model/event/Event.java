@@ -1,5 +1,6 @@
 package ru.practicum.model.event;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import lombok.*;
 
@@ -42,6 +43,7 @@ public class Event {
      * Дата и время создания события
      */
     @Column(name = "created_on")
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime createdOn;
     /**
      * Полное описание события
@@ -73,6 +75,7 @@ public class Event {
      * Дата и время публикации события
      */
     @Column(name = "published_on")
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime publishedOn;
     /**
      * Нужна ли пре-модерация заявок на участие
