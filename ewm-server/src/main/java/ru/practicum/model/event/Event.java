@@ -104,6 +104,28 @@ public class Event {
     @Column(name = "loc_lon")
     private Double locLon;
 
+    public Event(String title, String annotation, Long category, Long confirmedRequests,
+                 LocalDateTime createdOn, String description, LocalDateTime eventDate, Long initiatorId,
+                 Boolean paid, Integer participantLimit, LocalDateTime publishedOn, Boolean requestModeration,
+                 State state, Long views, Double locLat, Double locLon) {
+        this.title = title;
+        this.annotation = annotation;
+        this.category = category;
+        this.confirmedRequests = confirmedRequests;
+        this.createdOn = createdOn;
+        this.description = description;
+        this.eventDate = eventDate;
+        this.initiatorId = initiatorId;
+        this.paid = paid;
+        this.participantLimit = participantLimit;
+        this.publishedOn = publishedOn;
+        this.requestModeration = requestModeration;
+        this.state = state;
+        this.views = views;
+        this.locLat = locLat;
+        this.locLon = locLon;
+    }
+
     public void addView() {
         if (views != null) {
             ++views;

@@ -70,9 +70,8 @@ public class EventServicePrivateImpl implements EventServicePrivate {
         log.info("Получен запрос в сервис на добавление события");
         validateUserActivation(userId);
         validateEventDate(event);
-        setNewEventState(event);
-        Event newEvent = eventMapper.fromEventAddDto(event);
-        setDefaultFields(userId, newEvent);
+        Event newEvent = eventMapper.fromEventAddDto(event, userId);
+        setNewEventState(newEvent);
         return of(eventMapper.toEventFullDto(eventRepository.save(newEvent)));
     }
 
@@ -137,9 +136,9 @@ public class EventServicePrivateImpl implements EventServicePrivate {
 
     private EventFullDto updateEventInRepository(Event oldEvent, EventShortDto event) {
         log.info("Обновить событие в репозитории");
-        oldEvent = eventMapper.fromEventShortDto(event, oldEvent.getConfirmedRequests(),
-                oldEvent.getCreatedOn(), oldEvent.getInitiatorId(), oldEvent.getPublishedOn(),
-                oldEvent.getState(), oldEvent.getViews(), oldEvent.getLocLat(), oldEvent.getLocLon());
+        oldEvent = eventMapper.fromEventShortDto(event, oldEvent.getDescription(),
+                oldEvent.getCreatedOn(), oldEvent.getParticipantLimit(), oldEvent.getRequestModeration(),
+                oldEvent.getPublishedOn(), oldEvent.getState(), oldEvent.getLocLat(), oldEvent.getLocLon());
         return eventMapper.toEventFullDto(oldEvent);
     }
 
@@ -153,7 +152,7 @@ public class EventServicePrivateImpl implements EventServicePrivate {
         }
     }
 
-    private void setNewEventState(EventAddDto event) {
+    private void setNewEventState(Event event) {
         log.info("Проверка и установка статуса события");
         if (event.getRequestModeration().equals(Boolean.FALSE)
                 || event.getParticipantLimit() == null || event.getParticipantLimit() == 0L) {
@@ -161,15 +160,6 @@ public class EventServicePrivateImpl implements EventServicePrivate {
             event.setState(State.PUBLISHED);
         } else {
             event.setState(State.PENDING);
-        }
-    }
-
-    private void setDefaultFields(Long userId, Event event) {
-        log.info("Установка полей события по умолчанию");
-        event.setInitiatorId(userId);
-        event.setCreatedOn(LocalDateTime.now());
-        if (event.getParticipantLimit() == null) {
-            event.setParticipantLimit(0);
         }
     }
 }

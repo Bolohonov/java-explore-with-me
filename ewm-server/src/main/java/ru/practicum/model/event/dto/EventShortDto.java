@@ -26,26 +26,26 @@ public class EventShortDto {
      */
     private CategoryDto category;
     /**
-     * Описание события
+     * Количество одобренных заявок на участие в данном событии
      */
-    private String description;
+    private Long confirmedRequests;
     /**
      * Дата и время на которые намечено событие
      */
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss", locale = "en_GB")
     private LocalDateTime eventDate;
     /**
+     * Инициатор события
+     */
+    private EventShortDto.UserShortDto initiator;
+    /**
      * Нужно ли оплачивать участие
      */
     private Boolean paid;
     /**
-     * Ограничение на количество участников. Значение 0 - означает отсутствие ограничения
+     * Количество просмотрев события
      */
-    private Integer participantLimit;
-    /**
-     * Нужна ли пре-модерация заявок на участие
-     */
-    private Boolean requestModeration;
+    private Long views;
 
     @AllArgsConstructor
     @ToString

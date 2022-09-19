@@ -5,6 +5,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
+import ru.practicum.model.compilation.dto.CompilationAddDto;
 import ru.practicum.services.compilation.CompilationService;
 import ru.practicum.model.compilation.dto.CompilationDto;
 
@@ -24,8 +25,8 @@ public class CompilationAdminController {
 
     @PostMapping
     @ResponseStatus(OK)
-    public Optional<CompilationDto> addNewCompilation(
-            @RequestBody @Valid CompilationDto compilation) {
+    public Optional<CompilationAddDto> addNewCompilation(
+            @RequestBody @Valid CompilationAddDto compilation) {
         log.info("Пришел запрос на добавление новой подборки");
         return compilationService.addCompilation(compilation);
     }

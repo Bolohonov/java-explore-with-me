@@ -60,33 +60,34 @@ public class EventMapper {
                 event.getAnnotation(),
                 new EventShortDto.CategoryDto(event.getCategory(),
                         categoryRepository.findById(event.getCategory()).get().getName()),
-                event.getDescription(),
+                event.getConfirmedRequests(),
                 event.getEventDate(),
+                new EventShortDto.UserShortDto(event.getInitiatorId(),
+                        userService.getUserById(event.getInitiatorId()).get().getName()),
                 event.getPaid(),
-                event.getParticipantLimit(),
-                event.getRequestModeration()
+                event.getViews()
         );
     }
 
-    public Event fromEventShortDto(EventShortDto event, Long confirmedRequests, LocalDateTime createdOn,
-                                   Long initiatorId, LocalDateTime publishedOn, State state, Long views,
-                                   Double locLat, Double locLon) {
+    public Event fromEventShortDto(EventShortDto event, String description, LocalDateTime createdOn,
+                                   Integer participantLimit, Boolean requestModeration, LocalDateTime publishedOn,
+                                   State state, Double locLat, Double locLon) {
         return new Event(
                 event.getId(),
                 event.getTitle(),
                 event.getAnnotation(),
                 event.getCategory().getId(),
-                confirmedRequests,
+                event.getConfirmedRequests(),
                 createdOn,
-                event.getDescription(),
+                description,
                 event.getEventDate(),
-                initiatorId,
+                event.getInitiator().getId(),
                 event.getPaid(),
-                event.getParticipantLimit(),
+                participantLimit,
                 publishedOn,
-                event.getRequestModeration(),
+                requestModeration,
                 state,
-                views,
+                event.getViews(),
                 locLat,
                 locLon
         );
@@ -98,28 +99,27 @@ public class EventMapper {
                 .collect(Collectors.toList());
     }
 
-    public Event fromEventAddDto(EventAddDto event) throws ApiError {
+    public Event fromEventAddDto(EventAddDto event, Long userId) throws ApiError {
         log.info("Получено событие для конвертации");
         if (event.getLocation() == null) {
             throw new ApiError(HttpStatus.BAD_REQUEST,
                     "Ошибка создания события", "Вы не указали локацию");
         }
         return new Event(
-                event.getId(),
                 event.getTitle(),
                 event.getAnnotation(),
                 event.getCategory(),
-                event.getConfirmedRequests(),
-                event.getCreatedOn(),
+                0L,
+                LocalDateTime.now(),
                 event.getDescription(),
                 event.getEventDate(),
-                event.getInitiator(),
+                userId,
                 event.getPaid(),
-                event.getParticipantLimit(),
-                event.getPublishedOn(),
+                event.getParticipantLimit() != null ? event.getParticipantLimit() : 0,
+                null,
                 event.getRequestModeration(),
-                event.getState(),
-                event.getViews(),
+                State.PENDING,
+                0L,
                 event.getLocation().getLat(),
                 event.getLocation().getLon()
         );

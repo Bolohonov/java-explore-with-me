@@ -38,4 +38,10 @@ public class Compilation {
             joinColumns = @JoinColumn(name = "compilation_id"),
             inverseJoinColumns = @JoinColumn(name = "event_id"))
     private Set<Event> events;
+
+    public Compilation(String title, Boolean pinned, Set<Event> events) {
+        this.title = title;
+        this.pinned = pinned;
+        this.events = events;
+    }
 }

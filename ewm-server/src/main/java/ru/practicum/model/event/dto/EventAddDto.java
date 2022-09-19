@@ -3,7 +3,6 @@ package ru.practicum.model.event.dto;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import lombok.*;
-import ru.practicum.model.event.State;
 import ru.practicum.model.event.EventDateDeserializer;
 
 import java.io.Serializable;
@@ -12,10 +11,6 @@ import java.time.LocalDateTime;
 @Data
 @AllArgsConstructor
 public class EventAddDto {
-    /**
-     * уникальный идентификатор
-     */
-    private Long id;
     /**
      * Заголовок события
      */
@@ -29,15 +24,6 @@ public class EventAddDto {
      */
     private Long category;
     /**
-     * Количество одобренных заявок на участие в данном событии
-     */
-    private Long confirmedRequests;
-    /**
-     * Дата и время создания события
-     */
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
-    private LocalDateTime createdOn;
-    /**
      * Полное описание события
      */
     private String description;
@@ -48,10 +34,6 @@ public class EventAddDto {
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime eventDate;
     /**
-     * Инициатор события
-     */
-    private Long initiator;
-    /**
      * Нужно ли оплачивать участие
      */
     private Boolean paid;
@@ -60,22 +42,9 @@ public class EventAddDto {
      */
     private Integer participantLimit;
     /**
-     * Дата и время публикации события
-     */
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
-    private LocalDateTime publishedOn;
-    /**
      * Нужна ли пре-модерация заявок на участие
      */
     private Boolean requestModeration;
-    /**
-     * Список состояний жизненного цикла события
-     */
-    private State state;
-    /**
-     * Количество просмотрев события
-     */
-    private Long views;
     /**
      * Локация
      */

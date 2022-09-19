@@ -1,18 +1,14 @@
 package ru.practicum.model.compilation.dto;
 
-import lombok.*;
-import ru.practicum.model.event.Event;
+import lombok.AllArgsConstructor;
+import lombok.Data;
 
 import javax.validation.constraints.NotBlank;
-import java.util.Set;
+import java.util.Collection;
 
 @Data
 @AllArgsConstructor
-public class CompilationDto {
-    /**
-     * уникальный идентификатор
-     */
-    private Long id;
+public class CompilationAddDto {
     /**
      * Заголовок события
      */
@@ -23,7 +19,7 @@ public class CompilationDto {
      */
     private Boolean pinned;
     /**
-     * Список событий, входящих в подборку
+     * Список идентифкаторов событий, входящих в подборку
      */
-    private Set<Event> events;
+    private Collection<Long> events;
 }

@@ -1,5 +1,6 @@
 package ru.practicum.services.compilation;
 
+import ru.practicum.model.compilation.dto.CompilationAddDto;
 import ru.practicum.model.compilation.dto.CompilationDto;
 
 import java.util.Collection;
@@ -20,7 +21,7 @@ public interface CompilationService {
     /**
      * Добавить подборку
      */
-    Optional<CompilationDto> addCompilation(CompilationDto compilation);
+    Optional<CompilationDto> addCompilation(CompilationAddDto compilation);
 
     /**
      * Удалить подборку
