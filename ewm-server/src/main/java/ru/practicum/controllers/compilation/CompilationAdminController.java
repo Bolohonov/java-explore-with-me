@@ -25,7 +25,7 @@ public class CompilationAdminController {
 
     @PostMapping
     @ResponseStatus(OK)
-    public Optional<CompilationAddDto> addNewCompilation(
+    public Optional<CompilationDto> addNewCompilation(
             @RequestBody @Valid CompilationAddDto compilation) {
         log.info("Пришел запрос на добавление новой подборки");
         return compilationService.addCompilation(compilation);

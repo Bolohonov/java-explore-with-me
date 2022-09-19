@@ -54,7 +54,7 @@ public class CompilationServiceImpl implements CompilationService {
         log.info("Получен запрос в сервис на добавление подборки");
         return of(compilationMapper.toCompilationDto(compilationRepository
                 .save(compilationMapper
-                        .fromCompilationDto(compilation))));
+                        .fromCompilationAddDto(compilation))));
     }
 
     @Transactional
