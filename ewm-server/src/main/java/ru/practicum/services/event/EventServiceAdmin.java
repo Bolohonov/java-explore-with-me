@@ -1,6 +1,7 @@
 package ru.practicum.services.event;
 
 import ru.practicum.model.event.Event;
+import ru.practicum.model.event.dto.EventAddDto;
 import ru.practicum.model.event.dto.EventFullDto;
 import ru.practicum.model.event.dto.EventShortDto;
 
@@ -23,7 +24,7 @@ public interface EventServiceAdmin {
     /**
      * Обновить событие
      */
-    Optional<EventShortDto> updateEvent(Long eventId, Event newEvent);
+    Optional<EventShortDto> updateEvent(Long eventId, EventAddDto newEvent);
 
     /**
      * Опубликовать событие

@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 import ru.practicum.model.event.Event;
+import ru.practicum.model.event.dto.EventAddDto;
 import ru.practicum.model.event.dto.EventFullDto;
 import ru.practicum.model.event.dto.EventShortDto;
 import ru.practicum.services.event.EventServiceAdmin;
@@ -40,8 +41,9 @@ public class EventAdminController {
     @PutMapping("/{eventId}")
     @ResponseStatus(OK)
     public Optional<EventShortDto> updateEvent(@PathVariable Long eventId,
-                                               @RequestBody Event event) {
+                                               @RequestBody EventAddDto event) {
         log.info("Поступил запрос на обновление события администратором");
+        System.out.println(event); //TODO
         return eventService.updateEvent(eventId, event);
     }
 

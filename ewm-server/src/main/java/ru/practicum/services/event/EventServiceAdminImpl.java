@@ -8,6 +8,7 @@ import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.errors.ApiError;
 import ru.practicum.model.event.Event;
 import ru.practicum.model.event.State;
+import ru.practicum.model.event.dto.EventAddDto;
 import ru.practicum.model.event.dto.EventFullDto;
 import ru.practicum.mappers.event.EventMapper;
 import ru.practicum.model.event.dto.EventShortDto;
@@ -45,10 +46,13 @@ public class EventServiceAdminImpl implements EventServiceAdmin {
 
     @Transactional
     @Override
-    public Optional<EventShortDto> updateEvent(Long eventId, Event newEvent) {
-        log.info("Получен запрос на обновление списка событий администратором");
-        eventService.getEventFromRepository(eventId);
-        newEvent.setId(eventId);
+    public Optional<EventShortDto> updateEvent(Long eventId, EventAddDto newEventDto) {
+        log.info("Получен запрос на обновление события администратором");
+        Event oldEvent = eventService.getEventFromRepository(eventId);
+        Event newEvent = eventMapper.fromEventAddDtoToUpdate(newEventDto, oldEvent.getConfirmedRequests(),
+                oldEvent.getCreatedOn(), oldEvent.getInitiatorId(), oldEvent.getPublishedOn(),
+                oldEvent.getState(), oldEvent.getViews());
+        newEvent.setId(oldEvent.getId());
         return of(eventMapper.toEventShortDto(eventRepository.save(newEvent)));
     }
 

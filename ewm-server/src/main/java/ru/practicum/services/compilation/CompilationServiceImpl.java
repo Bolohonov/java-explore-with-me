@@ -61,12 +61,7 @@ public class CompilationServiceImpl implements CompilationService {
     @Override
     public void deleteCompilation(Long compilationId) {
         log.info("Получен запрос в сервис на удаление подборки");
-        if (getById(compilationId).getEvents().isEmpty()) {
-            compilationRepository.delete(getById(compilationId));
-        } else {
-            throw new ApiError(HttpStatus.BAD_REQUEST, "При удалении подборки",
-                    "Подборка содержит события");
-        }
+        compilationRepository.delete(getById(compilationId));
     }
 
     @Transactional

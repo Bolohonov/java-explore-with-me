@@ -124,4 +124,28 @@ public class EventMapper {
                 event.getLocation().getLon()
         );
     }
+
+    public Event fromEventAddDtoToUpdate(EventAddDto event, Long confirmedRequests,
+                                         LocalDateTime createdOn, Long initiatorId,
+                                         LocalDateTime publishedOn, State state, Long views) throws ApiError {
+        log.info("Получено событие для конвертации");
+        return new Event(
+                event.getTitle(),
+                event.getAnnotation(),
+                event.getCategory(),
+                confirmedRequests,
+                createdOn,
+                event.getDescription(),
+                event.getEventDate(),
+                initiatorId,
+                event.getPaid(),
+                event.getParticipantLimit() != null ? event.getParticipantLimit() : 0,
+                publishedOn,
+                event.getRequestModeration(),
+                state,
+                views,
+                event.getLocation().getLat(),
+                event.getLocation().getLon()
+        );
+    }
 }
