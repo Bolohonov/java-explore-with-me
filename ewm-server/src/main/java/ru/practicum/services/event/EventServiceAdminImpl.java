@@ -10,7 +10,7 @@ import ru.practicum.model.event.Event;
 import ru.practicum.model.event.State;
 import ru.practicum.model.event.dto.EventAddDto;
 import ru.practicum.model.event.dto.EventFullDto;
-import ru.practicum.model.event.mappers.event.EventMapper;
+import ru.practicum.mappers.event.EventMapper;
 import ru.practicum.repository.event.EventRepository;
 
 import java.time.LocalDateTime;

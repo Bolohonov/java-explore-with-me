@@ -1,4 +1,4 @@
-package ru.practicum.model.event.mappers.request;
+package ru.practicum.mappers.request;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;

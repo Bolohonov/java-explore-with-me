@@ -12,7 +12,7 @@ import ru.practicum.services.event.EventServicePrivate;
 import ru.practicum.model.request.Request;
 import ru.practicum.model.request.Status;
 import ru.practicum.model.request.dto.RequestDto;
-import ru.practicum.model.event.mappers.request.RequestMapper;
+import ru.practicum.mappers.request.RequestMapper;
 import ru.practicum.repository.request.RequestRepository;
 
 import java.time.LocalDateTime;

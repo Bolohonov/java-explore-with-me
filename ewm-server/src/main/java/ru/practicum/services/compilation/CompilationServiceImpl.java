@@ -10,7 +10,7 @@ import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.model.compilation.Compilation;
 import ru.practicum.model.compilation.dto.CompilationAddDto;
 import ru.practicum.model.compilation.dto.CompilationDto;
-import ru.practicum.model.event.mappers.compilation.CompilationMapper;
+import ru.practicum.mappers.compilation.CompilationMapper;
 import ru.practicum.repository.compilation.CompilationRepository;
 import ru.practicum.errors.ApiError;
 import ru.practicum.repository.event.EventRepository;

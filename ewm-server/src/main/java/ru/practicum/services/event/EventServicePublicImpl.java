@@ -8,7 +8,7 @@ import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.errors.ApiError;
 import ru.practicum.model.event.Event;
 import ru.practicum.model.event.dto.EventFullDto;
-import ru.practicum.model.event.mappers.event.EventMapper;
+import ru.practicum.mappers.event.EventMapper;
 import ru.practicum.model.event.dto.EventShortDto;
 import ru.practicum.repository.event.EventRepository;
 

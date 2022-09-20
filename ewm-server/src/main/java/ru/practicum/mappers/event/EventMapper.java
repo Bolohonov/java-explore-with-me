@@ -1,4 +1,4 @@
-package ru.practicum.model.event.mappers.event;
+package ru.practicum.mappers.event;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -67,30 +67,6 @@ public class EventMapper {
                         userService.getUserById(event.getInitiatorId()).get().getName()),
                 event.getPaid(),
                 event.getViews()
-        );
-    }
-
-    public Event fromEventShortDto(EventShortDto event, String description, LocalDateTime createdOn,
-                                   Integer participantLimit, Boolean requestModeration, LocalDateTime publishedOn,
-                                   State state, Double locLat, Double locLon) {
-        return new Event(
-                event.getId(),
-                event.getTitle(),
-                event.getAnnotation(),
-                event.getCategory().getId(),
-                event.getConfirmedRequests(),
-                createdOn,
-                description,
-                event.getEventDate(),
-                event.getInitiator().getId(),
-                event.getPaid(),
-                participantLimit,
-                publishedOn,
-                requestModeration,
-                state,
-                event.getViews(),
-                locLat,
-                locLon
         );
     }
 

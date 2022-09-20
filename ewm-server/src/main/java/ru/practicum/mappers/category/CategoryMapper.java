@@ -1,4 +1,4 @@
-package ru.practicum.model.event.mappers.category;
+package ru.practicum.mappers.category;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;

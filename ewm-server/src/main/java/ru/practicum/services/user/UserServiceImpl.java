@@ -10,7 +10,7 @@ import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.errors.ApiError;
 import ru.practicum.model.user.User;
 import ru.practicum.model.user.dto.UserDto;
-import ru.practicum.model.event.mappers.user.UserMapper;
+import ru.practicum.mappers.user.UserMapper;
 import ru.practicum.repository.user.UserRepository;
 
 import java.util.*;
