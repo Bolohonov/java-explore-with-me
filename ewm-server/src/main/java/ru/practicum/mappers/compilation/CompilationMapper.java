@@ -55,7 +55,7 @@ public class CompilationMapper {
     @Transactional
     public Compilation fromCompilationAddDto(CompilationAddDto compilation) {
         log.info("Получен запрос на конвертацию в подборку");
-        Set< Event > events = new HashSet<>();
+        Set<Event> events = new HashSet<>();
         compilation.getEvents()
                 .stream()
                 .forEach(id -> events.add(eventRepository.findById(id).orElseThrow(

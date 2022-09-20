@@ -132,7 +132,7 @@ public class EventMapper {
         return new Event(
                 newEvent.getTitle() != null ? newEvent.getTitle() : oldEvent.getTitle(),
                 newEvent.getAnnotation() != null ? newEvent.getAnnotation() : oldEvent.getAnnotation(),
-                newEvent.getCategory() !=null ? newEvent.getCategory() : oldEvent.getCategory(),
+                newEvent.getCategory() != null ? newEvent.getCategory() : oldEvent.getCategory(),
                 confirmedRequests,
                 createdOn,
                 newEvent.getDescription() != null ? newEvent.getDescription() : oldEvent.getDescription(),

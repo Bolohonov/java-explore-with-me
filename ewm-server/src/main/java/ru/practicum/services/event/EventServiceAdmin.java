@@ -1,9 +1,7 @@
 package ru.practicum.services.event;
 
-import ru.practicum.model.event.Event;
 import ru.practicum.model.event.dto.EventAddDto;
 import ru.practicum.model.event.dto.EventFullDto;
-import ru.practicum.model.event.dto.EventShortDto;
 
 import java.util.Collection;
 import java.util.List;
