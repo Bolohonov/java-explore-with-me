@@ -125,27 +125,44 @@ public class EventMapper {
         );
     }
 
-    public Event fromEventAddDtoToUpdate(EventAddDto event, Long confirmedRequests,
+    public Event fromEventAddDtoToUpdate(EventAddDto newEvent, Event oldEvent, Long confirmedRequests,
                                          LocalDateTime createdOn, Long initiatorId,
                                          LocalDateTime publishedOn, State state, Long views) throws ApiError {
         log.info("Получено событие для конвертации");
         return new Event(
+                newEvent.getTitle() != null ? newEvent.getTitle() : oldEvent.getTitle(),
+                newEvent.getAnnotation() != null ? newEvent.getAnnotation() : oldEvent.getAnnotation(),
+                newEvent.getCategory() !=null ? newEvent.getCategory() : oldEvent.getCategory(),
+                confirmedRequests,
+                createdOn,
+                newEvent.getDescription() != null ? newEvent.getDescription() : oldEvent.getDescription(),
+                newEvent.getEventDate() != null ? newEvent.getEventDate() : oldEvent.getEventDate(),
+                initiatorId,
+                newEvent.getPaid() != null ? newEvent.getPaid() : oldEvent.getPaid(),
+                newEvent.getParticipantLimit() != null ? newEvent.getParticipantLimit()
+                        : oldEvent.getParticipantLimit(),
+                publishedOn,
+                newEvent.getRequestModeration() != null ? newEvent.getRequestModeration()
+                        : oldEvent.getRequestModeration(),
+                state,
+                views,
+                newEvent.getLocation() != null ? newEvent.getLocation().getLat() : oldEvent.getLocLat(),
+                newEvent.getLocation() != null ? newEvent.getLocation().getLon() : oldEvent.getLocLon()
+        );
+    }
+
+    public EventAddDto toEventAddDto(Event event) throws ApiError {
+        log.info("Получено событие для конвертации");
+        return new EventAddDto(
                 event.getTitle(),
                 event.getAnnotation(),
                 event.getCategory(),
-                confirmedRequests,
-                createdOn,
                 event.getDescription(),
                 event.getEventDate(),
-                initiatorId,
                 event.getPaid(),
-                event.getParticipantLimit() != null ? event.getParticipantLimit() : 0,
-                publishedOn,
+                event.getParticipantLimit(),
                 event.getRequestModeration(),
-                state,
-                views,
-                event.getLocation().getLat(),
-                event.getLocation().getLon()
+                new EventAddDto.Location(event.getLocLat(), event.getLocLon())
         );
     }
 }

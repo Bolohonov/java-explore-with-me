@@ -48,7 +48,7 @@ public class EventAddDto {
     /**
      * Локация
      */
-    private EventFullDto.Location location;
+    private Location location;
 
 
     @AllArgsConstructor

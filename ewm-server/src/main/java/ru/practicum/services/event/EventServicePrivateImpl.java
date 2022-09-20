@@ -32,14 +32,14 @@ import static java.util.Optional.of;
 public class EventServicePrivateImpl implements EventServicePrivate {
     private final EventRepository eventRepository;
     private final EventMapper eventMapper;
-    private final EventServiceImpl eventServiceImpl;
+    private final EventService eventService;
     private final UserService userService;
 
     @Transactional(readOnly = true)
     @Override
     public Optional<EventFullDto> getEventById(Long eventId) {
         log.info("Получен запрос на поиск события");
-        Event event = eventServiceImpl.getEventFromRepository(eventId);
+        Event event = eventService.getEventFromRepository(eventId);
         return of(eventMapper.toEventFullDto(event));
     }
 
@@ -59,7 +59,7 @@ public class EventServicePrivateImpl implements EventServicePrivate {
     @Override
     public Optional<EventFullDto> updateEventByInitiator(Long userId, EventShortDto event) {
         log.info("Получен запрос в сервис на обновление события инициатором");
-        Event oldEvent = eventServiceImpl.getEventFromRepository(event.getId());
+        Event oldEvent = eventService.getEventFromRepository(event.getId());
         validateEventBeforeUpdateByInitiator(userId, event);
         return of(updateEventInRepository(oldEvent, event));
     }
@@ -71,7 +71,6 @@ public class EventServicePrivateImpl implements EventServicePrivate {
         validateUserActivation(userId);
         validateEventDate(event);
         Event newEvent = eventMapper.fromEventAddDto(event, userId);
-        setNewEventState(newEvent);
         return of(eventMapper.toEventFullDto(eventRepository.save(newEvent)));
     }
 
@@ -79,7 +78,7 @@ public class EventServicePrivateImpl implements EventServicePrivate {
     @Override
     public Optional<EventShortDto> changeEventStateToCanceled(Long userId, Long eventId) {
         log.info("Получен запрос на отмену события");
-        Event event = eventServiceImpl.getEventFromRepository(eventId);
+        Event event = eventService.getEventFromRepository(eventId);
         if (!event.getState().equals(State.PENDING)) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
         }

@@ -40,10 +40,9 @@ public class EventAdminController {
 
     @PutMapping("/{eventId}")
     @ResponseStatus(OK)
-    public Optional<EventShortDto> updateEvent(@PathVariable Long eventId,
+    public Optional<EventAddDto> updateEvent(@PathVariable Long eventId,
                                                @RequestBody EventAddDto event) {
         log.info("Поступил запрос на обновление события администратором");
-        System.out.println(event); //TODO
         return eventService.updateEvent(eventId, event);
     }
 

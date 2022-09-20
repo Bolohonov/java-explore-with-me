@@ -4,7 +4,7 @@ public enum Status {
     /**
      * Ожидает утверждения
      */
-    WAITING,
+    PENDING,
     /**
      * Запрос подтвержден
      */

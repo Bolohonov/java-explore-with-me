@@ -44,7 +44,7 @@ public class RequestServiceImpl implements RequestService {
                 .created(LocalDateTime.now())
                 .event(eventId)
                 .requester(userId)
-                .status(Status.WAITING)
+                .status(Status.PENDING)
                 .build();
         validateAndSetStatus(eventId, request);
         return of(RequestMapper.toRequestDto(requestRepository.save(request)));
@@ -165,7 +165,7 @@ public class RequestServiceImpl implements RequestService {
     private void checkLimitAndRejectOtherRequests(EventFullDto event) {
         if (event.getConfirmedRequests().equals(event.getParticipantLimit().longValue())) {
             Collection<Request> requests = requestRepository.getRequestsByEventAndStatus(event.getId(),
-                    Status.WAITING.toString());
+                    Status.PENDING.toString());
             requests.forEach((r) -> r.setStatus(Status.REJECTED));
         }
     }

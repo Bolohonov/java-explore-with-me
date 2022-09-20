@@ -24,7 +24,7 @@ public interface EventServiceAdmin {
     /**
      * Обновить событие
      */
-    Optional<EventShortDto> updateEvent(Long eventId, EventAddDto newEvent);
+    Optional<EventAddDto> updateEvent(Long eventId, EventAddDto newEvent);
 
     /**
      * Опубликовать событие

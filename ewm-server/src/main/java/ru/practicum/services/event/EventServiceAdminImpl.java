@@ -46,14 +46,14 @@ public class EventServiceAdminImpl implements EventServiceAdmin {
 
     @Transactional
     @Override
-    public Optional<EventShortDto> updateEvent(Long eventId, EventAddDto newEventDto) {
+    public Optional<EventAddDto> updateEvent(Long eventId, EventAddDto newEventDto) {
         log.info("Получен запрос на обновление события администратором");
         Event oldEvent = eventService.getEventFromRepository(eventId);
-        Event newEvent = eventMapper.fromEventAddDtoToUpdate(newEventDto, oldEvent.getConfirmedRequests(),
+        Event newEvent = eventMapper.fromEventAddDtoToUpdate(newEventDto, oldEvent, oldEvent.getConfirmedRequests(),
                 oldEvent.getCreatedOn(), oldEvent.getInitiatorId(), oldEvent.getPublishedOn(),
                 oldEvent.getState(), oldEvent.getViews());
         newEvent.setId(oldEvent.getId());
-        return of(eventMapper.toEventShortDto(eventRepository.save(newEvent)));
+        return of(eventMapper.toEventAddDto(eventRepository.save(newEvent)));
     }
 
     @Transactional
