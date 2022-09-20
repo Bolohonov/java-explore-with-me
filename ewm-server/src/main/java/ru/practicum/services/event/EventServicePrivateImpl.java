@@ -16,7 +16,9 @@ import ru.practicum.model.event.dto.EventFullDto;
 import ru.practicum.mappers.event.EventMapper;
 import ru.practicum.model.event.dto.EventShortDto;
 import ru.practicum.model.event.dto.EventUpdateDto;
+import ru.practicum.model.like.Like;
 import ru.practicum.repository.event.EventRepository;
+import ru.practicum.repository.like.LikeRepository;
 import ru.practicum.services.user.UserService;
 
 import java.time.LocalDateTime;
@@ -35,6 +37,7 @@ public class EventServicePrivateImpl implements EventServicePrivate {
     private final EventMapper eventMapper;
     private final EventService eventService;
     private final UserService userService;
+    private final LikeRepository likeRepository;
 
     @Transactional(readOnly = true)
     @Override
@@ -85,6 +88,79 @@ public class EventServicePrivateImpl implements EventServicePrivate {
         }
         event.setState(State.CANCELED);
         return of(eventMapper.toEventFullDto(event));
+    }
+
+    @Transactional
+    @Override
+    public Optional<EventShortDto> addLike(Long userId, Long eventId) {
+        log.info("Запрос в сервис на добавление лайка");
+        return updateRating(userId, eventId, Boolean.TRUE);
+    }
+
+    @Transactional
+    @Override
+    public Optional<EventShortDto> addDislike(Long userId, Long eventId) {
+        log.info("Запрос в сервис на добавление дизлайка");
+        return updateRating(userId, eventId, Boolean.FALSE);
+    }
+
+    private Optional<EventShortDto> updateRating(Long userId, Long eventId, Boolean reason) {
+        log.info("Запрос в сервис на обновление рейтинга");
+        Event event = eventService.getEventFromRepository(eventId);
+        List<ApiError> errorsList = new ArrayList<>();
+        if (event == null) {
+            errorsList.add(new ApiError(HttpStatus.BAD_REQUEST, "Ошибка при сохранении like",
+                    String.format("Проверьте указанные id события %s", eventId)));
+        }
+        if (!userService.getUserById(userId).isPresent()) {
+            errorsList.add(new ApiError(HttpStatus.BAD_REQUEST, "Ошибка при сохранении like",
+                    String.format("Проверьте указанные id пользователя %s", userId)));
+        }
+        if (errorsList.isEmpty()) {
+            Long rating = event.getRating();
+            Like like = likeRepository.findById(userId, eventId);
+            if (like != null) {
+                checkLikeStatus(event, like, reason);
+            } else {
+                likeRepository.save(new Like(userId, eventId, reason));
+                if (reason.equals(Boolean.TRUE)) {
+                    event.setRating(++rating);
+                    log.info("Рейтинг события с id {} обновлен", eventId);
+                } else {
+                    event.setRating(--rating);
+                    log.info("Рейтинг события с id {} обновлен", eventId);
+                }
+            }
+        } else {
+            throw new ApiError(HttpStatus.BAD_REQUEST, "Ошибка при сохранении like",
+                    "Получены следующие ошибки при сохранении", errorsList);
+        }
+        return of(eventMapper.toEventShortDto(event));
+    }
+
+    private void checkLikeStatus(Event event, Like like, Boolean reason) {
+        Long rating = event.getRating();
+        if (like.getReason().equals(Boolean.TRUE) && reason.equals(Boolean.TRUE)) {
+            likeRepository.delete(like);
+            event.setRating(--rating);
+            log.info("Рейтинг события с id {} обновлен", event.getId());
+            return;
+        }
+        if (like.getReason().equals(Boolean.TRUE) && reason.equals(Boolean.FALSE)) {
+            throw new ApiError(HttpStatus.BAD_REQUEST, "Ошибка при сохранении like",
+                    String.format("Вы уже поставили лайк данному событию с id %s",
+                            event.getId()));
+        }
+        if (like.getReason().equals(Boolean.FALSE) && reason.equals(Boolean.TRUE)) {
+            throw new ApiError(HttpStatus.BAD_REQUEST, "Ошибка при сохранении like",
+                    String.format("Вы уже поставили дизлайк данному событию с id %s",
+                            event.getId()));
+        }
+        if (like.getReason().equals(Boolean.FALSE) && reason.equals(Boolean.FALSE)) {
+            likeRepository.delete(like);
+            event.setRating(++rating);
+            log.info("Рейтинг события с id {} обновлен", event.getId());
+        }
     }
 
     private Integer getPageNumber(Integer from, Integer size) {

@@ -44,7 +44,8 @@ public class EventMapper {
                 event.getRequestModeration(),
                 event.getState(),
                 event.getViews(),
-                new EventFullDto.Location(event.getLocLat(), event.getLocLon())
+                new EventFullDto.Location(event.getLocLat(), event.getLocLon()),
+                event.getRating()
         );
     }
 
@@ -98,7 +99,8 @@ public class EventMapper {
                 State.PENDING,
                 0L,
                 event.getLocation().getLat(),
-                event.getLocation().getLon()
+                event.getLocation().getLon(),
+                0L
         );
     }
 
@@ -124,7 +126,8 @@ public class EventMapper {
                 state,
                 views,
                 newEvent.getLocation() != null ? newEvent.getLocation().getLat() : oldEvent.getLocLat(),
-                newEvent.getLocation() != null ? newEvent.getLocation().getLon() : oldEvent.getLocLon()
+                newEvent.getLocation() != null ? newEvent.getLocation().getLon() : oldEvent.getLocLon(),
+                oldEvent.getRating()
         );
     }
 
@@ -151,7 +154,8 @@ public class EventMapper {
                 state,
                 views,
                 newEvent.getLocation() != null ? newEvent.getLocation().getLat() : oldEvent.getLocLat(),
-                newEvent.getLocation() != null ? newEvent.getLocation().getLon() : oldEvent.getLocLon()
+                newEvent.getLocation() != null ? newEvent.getLocation().getLon() : oldEvent.getLocLon(),
+                oldEvent.getRating()
         );
     }
 

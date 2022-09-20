@@ -103,11 +103,16 @@ public class Event {
      */
     @Column(name = "loc_lon")
     private Double locLon;
+    /**
+     * Рейтинг события
+     */
+    @Column(name = "rating")
+    private Long rating;
 
     public Event(String title, String annotation, Long category, Long confirmedRequests,
                  LocalDateTime createdOn, String description, LocalDateTime eventDate, Long initiatorId,
                  Boolean paid, Integer participantLimit, LocalDateTime publishedOn, Boolean requestModeration,
-                 State state, Long views, Double locLat, Double locLon) {
+                 State state, Long views, Double locLat, Double locLon, Long rating) {
         this.title = title;
         this.annotation = annotation;
         this.category = category;
@@ -124,6 +129,7 @@ public class Event {
         this.views = views;
         this.locLat = locLat;
         this.locLon = locLon;
+        this.rating = rating;
     }
 
     public void addView() {

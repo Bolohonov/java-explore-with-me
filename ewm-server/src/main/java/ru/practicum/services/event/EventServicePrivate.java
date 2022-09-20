@@ -33,4 +33,14 @@ public interface EventServicePrivate {
      * Отменить событие - статус Canceled
      */
     Optional<EventFullDto> changeEventStateToCanceled(Long userId, Long eventId);
+
+    /**
+     * Лайкнуть событие
+     */
+    Optional<EventShortDto> addLike(Long userId, Long eventId);
+
+    /**
+     * Дизлайкнуть событие
+     */
+    Optional<EventShortDto> addDislike(Long userId, Long eventId);
 }

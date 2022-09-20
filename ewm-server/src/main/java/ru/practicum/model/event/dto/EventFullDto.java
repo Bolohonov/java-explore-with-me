@@ -80,6 +80,10 @@ public class EventFullDto {
      * Локация
      */
     private Location location;
+    /**
+     * Рейтинг события
+     */
+    private Long rating;
 
 
     @AllArgsConstructor
