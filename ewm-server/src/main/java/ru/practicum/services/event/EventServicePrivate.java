@@ -4,6 +4,7 @@ import ru.practicum.model.event.dto.EventAddDto;
 import ru.practicum.model.event.dto.EventFullDto;
 import ru.practicum.model.event.dto.EventShortDto;
 import ru.practicum.model.event.dto.EventUpdateDto;
+import ru.practicum.model.user.dto.UserDtoWithRating;
 
 import java.util.Collection;
 import java.util.Optional;
@@ -43,4 +44,9 @@ public interface EventServicePrivate {
      * Дизлайкнуть событие
      */
     Optional<EventShortDto> addDislike(Long userId, Long eventId);
+
+    /**
+     * Получение списка инициаторов событий по их рейтингу
+     */
+    Collection<UserDtoWithRating> getUsersByRating(Long minEventRating, Integer from, Integer size);
 }

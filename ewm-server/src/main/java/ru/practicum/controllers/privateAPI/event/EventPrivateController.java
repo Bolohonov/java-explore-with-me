@@ -7,6 +7,7 @@ import ru.practicum.model.event.dto.EventAddDto;
 import ru.practicum.model.event.dto.EventFullDto;
 import ru.practicum.model.event.dto.EventShortDto;
 import ru.practicum.model.event.dto.EventUpdateDto;
+import ru.practicum.model.user.dto.UserDtoWithRating;
 import ru.practicum.services.event.EventServicePrivate;
 import ru.practicum.services.request.RequestService;
 import ru.practicum.model.request.dto.RequestDto;
@@ -98,5 +99,17 @@ public class EventPrivateController {
     public Optional<EventShortDto> dislikeEvent(@PathVariable Long userId,
                                                 @PathVariable Long eventId) {
         return eventService.addDislike(userId, eventId);
+    }
+
+    @GetMapping("/rating")
+    @ResponseStatus(OK)
+    public Collection<UserDtoWithRating> getUsersByEventsRating(@PathVariable Long userId,
+                                                                @RequestParam (defaultValue = "0")
+                                                                Long minEventRating,
+                                                                @PositiveOrZero @RequestParam(defaultValue = "0")
+                                                                    Integer from,
+                                                                @Positive @RequestParam(defaultValue = "10")
+                                                                    Integer size) {
+        return eventService.getUsersByRating(minEventRating, from, size);
     }
 }

@@ -37,4 +37,9 @@ public interface EventRepositoryCustom {
                                        Set<Long> setOfCategories,
                                        Map<String, LocalDateTime> timeMap,
                                        Integer fom, Integer size);
+
+    /**
+     * Получение списка событий сгруппированных по их инициаторам и отсортированных по суммарному рейтингу
+     */
+    Collection<Event> getEventsByRatingGroupByInitiators(Long minRating, Integer from, Integer size);
 }

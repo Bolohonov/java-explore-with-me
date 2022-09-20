@@ -57,6 +57,19 @@ public class EventRepositoryCustomImpl implements EventRepositoryCustom {
         return getResultWithPagination(cb, select, from, size);
     }
 
+    @Override
+    public Collection<Event> getEventsByRatingGroupByInitiators(Long minEventRating,
+                                                                Integer from, Integer size) {
+        CriteriaBuilder cb = entityManager.getCriteriaBuilder();
+        CriteriaQuery<Event> query = cb.createQuery(Event.class);
+        Root<Event> event = query.from(Event.class);
+        CriteriaQuery<Event> select = query.multiselect(event, cb.count(event.get("rating")))
+                .where(cb.greaterThan(event.get("rating").as(Long.class), minEventRating))
+                .orderBy(cb.desc(event.get("rating")));
+        TypedQuery<Event> typedQuery = entityManager.createQuery(select.groupBy(event.get("initiatorId")));
+        return getResultWithPagination(cb, select, from, size);
+    }
+
     private <T> Predicate[] getPredicatesEqual(CriteriaBuilder cb, Root<Event> event,
                                                Class<T> valueType, Set<T> set, String pathField) {
         List<Predicate> predicates = new ArrayList<>();

@@ -17,15 +17,13 @@ import ru.practicum.mappers.event.EventMapper;
 import ru.practicum.model.event.dto.EventShortDto;
 import ru.practicum.model.event.dto.EventUpdateDto;
 import ru.practicum.model.like.Like;
+import ru.practicum.model.user.dto.UserDtoWithRating;
 import ru.practicum.repository.event.EventRepository;
 import ru.practicum.repository.like.LikeRepository;
 import ru.practicum.services.user.UserService;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 import static java.util.Optional.of;
 
@@ -102,6 +100,15 @@ public class EventServicePrivateImpl implements EventServicePrivate {
     public Optional<EventShortDto> addDislike(Long userId, Long eventId) {
         log.info("Запрос в сервис на добавление дизлайка");
         return updateRating(userId, eventId, Boolean.FALSE);
+    }
+
+    @Transactional
+    @Override
+    public Collection<UserDtoWithRating> getUsersByRating(Long minEventRating, Integer from, Integer size) {
+        log.info("Запрос в сервис на получение рейтинга инициаторов событий");
+        Collection<Event> events = eventRepository.getEventsByRatingGroupByInitiators(minEventRating, from, size);
+        events.stream().forEach(System.out::println); //TODO
+        return Collections.emptyList(); //TODO
     }
 
     private Optional<EventShortDto> updateRating(Long userId, Long eventId, Boolean reason) {
