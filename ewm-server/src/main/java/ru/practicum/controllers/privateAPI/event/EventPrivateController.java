@@ -87,18 +87,12 @@ public class EventPrivateController {
         return requestService.rejectRequest(userId, reqId);
     }
 
-    @PostMapping("/{eventId}")
+    @PostMapping("/like/{eventId}")
     @ResponseStatus(OK)
     public Optional<EventShortDto> likeEvent(@PathVariable Long userId,
-                                             @PathVariable Long eventId) {
-        return eventService.addLike(userId, eventId);
-    }
-
-    @PostMapping("/{eventId}")
-    @ResponseStatus(OK)
-    public Optional<EventShortDto> dislikeEvent(@PathVariable Long userId,
-                                                @PathVariable Long eventId) {
-        return eventService.addDislike(userId, eventId);
+                                             @PathVariable Long eventId,
+                                             @RequestParam Boolean like) {
+        return eventService.addLike(userId, eventId, like);
     }
 
     @GetMapping("/rating")

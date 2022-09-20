@@ -90,16 +90,9 @@ public class EventServicePrivateImpl implements EventServicePrivate {
 
     @Transactional
     @Override
-    public Optional<EventShortDto> addLike(Long userId, Long eventId) {
-        log.info("Запрос в сервис на добавление лайка");
-        return updateRating(userId, eventId, Boolean.TRUE);
-    }
-
-    @Transactional
-    @Override
-    public Optional<EventShortDto> addDislike(Long userId, Long eventId) {
-        log.info("Запрос в сервис на добавление дизлайка");
-        return updateRating(userId, eventId, Boolean.FALSE);
+    public Optional<EventShortDto> addLike(Long userId, Long eventId, Boolean like) {
+        log.info("Запрос в сервис на добавление лайка/дизлайка");
+        return updateRating(userId, eventId, like);
     }
 
     @Transactional
@@ -125,7 +118,7 @@ public class EventServicePrivateImpl implements EventServicePrivate {
         }
         if (errorsList.isEmpty()) {
             Long rating = event.getRating();
-            Like like = likeRepository.findById(userId, eventId);
+            Like like = likeRepository.findByUserIdAndEventId(userId, eventId);
             if (like != null) {
                 checkLikeStatus(event, like, reason);
             } else {
