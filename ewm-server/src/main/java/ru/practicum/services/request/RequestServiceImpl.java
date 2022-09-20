@@ -33,12 +33,14 @@ public class RequestServiceImpl implements RequestService {
     @Transactional(readOnly = true)
     @Override
     public Collection<RequestDto> getUserRequests(Long userId) {
+        log.info("Получен запрос в сервис на поиск запросов пользователя на участие в событиях");
         return RequestMapper.toRequestDto(requestRepository.getRequestsByRequester(userId));
     }
 
     @Transactional
     @Override
     public Optional<RequestDto> addNewRequest(Long userId, Long eventId) {
+        log.info("Получен запрос в сервис на добавление запроса на участие в событии");
         validateRequestForAdd(userId, eventId);
         Request request = Request.builder()
                 .created(LocalDateTime.now())
@@ -47,6 +49,7 @@ public class RequestServiceImpl implements RequestService {
                 .status(Status.PENDING)
                 .build();
         validateAndSetStatus(eventId, request);
+        checkLimitAndRejectOtherRequests(eventService.getEventById(eventId).get());
         return of(RequestMapper.toRequestDto(requestRepository.save(request)));
     }
 
@@ -69,6 +72,7 @@ public class RequestServiceImpl implements RequestService {
     @Transactional
     @Override
     public Optional<RequestDto> confirmRequest(Long userId, Long eventId, Long requestId) {
+        log.info("Получен запрос в сервис на подтверждение запроса на участие в событии");
         Request request = getRequestFromRepository(requestId);
         EventFullDto event = eventService.getEventById(eventId).get();
         if (event.getConfirmedRequests() != null) {
@@ -90,6 +94,7 @@ public class RequestServiceImpl implements RequestService {
     @Transactional
     @Override
     public Optional<RequestDto> rejectRequest(Long userId, Long requestId) {
+        log.info("Получен запрос в сервис на отклонение запроса на участие в событии");
         Request request = getRequestFromRepository(requestId);
         request.setStatus(Status.REJECTED);
         return of(RequestMapper.toRequestDto(request));
@@ -127,7 +132,7 @@ public class RequestServiceImpl implements RequestService {
             );
         }
         if (event.getConfirmedRequests() != null
-                && !event.getConfirmedRequests().equals(event.getParticipantLimit().longValue())) {
+                && (event.getConfirmedRequests() == event.getParticipantLimit().longValue())) {
             errors.add(new ApiError(
                             HttpStatus.BAD_REQUEST,
                             "Ошибка запроса на участие",

@@ -21,6 +21,7 @@ public class RequestController {
     @GetMapping("/{userId}/requests")
     @ResponseStatus(OK)
     public Collection<RequestDto> findUserRequests(@PathVariable Long userId) {
+        log.info("Получен запрос в контроллер на поиск запросов пользователя на участие в событиях");
         return requestService.getUserRequests(userId);
     }
 
@@ -28,6 +29,7 @@ public class RequestController {
     @ResponseStatus(OK)
     public Optional<RequestDto> addRequest(@PathVariable Long userId,
                                            @RequestParam Long eventId) {
+        log.info("Получен запрос в контроллер на добавление запроса на участие в событии");
         return requestService.addNewRequest(userId, eventId);
     }
 
@@ -35,6 +37,7 @@ public class RequestController {
     @ResponseStatus(OK)
     public Optional<RequestDto> cancelRequest(@PathVariable Long userId,
                                               @PathVariable Long requestId) {
+        log.info("Получен запрос в контроллер на отмену запроса на участие в событии");
         return requestService.revokeRequest(userId, requestId);
     }
 }
