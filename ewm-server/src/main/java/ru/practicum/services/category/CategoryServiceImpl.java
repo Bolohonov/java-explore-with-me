@@ -9,7 +9,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 import ru.practicum.model.category.Category;
 import ru.practicum.model.category.dto.CategoryDto;
-import ru.practicum.mappers.category.CategoryMapper;
+import ru.practicum.model.event.mappers.category.CategoryMapper;
 import ru.practicum.repository.category.CategoryRepository;
 import ru.practicum.errors.ApiError;
 import ru.practicum.services.event.EventServiceAdmin;

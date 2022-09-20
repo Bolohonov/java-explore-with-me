@@ -10,7 +10,11 @@ public enum Status {
      */
     CONFIRMED,
     /**
+     * Заявка отклонена
+     */
+    REJECTED,
+    /**
      * В архиве
      */
-    REJECTED
+    CANCELED
 }

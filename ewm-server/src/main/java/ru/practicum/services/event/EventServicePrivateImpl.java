@@ -13,8 +13,9 @@ import ru.practicum.model.event.Event;
 import ru.practicum.model.event.State;
 import ru.practicum.model.event.dto.EventAddDto;
 import ru.practicum.model.event.dto.EventFullDto;
-import ru.practicum.mappers.event.EventMapper;
+import ru.practicum.model.event.mappers.event.EventMapper;
 import ru.practicum.model.event.dto.EventShortDto;
+import ru.practicum.model.event.dto.EventUpdateDto;
 import ru.practicum.repository.event.EventRepository;
 import ru.practicum.services.user.UserService;
 
@@ -57,9 +58,9 @@ public class EventServicePrivateImpl implements EventServicePrivate {
 
     @Transactional
     @Override
-    public Optional<EventFullDto> updateEventByInitiator(Long userId, EventShortDto event) {
+    public Optional<EventFullDto> updateEventByInitiator(Long userId, EventUpdateDto event) {
         log.info("Получен запрос в сервис на обновление события инициатором");
-        Event oldEvent = eventService.getEventFromRepository(event.getId());
+        Event oldEvent = eventService.getEventFromRepository(event.getEventId());
         validateEventBeforeUpdateByInitiator(userId, event);
         return of(updateEventInRepository(oldEvent, event));
     }
@@ -76,34 +77,35 @@ public class EventServicePrivateImpl implements EventServicePrivate {
 
     @Transactional
     @Override
-    public Optional<EventShortDto> changeEventStateToCanceled(Long userId, Long eventId) {
+    public Optional<EventFullDto> changeEventStateToCanceled(Long userId, Long eventId) {
         log.info("Получен запрос на отмену события");
         Event event = eventService.getEventFromRepository(eventId);
         if (!event.getState().equals(State.PENDING)) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
         }
         event.setState(State.CANCELED);
-        return of(eventMapper.toEventShortDto(event));
+        return of(eventMapper.toEventFullDto(event));
     }
 
     private Integer getPageNumber(Integer from, Integer size) {
         return from % size;
     }
 
-    private void validateEventBeforeUpdateByInitiator(Long userId, EventShortDto event) {
+    private void validateEventBeforeUpdateByInitiator(Long userId, EventUpdateDto newEvent) {
         List<ApiError> errorsList = new ArrayList<>();
+        EventFullDto event = getEventById(newEvent.getEventId()).get();
         try {
             validateEventDate(event);
         } catch (ApiError error) {
             errorsList.add(error);
         }
-        if (!getEventById(event.getId()).get().getInitiator().getId().equals(userId)) {
+        if (!event.getInitiator().getId().equals(userId)) {
             errorsList.add(new ApiError(HttpStatus.BAD_REQUEST, String.format("При выполнении %s произошла ошибка.",
                     "update"), String.format("Пользователь с id %s не является инициатором события. Отказано в доступе",
                     userId)));
         }
-        if (!getEventById(event.getId()).get().getState().equals(State.PENDING)
-                || !getEventById(event.getId()).get().getState().equals(State.CANCELED)) {
+        if (!event.getState().equals(State.PENDING)
+                && !event.getState().equals(State.CANCELED)) {
             errorsList.add(new ApiError(HttpStatus.BAD_REQUEST, String.format("При выполнении %s произошла ошибка.",
                     "update"), String.format("Событие с id %s уже имеет статус Опубликовано. Отказано в доступе",
                     event.getId())));
@@ -112,15 +114,6 @@ public class EventServicePrivateImpl implements EventServicePrivate {
             throw new ApiError(HttpStatus.BAD_REQUEST, "Ошибка при обновлении события",
                     String.format("Во время обновления события %s произошли ошибки:",
                             event.getId()), errorsList);
-        }
-    }
-
-    private void validateEventDate(EventShortDto event) {
-        log.info("Проверка даты события");
-        if (!event.getEventDate().isAfter(LocalDateTime.now().plusHours(2L))) {
-            throw new ApiError(HttpStatus.BAD_REQUEST, "Поле eventDate указано неверно.",
-                    String.format("Error: must be a date in the present or in the future. Value: %s",
-                            event.getEventDate().toString()));
         }
     }
 
@@ -133,11 +126,20 @@ public class EventServicePrivateImpl implements EventServicePrivate {
         }
     }
 
-    private EventFullDto updateEventInRepository(Event oldEvent, EventShortDto event) {
+    private void validateEventDate(EventFullDto event) {
+        log.info("Проверка даты события");
+        if (!event.getEventDate().isAfter(LocalDateTime.now().plusHours(2L))) {
+            throw new ApiError(HttpStatus.BAD_REQUEST, "Поле eventDate указано неверно.",
+                    String.format("Error: must be a date in the present or in the future (plus 2 hours). " +
+                            "Value: %s", event.getEventDate().toString()));
+        }
+    }
+
+    private EventFullDto updateEventInRepository(Event oldEvent, EventUpdateDto event) {
         log.info("Обновить событие в репозитории");
-        oldEvent = eventMapper.fromEventShortDto(event, oldEvent.getDescription(),
-                oldEvent.getCreatedOn(), oldEvent.getParticipantLimit(), oldEvent.getRequestModeration(),
-                oldEvent.getPublishedOn(), oldEvent.getState(), oldEvent.getLocLat(), oldEvent.getLocLon());
+        oldEvent = eventMapper.fromEventAddDtoToUpdate(event, oldEvent, oldEvent.getConfirmedRequests(),
+                oldEvent.getCreatedOn(), oldEvent.getInitiatorId(), oldEvent.getPublishedOn(),
+                oldEvent.getState(), oldEvent.getViews());
         return eventMapper.toEventFullDto(oldEvent);
     }
 

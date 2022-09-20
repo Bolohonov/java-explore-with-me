@@ -3,6 +3,7 @@ package ru.practicum.services.event;
 import ru.practicum.model.event.dto.EventAddDto;
 import ru.practicum.model.event.dto.EventFullDto;
 import ru.practicum.model.event.dto.EventShortDto;
+import ru.practicum.model.event.dto.EventUpdateDto;
 
 import java.util.Collection;
 import java.util.Optional;
@@ -21,7 +22,7 @@ public interface EventServicePrivate {
     /**
      * Инициатор обновляет событие
      */
-    Optional<EventFullDto> updateEventByInitiator(Long userId, EventShortDto event);
+    Optional<EventFullDto> updateEventByInitiator(Long userId, EventUpdateDto event);
 
     /**
      * Добавить событие
@@ -31,5 +32,5 @@ public interface EventServicePrivate {
     /**
      * Отменить событие - статус Canceled
      */
-    Optional<EventShortDto> changeEventStateToCanceled(Long userId, Long eventId);
+    Optional<EventFullDto> changeEventStateToCanceled(Long userId, Long eventId);
 }

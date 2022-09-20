@@ -1,4 +1,4 @@
-package ru.practicum.controllers.event;
+package ru.practicum.controllers.privateAPI.event;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -39,7 +39,7 @@ public class EventAdminController {
     @PutMapping("/{eventId}")
     @ResponseStatus(OK)
     public Optional<EventAddDto> updateEvent(@PathVariable Long eventId,
-                                               @RequestBody EventAddDto event) {
+                                             @RequestBody EventAddDto event) {
         log.info("Поступил запрос на обновление события администратором");
         return eventService.updateEvent(eventId, event);
     }

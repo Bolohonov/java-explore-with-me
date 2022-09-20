@@ -1,4 +1,4 @@
-package ru.practicum.mappers.event;
+package ru.practicum.model.event.mappers.event;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -7,6 +7,7 @@ import org.springframework.stereotype.Component;
 import ru.practicum.model.event.dto.EventAddDto;
 import ru.practicum.model.event.dto.EventFullDto;
 import ru.practicum.model.event.dto.EventShortDto;
+import ru.practicum.model.event.dto.EventUpdateDto;
 import ru.practicum.repository.category.CategoryRepository;
 import ru.practicum.errors.ApiError;
 import ru.practicum.model.event.Event;
@@ -130,6 +131,33 @@ public class EventMapper {
                                          LocalDateTime publishedOn, State state, Long views) throws ApiError {
         log.info("Получено событие для конвертации");
         return new Event(
+                newEvent.getTitle() != null ? newEvent.getTitle() : oldEvent.getTitle(),
+                newEvent.getAnnotation() != null ? newEvent.getAnnotation() : oldEvent.getAnnotation(),
+                newEvent.getCategory() != null ? newEvent.getCategory() : oldEvent.getCategory(),
+                confirmedRequests,
+                createdOn,
+                newEvent.getDescription() != null ? newEvent.getDescription() : oldEvent.getDescription(),
+                newEvent.getEventDate() != null ? newEvent.getEventDate() : oldEvent.getEventDate(),
+                initiatorId,
+                newEvent.getPaid() != null ? newEvent.getPaid() : oldEvent.getPaid(),
+                newEvent.getParticipantLimit() != null ? newEvent.getParticipantLimit()
+                        : oldEvent.getParticipantLimit(),
+                publishedOn,
+                newEvent.getRequestModeration() != null ? newEvent.getRequestModeration()
+                        : oldEvent.getRequestModeration(),
+                state,
+                views,
+                newEvent.getLocation() != null ? newEvent.getLocation().getLat() : oldEvent.getLocLat(),
+                newEvent.getLocation() != null ? newEvent.getLocation().getLon() : oldEvent.getLocLon()
+        );
+    }
+
+    public Event fromEventAddDtoToUpdate(EventUpdateDto newEvent, Event oldEvent, Long confirmedRequests,
+                                         LocalDateTime createdOn, Long initiatorId,
+                                         LocalDateTime publishedOn, State state, Long views) throws ApiError {
+        log.info("Получено событие для конвертации");
+        return new Event(
+                oldEvent.getId(),
                 newEvent.getTitle() != null ? newEvent.getTitle() : oldEvent.getTitle(),
                 newEvent.getAnnotation() != null ? newEvent.getAnnotation() : oldEvent.getAnnotation(),
                 newEvent.getCategory() != null ? newEvent.getCategory() : oldEvent.getCategory(),

@@ -1,4 +1,4 @@
-package ru.practicum.controllers.request;
+package ru.practicum.controllers.privateAPI.request;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

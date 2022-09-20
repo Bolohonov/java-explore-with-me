@@ -50,7 +50,6 @@ public class EventAddDto {
      */
     private Location location;
 
-
     @AllArgsConstructor
     @ToString
     @Getter

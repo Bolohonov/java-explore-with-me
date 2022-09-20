@@ -1,5 +1,6 @@
 package ru.practicum.model.request;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.*;
 
 import javax.persistence.*;
@@ -28,6 +29,7 @@ public class Request {
      * Дата и время создания заявки
      */
     @Column(name = "created")
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime created;
     /**
      * Идентификатор события

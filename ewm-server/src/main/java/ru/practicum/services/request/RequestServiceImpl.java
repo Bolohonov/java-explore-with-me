@@ -12,7 +12,7 @@ import ru.practicum.services.event.EventServicePrivate;
 import ru.practicum.model.request.Request;
 import ru.practicum.model.request.Status;
 import ru.practicum.model.request.dto.RequestDto;
-import ru.practicum.mappers.request.RequestMapper;
+import ru.practicum.model.event.mappers.request.RequestMapper;
 import ru.practicum.repository.request.RequestRepository;
 
 import java.time.LocalDateTime;
@@ -57,7 +57,7 @@ public class RequestServiceImpl implements RequestService {
     @Override
     public Optional<RequestDto> revokeRequest(Long userId, Long requestId) {
         Request request = getRequestFromRepository(requestId);
-        request.setStatus(Status.REJECTED);
+        request.setStatus(Status.CANCELED);
         return of(RequestMapper.toRequestDto(request));
     }
 
@@ -132,6 +132,7 @@ public class RequestServiceImpl implements RequestService {
             );
         }
         if (event.getConfirmedRequests() != null
+                && (event.getParticipantLimit() != 0)
                 && (event.getConfirmedRequests() == event.getParticipantLimit().longValue())) {
             errors.add(new ApiError(
                             HttpStatus.BAD_REQUEST,
@@ -168,7 +169,8 @@ public class RequestServiceImpl implements RequestService {
     }
 
     private void checkLimitAndRejectOtherRequests(EventFullDto event) {
-        if (event.getConfirmedRequests().equals(event.getParticipantLimit().longValue())) {
+        if (event.getParticipantLimit() != 0
+                && event.getConfirmedRequests().equals(event.getParticipantLimit().longValue())) {
             Collection<Request> requests = requestRepository.getRequestsByEventAndStatus(event.getId(),
                     Status.PENDING.toString());
             requests.forEach((r) -> r.setStatus(Status.REJECTED));

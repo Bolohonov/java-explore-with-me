@@ -1,4 +1,4 @@
-package ru.practicum.controllers.category;
+package ru.practicum.controllers.privateAPI.category;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;

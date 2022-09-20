@@ -1,5 +1,6 @@
 package ru.practicum.model.request.dto;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import ru.practicum.model.request.Status;
@@ -16,6 +17,7 @@ public class RequestDto {
     /**
      * Дата и время создания заявки
      */
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime created;
     /**
      * Идентификатор события

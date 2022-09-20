@@ -12,5 +12,5 @@ public enum State {
     /**
      * В архиве
      */
-    CANCELED;
+    CANCELED
 }

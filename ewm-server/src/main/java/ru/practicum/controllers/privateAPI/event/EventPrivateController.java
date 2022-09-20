@@ -1,4 +1,4 @@
-package ru.practicum.controllers.event;
+package ru.practicum.controllers.privateAPI.event;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -6,6 +6,7 @@ import org.springframework.web.bind.annotation.*;
 import ru.practicum.model.event.dto.EventAddDto;
 import ru.practicum.model.event.dto.EventFullDto;
 import ru.practicum.model.event.dto.EventShortDto;
+import ru.practicum.model.event.dto.EventUpdateDto;
 import ru.practicum.services.event.EventServicePrivate;
 import ru.practicum.services.request.RequestService;
 import ru.practicum.model.request.dto.RequestDto;
@@ -38,7 +39,7 @@ public class EventPrivateController {
     @PatchMapping()
     @ResponseStatus(OK)
     public Optional<EventFullDto> patchEventByInitiator(@PathVariable Long userId,
-                                                        @RequestBody EventShortDto event) {
+                                                        @RequestBody EventUpdateDto event) {
         return eventService.updateEventByInitiator(userId, event);
     }
 
@@ -58,7 +59,7 @@ public class EventPrivateController {
 
     @PatchMapping("/{eventId}")
     @ResponseStatus(OK)
-    public Optional<EventShortDto> changeEventStateToCanceled(@PathVariable Long userId,
+    public Optional<EventFullDto> changeEventStateToCanceled(@PathVariable Long userId,
                                                               @PathVariable Long eventId) {
         return eventService.changeEventStateToCanceled(userId, eventId);
     }
