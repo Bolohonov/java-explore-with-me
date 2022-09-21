@@ -87,11 +87,12 @@ public class EventPrivateController {
         return requestService.rejectRequest(userId, reqId);
     }
 
-    @PostMapping("/like/{eventId}")
+    @PostMapping("/{eventId}/like")
     @ResponseStatus(OK)
-    public Optional<EventShortDto> likeEvent(@PathVariable Long userId,
+    public Optional<EventFullDto> likeEvent(@PathVariable Long userId,
                                              @PathVariable Long eventId,
                                              @RequestParam Boolean like) {
+        log.info("Получен запрос в контроллер на добавление лайка");
         return eventService.addLike(userId, eventId, like);
     }
 

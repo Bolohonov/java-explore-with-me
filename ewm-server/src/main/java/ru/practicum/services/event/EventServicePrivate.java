@@ -38,7 +38,7 @@ public interface EventServicePrivate {
     /**
      * Лайкнуть/дизлайкнуть событие
      */
-    Optional<EventShortDto> addLike(Long userId, Long eventId, Boolean like);
+    Optional<EventFullDto> addLike(Long userId, Long eventId, Boolean like);
 
     /**
      * Получение списка инициаторов событий по их рейтингу

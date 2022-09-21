@@ -90,7 +90,7 @@ public class EventServicePrivateImpl implements EventServicePrivate {
 
     @Transactional
     @Override
-    public Optional<EventShortDto> addLike(Long userId, Long eventId, Boolean like) {
+    public Optional<EventFullDto> addLike(Long userId, Long eventId, Boolean like) {
         log.info("Запрос в сервис на добавление лайка/дизлайка");
         return updateRating(userId, eventId, like);
     }
@@ -104,7 +104,7 @@ public class EventServicePrivateImpl implements EventServicePrivate {
         return Collections.emptyList(); //TODO
     }
 
-    private Optional<EventShortDto> updateRating(Long userId, Long eventId, Boolean reason) {
+    private Optional<EventFullDto> updateRating(Long userId, Long eventId, Boolean reason) {
         log.info("Запрос в сервис на обновление рейтинга");
         Event event = eventService.getEventFromRepository(eventId);
         List<ApiError> errorsList = new ArrayList<>();
@@ -135,7 +135,7 @@ public class EventServicePrivateImpl implements EventServicePrivate {
             throw new ApiError(HttpStatus.BAD_REQUEST, "Ошибка при сохранении like",
                     "Получены следующие ошибки при сохранении", errorsList);
         }
-        return of(eventMapper.toEventShortDto(event));
+        return of(eventMapper.toEventFullDto(event));
     }
 
     private void checkLikeStatus(Event event, Like like, Boolean reason) {

@@ -34,6 +34,7 @@ CREATE TABLE IF NOT EXISTS events (
  views BIGINT,
  loc_lat float4 NOT NULL,
  loc_lon float4 NOT NULL,
+ rating BIGINT,
  CONSTRAINT pk_event PRIMARY KEY (id),
  CONSTRAINT FK_EVENT_ON_INITIATOR
      FOREIGN KEY (initiator_id) REFERENCES users (id) ON DELETE CASCADE,
@@ -72,4 +73,15 @@ CREATE TABLE IF NOT EXISTS events_in_compilations (
         FOREIGN KEY (event_id) REFERENCES events (id) ON DELETE CASCADE,
     CONSTRAINT FK_events_in_compilations_to_compilations
         FOREIGN KEY (compilation_id) REFERENCES compilations (id) ON DELETE CASCADE
+);
+
+CREATE TABLE IF NOT EXISTS likes (
+    user_id BIGINT NOT NULL,
+    event_id BIGINT NOT NULL,
+    reason BOOLEAN NOT NULL,
+    CONSTRAINT pk_likes PRIMARY KEY (user_id, event_id),
+    CONSTRAINT FK_likes_to_users
+        FOREIGN KEY (user_id) REFERENCES users (id) ON DELETE CASCADE,
+    CONSTRAINT FK_likes_to_events
+        FOREIGN KEY (event_id) REFERENCES events (id) ON DELETE CASCADE
 );
