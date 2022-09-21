@@ -81,7 +81,9 @@ public class EventServicePublicImpl implements EventServicePublic {
         }
         if (sort != null && sort.equals("VIEWS")) {
             result = "views";
-
+        }
+        if (sort != null && sort.equals("rating")) {
+            result = "rating";
         }
         return result;
     }
