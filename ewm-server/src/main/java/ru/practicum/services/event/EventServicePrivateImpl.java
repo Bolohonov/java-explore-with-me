@@ -90,22 +90,8 @@ public class EventServicePrivateImpl implements EventServicePrivate {
 
     @Transactional
     @Override
-    public Optional<EventFullDto> addLike(Long userId, Long eventId, Boolean like) {
+    public Optional<EventFullDto> addLike(Long userId, Long eventId, Boolean reason) {
         log.info("Запрос в сервис на добавление лайка/дизлайка");
-        return updateRating(userId, eventId, like);
-    }
-
-    @Transactional
-    @Override
-    public Collection<UserDtoWithRating> getUsersByRating(Long minEventRating, Integer from, Integer size) {
-        log.info("Запрос в сервис на получение рейтинга инициаторов событий");
-        Collection<Event> events = eventRepository.getEventsByRatingGroupByInitiators(minEventRating, from, size);
-        events.stream().forEach(System.out::println); //TODO
-        return Collections.emptyList(); //TODO
-    }
-
-    private Optional<EventFullDto> updateRating(Long userId, Long eventId, Boolean reason) {
-        log.info("Запрос в сервис на обновление рейтинга");
         Event event = eventService.getEventFromRepository(eventId);
         List<ApiError> errorsList = new ArrayList<>();
         if (event == null) {
@@ -117,19 +103,12 @@ public class EventServicePrivateImpl implements EventServicePrivate {
                     String.format("Проверьте указанные id пользователя %s", userId)));
         }
         if (errorsList.isEmpty()) {
-            Long rating = event.getRating();
             Like like = likeRepository.findByUserIdAndEventId(userId, eventId);
             if (like != null) {
                 checkLikeStatus(event, like, reason);
             } else {
-                likeRepository.save(new Like(userId, eventId, reason));
-                if (reason.equals(Boolean.TRUE)) {
-                    event.setRating(++rating);
-                    log.info("Рейтинг события с id {} обновлен", eventId);
-                } else {
-                    event.setRating(--rating);
-                    log.info("Рейтинг события с id {} обновлен", eventId);
-                }
+                likeRepository.save(like);
+                getEventById(eventId);
             }
         } else {
             throw new ApiError(HttpStatus.BAD_REQUEST, "Ошибка при сохранении like",
@@ -138,11 +117,19 @@ public class EventServicePrivateImpl implements EventServicePrivate {
         return of(eventMapper.toEventFullDto(event));
     }
 
+    @Transactional
+    @Override
+    public Collection<UserDtoWithRating> getUsersByRating(Long minEventRating, Integer from, Integer size) {
+        log.info("Запрос в сервис на получение рейтинга инициаторов событий");
+        Collection<Event> events = eventRepository.getEventsByRatingGroupByInitiators(minEventRating, from, size);
+        events.stream().forEach(System.out::println); //TODO
+        return Collections.emptyList(); //TODO
+    }
+
     private void checkLikeStatus(Event event, Like like, Boolean reason) {
-        Long rating = event.getRating();
         if (like.getReason().equals(Boolean.TRUE) && reason.equals(Boolean.TRUE)) {
             likeRepository.delete(like);
-            event.setRating(--rating);
+            getEventById(event.getId());
             log.info("Рейтинг события с id {} обновлен", event.getId());
             return;
         }
@@ -158,7 +145,7 @@ public class EventServicePrivateImpl implements EventServicePrivate {
         }
         if (like.getReason().equals(Boolean.FALSE) && reason.equals(Boolean.FALSE)) {
             likeRepository.delete(like);
-            event.setRating(++rating);
+            getEventById(event.getId());
             log.info("Рейтинг события с id {} обновлен", event.getId());
         }
     }
@@ -213,7 +200,7 @@ public class EventServicePrivateImpl implements EventServicePrivate {
 
     private EventFullDto updateEventInRepository(Event oldEvent, EventUpdateDto event) {
         log.info("Обновить событие в репозитории");
-        oldEvent = eventMapper.fromEventAddDtoToUpdate(event, oldEvent, oldEvent.getConfirmedRequests(),
+        oldEvent = eventMapper.fromEventUpdateDtoToUpdate(event, oldEvent, oldEvent.getConfirmedRequests(),
                 oldEvent.getCreatedOn(), oldEvent.getInitiatorId(), oldEvent.getPublishedOn(),
                 oldEvent.getState(), oldEvent.getViews());
         return eventMapper.toEventFullDto(oldEvent);

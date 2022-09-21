@@ -48,7 +48,7 @@ public class EventServiceAdminImpl implements EventServiceAdmin {
     public Optional<EventAddDto> updateEvent(Long eventId, EventAddDto newEventDto) {
         log.info("Получен запрос на обновление события администратором");
         Event oldEvent = eventService.getEventFromRepository(eventId);
-        Event newEvent = eventMapper.fromEventAddDtoToUpdate(newEventDto, oldEvent, oldEvent.getConfirmedRequests(),
+        Event newEvent = eventMapper.fromEventUpdateDtoToUpdate(newEventDto, oldEvent, oldEvent.getConfirmedRequests(),
                 oldEvent.getCreatedOn(), oldEvent.getInitiatorId(), oldEvent.getPublishedOn(),
                 oldEvent.getState(), oldEvent.getViews());
         newEvent.setId(oldEvent.getId());

@@ -4,9 +4,11 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.errors.ApiError;
 import ru.practicum.model.event.Event;
 import ru.practicum.repository.event.EventRepository;
+import ru.practicum.repository.like.LikeRepository;
 
 import java.util.*;
 
@@ -15,16 +17,24 @@ import java.util.*;
 @Slf4j
 public class EventServiceImpl implements EventService {
     private final EventRepository eventRepository;
+    private final LikeRepository likeRepository;
 
+    @Override
+    @Transactional
     public Event getEventFromRepository(Long eventId) {
         log.info("Получить событие с id {} из репозитория", eventId);
-        return eventRepository.findById(eventId).orElseThrow(() -> {
+        Event event = eventRepository.findById(eventId).orElseThrow(() -> {
             throw new ApiError(HttpStatus.NOT_FOUND, "Событие не найдено",
                     String.format("Не найдено событие c id %s", eventId
                     ));
         });
+        Long rating = likeRepository.countEventRating(eventId);
+        event.setRating(rating);
+        return event;
     }
 
+    @Override
+    @Transactional
     public <T> Set<T> getSetOfParams(List<T> list) {
         Set<T> set = new HashSet<>();
         if (list != null) {

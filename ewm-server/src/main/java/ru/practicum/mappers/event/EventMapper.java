@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.model.event.dto.EventAddDto;
 import ru.practicum.model.event.dto.EventFullDto;
 import ru.practicum.model.event.dto.EventShortDto;
@@ -12,6 +13,7 @@ import ru.practicum.repository.category.CategoryRepository;
 import ru.practicum.errors.ApiError;
 import ru.practicum.model.event.Event;
 import ru.practicum.model.event.State;
+import ru.practicum.repository.like.LikeRepository;
 import ru.practicum.services.user.UserService;
 
 import java.time.LocalDateTime;
@@ -24,7 +26,9 @@ import java.util.stream.Collectors;
 public class EventMapper {
     private final UserService userService;
     private final CategoryRepository categoryRepository;
+    private final LikeRepository likeRepository;
 
+    @Transactional
     public EventFullDto toEventFullDto(Event event) {
         return new EventFullDto(
                 event.getId(),
@@ -45,7 +49,7 @@ public class EventMapper {
                 event.getState(),
                 event.getViews(),
                 new EventFullDto.Location(event.getLocLat(), event.getLocLon()),
-                event.getRating()
+                likeRepository.countEventRating(event.getId())
         );
     }
 
@@ -104,9 +108,9 @@ public class EventMapper {
         );
     }
 
-    public Event fromEventAddDtoToUpdate(EventAddDto newEvent, Event oldEvent, Long confirmedRequests,
-                                         LocalDateTime createdOn, Long initiatorId,
-                                         LocalDateTime publishedOn, State state, Long views) throws ApiError {
+    public Event fromEventUpdateDtoToUpdate(EventAddDto newEvent, Event oldEvent, Long confirmedRequests,
+                                            LocalDateTime createdOn, Long initiatorId,
+                                            LocalDateTime publishedOn, State state, Long views) throws ApiError {
         log.info("Получено событие для конвертации");
         return new Event(
                 newEvent.getTitle() != null ? newEvent.getTitle() : oldEvent.getTitle(),
@@ -127,13 +131,13 @@ public class EventMapper {
                 views,
                 newEvent.getLocation() != null ? newEvent.getLocation().getLat() : oldEvent.getLocLat(),
                 newEvent.getLocation() != null ? newEvent.getLocation().getLon() : oldEvent.getLocLon(),
-                oldEvent.getRating()
+                likeRepository.countEventRating(oldEvent.getId())
         );
     }
 
-    public Event fromEventAddDtoToUpdate(EventUpdateDto newEvent, Event oldEvent, Long confirmedRequests,
-                                         LocalDateTime createdOn, Long initiatorId,
-                                         LocalDateTime publishedOn, State state, Long views) throws ApiError {
+    public Event fromEventUpdateDtoToUpdate(EventUpdateDto newEvent, Event oldEvent, Long confirmedRequests,
+                                            LocalDateTime createdOn, Long initiatorId,
+                                            LocalDateTime publishedOn, State state, Long views) throws ApiError {
         log.info("Получено событие для конвертации");
         return new Event(
                 oldEvent.getId(),
@@ -155,7 +159,7 @@ public class EventMapper {
                 views,
                 newEvent.getLocation() != null ? newEvent.getLocation().getLat() : oldEvent.getLocLat(),
                 newEvent.getLocation() != null ? newEvent.getLocation().getLon() : oldEvent.getLocLon(),
-                oldEvent.getRating()
+                likeRepository.countEventRating(oldEvent.getId())
         );
     }
 
