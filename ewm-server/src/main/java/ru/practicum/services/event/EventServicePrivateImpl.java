@@ -107,7 +107,7 @@ public class EventServicePrivateImpl implements EventServicePrivate {
             if (like != null) {
                 checkLikeStatus(event, like, reason);
             } else {
-                likeRepository.save(like);
+                likeRepository.save(new Like(userId, eventId, reason));
                 getEventById(eventId);
             }
         } else {

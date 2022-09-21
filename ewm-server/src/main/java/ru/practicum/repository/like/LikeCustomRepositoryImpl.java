@@ -16,14 +16,25 @@ public class LikeCustomRepositoryImpl implements LikeCustomRepository {
     public Long countEventRating(Long eventId) {
         CriteriaBuilder cb = entityManager.getCriteriaBuilder();
         CriteriaQuery<Long> query = cb.createQuery(Long.class);
-        Root<Like> event = query.from(Like.class);
-        CriteriaQuery<Long> likes = query.select(cb.count(event.get("userId")))
-                .where(cb.and(cb.equal(event.get("eventId").as(Long.class), eventId),
-                        cb.equal(event.get("reason").as(Boolean.class), Boolean.TRUE)));
-        CriteriaQuery<Long> dislikes = query.select(cb.count(event.get("userId")))
-                .where(cb.and(cb.equal(event.get("eventId").as(Long.class), eventId),
-                        cb.equal(event.get("reason").as(Boolean.class), Boolean.FALSE)));
-        return entityManager.createQuery(likes).getSingleResult()
-                - entityManager.createQuery(dislikes).getSingleResult();
+        Root<Like> like = query.from(Like.class);
+        CriteriaQuery<Long> likes = query.select(cb.count(like))
+                .where(cb.and(cb.equal(like.get("eventId").as(Long.class), eventId),
+                        cb.equal(like.get("reason").as(Boolean.class), Boolean.TRUE)));
+        CriteriaQuery<Long> dislikes = query.select(cb.count(like))
+                .where(cb.and(cb.equal(like.get("eventId").as(Long.class), eventId),
+                        cb.equal(like.get("reason").as(Boolean.class), Boolean.FALSE)));
+        Long l = entityManager.createQuery(likes).getSingleResult();
+        Long d = entityManager.createQuery(dislikes).getSingleResult();
+        Long rating = 0L;
+        if (l != null && d != null) {
+            rating = l - d;
+        }
+        if (l != null && d == null) {
+            rating = l;
+        }
+        if (l == null && d != null) {
+            rating = -d;
+        }
+        return rating;
     }
 }
