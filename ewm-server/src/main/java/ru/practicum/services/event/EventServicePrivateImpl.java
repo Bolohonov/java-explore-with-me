@@ -108,7 +108,6 @@ public class EventServicePrivateImpl implements EventServicePrivate {
                 checkLikeStatus(event, like, reason);
             } else {
                 likeRepository.save(new Like(userId, eventId, reason));
-                getEventById(eventId);
             }
         } else {
             throw new ApiError(HttpStatus.BAD_REQUEST, "Ошибка при сохранении like",
@@ -122,7 +121,6 @@ public class EventServicePrivateImpl implements EventServicePrivate {
     public Collection<UserDtoWithRating> getUsersByRating(Long minEventRating, Integer from, Integer size) {
         log.info("Запрос в сервис на получение рейтинга инициаторов событий");
         Collection<Event> events = eventRepository.getEventsByRatingGroupByInitiators(minEventRating, from, size);
-        events.stream().forEach(System.out::println); //TODO
         return Collections.emptyList(); //TODO
     }
 

@@ -149,6 +149,7 @@ public class EventRepositoryCustomImpl implements EventRepositoryCustom {
             typedQuery.getResultList();
             pageNumber += size;
         }
+        typedQuery.getResultList().forEach(System.out::println); //TODO
         return typedQuery.getResultList();
     }
 }
