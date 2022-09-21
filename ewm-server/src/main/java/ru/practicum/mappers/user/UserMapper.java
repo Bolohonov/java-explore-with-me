@@ -4,9 +4,10 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 import ru.practicum.model.user.User;
 import ru.practicum.model.user.dto.UserDto;
+import ru.practicum.model.user.dto.UserDtoWithRating;
 
-import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 @Component
@@ -19,17 +20,23 @@ public class UserMapper {
                 user.getActivation() != null ? user.getActivation() : Boolean.FALSE);
     }
 
-    public static Collection<UserDto> toUserDto(Iterable<User> users) {
-        Collection<UserDto> dtos = new ArrayList<>();
-        for (User user : users) {
-            dtos.add(toUserDto(user));
-        }
-        return dtos;
-    }
-
     public static Collection<UserDto> toUserDto(Collection<User> users) {
         return users.stream()
                 .map(UserMapper::toUserDto)
+                .collect(Collectors.toList());
+    }
+
+    public static UserDtoWithRating toUserDtoWithRating(User user, Long rating) {
+        return new UserDtoWithRating(user.getId(),
+                user.getName(),
+                user.getEmail(),
+                user.getActivation() != null ? user.getActivation() : Boolean.FALSE,
+                rating);
+    }
+
+    public static Collection<UserDtoWithRating> toUserDtoWithRatingColl(Map<User, Long> users) {
+        return users.entrySet().stream()
+                .map((e) -> toUserDtoWithRating(e.getKey(), e.getValue()))
                 .collect(Collectors.toList());
     }
 }

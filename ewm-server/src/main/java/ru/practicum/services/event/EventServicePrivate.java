@@ -43,5 +43,5 @@ public interface EventServicePrivate {
     /**
      * Получение списка инициаторов событий по их рейтингу
      */
-    Collection<UserDtoWithRating> getUsersByRating(Long minEventRating, Integer from, Integer size);
+    Collection<UserDtoWithRating> getUsersByRating(Integer from, Integer size);
 }

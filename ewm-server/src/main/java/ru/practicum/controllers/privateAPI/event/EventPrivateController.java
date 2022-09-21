@@ -99,12 +99,10 @@ public class EventPrivateController {
     @GetMapping("/rating")
     @ResponseStatus(OK)
     public Collection<UserDtoWithRating> getUsersByEventsRating(@PathVariable Long userId,
-                                                                @RequestParam (defaultValue = "0")
-                                                                Long minEventRating,
                                                                 @PositiveOrZero @RequestParam(defaultValue = "0")
                                                                     Integer from,
                                                                 @Positive @RequestParam(defaultValue = "10")
                                                                     Integer size) {
-        return eventService.getUsersByRating(minEventRating, from, size);
+        return eventService.getUsersByRating(from, size);
     }
 }

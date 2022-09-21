@@ -41,5 +41,5 @@ public interface EventRepositoryCustom {
     /**
      * Получение списка событий сгруппированных по их инициаторам и отсортированных по суммарному рейтингу
      */
-    Collection<Event> getEventsByRatingGroupByInitiators(Long minRating, Integer from, Integer size);
+    Collection<Object[]> getEventsByRatingGroupByInitiators(Integer from, Integer size);
 }

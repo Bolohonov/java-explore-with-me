@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 import ru.practicum.errors.ApiError;
+import ru.practicum.mappers.user.UserMapper;
 import ru.practicum.model.event.Event;
 import ru.practicum.model.event.State;
 import ru.practicum.model.event.dto.EventAddDto;
@@ -24,6 +25,8 @@ import ru.practicum.services.user.UserService;
 
 import java.time.LocalDateTime;
 import java.util.*;
+import java.util.stream.Collector;
+import java.util.stream.Collectors;
 
 import static java.util.Optional.of;
 
@@ -118,10 +121,15 @@ public class EventServicePrivateImpl implements EventServicePrivate {
 
     @Transactional
     @Override
-    public Collection<UserDtoWithRating> getUsersByRating(Long minEventRating, Integer from, Integer size) {
+    public Collection<UserDtoWithRating> getUsersByRating(Integer from, Integer size) {
         log.info("Запрос в сервис на получение рейтинга инициаторов событий");
-        Collection<Event> events = eventRepository.getEventsByRatingGroupByInitiators(minEventRating, from, size);
-        return Collections.emptyList(); //TODO
+        Collection<Object[]> events = eventRepository.getEventsByRatingGroupByInitiators(from, size);
+        for (Object[] o : events) {
+            for (int i = 0; i < o.length; i ++) {
+                Arrays.stream(o).forEach(System.out::println);//TODO
+            }
+        }
+        return Collections.emptyList();
     }
 
     private void checkLikeStatus(Event event, Like like, Boolean reason) {
