@@ -26,7 +26,7 @@ CREATE TABLE IF NOT EXISTS events (
  event_date TIMESTAMP WITHOUT TIME ZONE NOT NULL,
  initiator_id BIGINT NOT NULL,
  paid BOOLEAN,
- participant_limit INT,
+ participant_limit BIGINT,
  published_on TIMESTAMP WITHOUT TIME ZONE,
  request_moderation BOOLEAN,
  state event_state,
