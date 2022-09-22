@@ -15,8 +15,7 @@ public class UserMapper {
     public static UserDto toUserDto(User user) {
         return new UserDto(user.getId(),
                 user.getName(),
-                user.getEmail(),
-                user.getActivation() != null ? user.getActivation() : Boolean.FALSE);
+                user.getEmail());
     }
 
     public static Collection<UserDto> toUserDto(Iterable<User> users) {
