@@ -69,7 +69,6 @@ public class EventServicePrivateImpl implements EventServicePrivate {
     @Override
     public Optional<EventFullDto> addEvent(Long userId, EventAddDto event) {
         log.info("Получен запрос в сервис на добавление события");
-        validateUserActivation(userId);
         validateEventDate(event);
         Event newEvent = eventMapper.fromEventAddDto(event, userId);
         return of(eventMapper.toEventFullDto(eventRepository.save(newEvent)));
@@ -141,26 +140,5 @@ public class EventServicePrivateImpl implements EventServicePrivate {
                 oldEvent.getCreatedOn(), oldEvent.getInitiatorId(), oldEvent.getPublishedOn(),
                 oldEvent.getState(), oldEvent.getViews());
         return eventMapper.toEventFullDto(oldEvent);
-    }
-
-    private void validateUserActivation(Long userId) {
-        log.info("Проверка акцивации пользователя");
-        if (!userService.getUserById(userId).get()
-                .getActivation().equals(Boolean.TRUE)) {
-            throw new ApiError(HttpStatus.BAD_REQUEST, "Пользователь не активирован.",
-                    String.format("Пользователь с id %s не может выполнить данное действие. " +
-                            "Получите активацию от администратора", userId));
-        }
-    }
-
-    private void setNewEventState(Event event) {
-        log.info("Проверка и установка статуса события");
-        if (event.getRequestModeration().equals(Boolean.FALSE)
-                || event.getParticipantLimit() == null || event.getParticipantLimit() == 0L) {
-            event.setPublishedOn(LocalDateTime.now());
-            event.setState(State.PUBLISHED);
-        } else {
-            event.setState(State.PENDING);
-        }
     }
 }
