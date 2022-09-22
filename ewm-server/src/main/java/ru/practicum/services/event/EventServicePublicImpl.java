@@ -75,9 +75,8 @@ public class EventServicePublicImpl implements EventServicePublic {
 
     private String getSortString(String sort) {
         String result = "id";
-        if (sort != null && sort.equals("EVENT_DATE")) {
+        if (sort != null && (sort.equals("EVENT_DATE") || sort.trim().equals("EVENTDATE"))) {
             result = "eventDate";
-
         }
         if (sort != null && sort.equals("VIEWS")) {
             result = "views";
