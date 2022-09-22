@@ -38,7 +38,6 @@ public class EventController {
             @PositiveOrZero @RequestParam(name = "from", defaultValue = "0") Integer from,
             @Positive @RequestParam(name = "size", defaultValue = "10") Integer size,
             HttpServletRequest request) {
-        statisticsClient.addEndpointHit(request.getRemoteAddr(), request.getRequestURI());
         return eventService.getEvents(text, categories, paid, rangeStart, rangeEnd,
                 onlyAvailable, sort, from, size);
     }
@@ -47,7 +46,6 @@ public class EventController {
     @ResponseStatus(OK)
     public Optional<EventFullDto> findEventById(@PathVariable Long eventId,
                                                 HttpServletRequest request) {
-        statisticsClient.addEndpointHit(request.getRemoteAddr(), request.getRequestURI());
         return eventService.getPublishedEventById(eventId);
     }
 }
