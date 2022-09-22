@@ -18,6 +18,7 @@ import ru.practicum.mappers.event.EventMapper;
 import ru.practicum.model.event.dto.EventShortDto;
 import ru.practicum.model.event.dto.EventUpdateDto;
 import ru.practicum.model.like.Like;
+import ru.practicum.model.user.dto.UserDto;
 import ru.practicum.model.user.dto.UserDtoWithRating;
 import ru.practicum.repository.event.EventRepository;
 import ru.practicum.repository.like.LikeRepository;
@@ -25,7 +26,6 @@ import ru.practicum.services.user.UserService;
 
 import java.time.LocalDateTime;
 import java.util.*;
-import java.util.stream.Collector;
 import java.util.stream.Collectors;
 
 import static java.util.Optional.of;
@@ -123,13 +123,22 @@ public class EventServicePrivateImpl implements EventServicePrivate {
     @Override
     public Collection<UserDtoWithRating> getUsersByRating(Integer from, Integer size) {
         log.info("Запрос в сервис на получение рейтинга инициаторов событий");
-        Collection<Object[]> events = eventRepository.getEventsByRatingGroupByInitiators(from, size);
-        for (Object[] o : events) {
+        Collection<Object[]> queryResult = eventRepository.getEventsByRatingGroupByInitiators(from, size);
+        Map<UserDto, Long> usersRating = new HashMap<>();
+        for (Object[] o : queryResult) {
             for (int i = 0; i < o.length; i ++) {
-                Arrays.stream(o).forEach(System.out::println);//TODO
+                usersRating.put(userService.getUserById(Long.parseLong(o[0].toString())).get(),
+                        Long.parseLong(o[1].toString()));
             }
         }
-        return Collections.emptyList();
+        Map<UserDto,Long> usersRatingPage =
+                usersRating.entrySet().stream()
+                        .sorted(Map.Entry.comparingByValue(Comparator.reverseOrder()))
+                        .skip(from)
+                        .limit(usersRating.size() + size - 1)
+                        .collect(Collectors.toMap(
+                                Map.Entry::getKey, Map.Entry::getValue, (e1, e2) -> e1, LinkedHashMap::new));
+        return UserMapper.toUserDtoWithRatingColl(usersRatingPage);
     }
 
     private void checkLikeStatus(Event event, Like like, Boolean reason) {

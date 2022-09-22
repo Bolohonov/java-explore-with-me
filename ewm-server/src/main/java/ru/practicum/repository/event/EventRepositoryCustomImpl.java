@@ -60,20 +60,14 @@ public class EventRepositoryCustomImpl implements EventRepositoryCustom {
     }
 
     @Override
-    public Collection<org.hibernate.mapping.Map> getEventsByRatingGroupByInitiators(Integer from, Integer size) {
+    public Collection<Object[]> getEventsByRatingGroupByInitiators(Integer from, Integer size) {
         CriteriaBuilder cb = entityManager.getCriteriaBuilder();
-        CriteriaQuery<HashMap> query = cb.createQuery(HashMap.class);
+        CriteriaQuery<Object[]> query = cb.createQuery(Object[].class);
         Root<Event> event = query.from(Event.class);
-        CriteriaQuery<HashMap> select = query.multiselect(event.get("initiatorId"), cb.sum(event.get("rating")))
+        CriteriaQuery<Object[]> select = query.multiselect(event.get("initiatorId"), cb.sum(event.get("rating")))
                 .groupBy(event.get("initiatorId"));
-        TypedQuery<HashMap> typedQuery = entityManager.createQuery(select);
-        List<HashMap> result = typedQuery.getResultList();
-//        HashMap<Long, Long> map = new HashMap<>();
-//        map = typedQuery.getResultStream().collect(Collectors.toMap(Function.identity(),
-//                Object::, (k1, k2) -> k1,
-//                LinkedHashMap::new));
-//        result.forEach((e) -> map.put(e.getKey()));
-        return getResultWithPaginationArray(cb, select, from, size);
+        TypedQuery<Object[]> typedQuery = entityManager.createQuery(select);
+        return typedQuery.getResultList();
     }
 
     private <T> Predicate[] getPredicatesEqual(CriteriaBuilder cb, Root<Event> event,
@@ -150,21 +144,6 @@ public class EventRepositoryCustomImpl implements EventRepositoryCustom {
         int pageNumber = from % size;
         TypedQuery<Event> typedQuery = entityManager.createQuery(select);
         while (pageNumber < getCount(cb, Event.class).intValue()) {
-            typedQuery.setFirstResult(from);
-            typedQuery.setMaxResults(size);
-            typedQuery.getResultList();
-            pageNumber += size;
-        }
-        return typedQuery.getResultList();
-    }
-
-    private org.hibernate.mapping.Map getResultWithPaginationArray(CriteriaBuilder cb,
-                                                      CriteriaQuery<org.hibernate.mapping.Map> select,
-                                                      Integer from,
-                                                      Integer size) {
-        int pageNumber = from % size;
-        TypedQuery<org.hibernate.mapping.Map> typedQuery = entityManager.createQuery(select);
-        while (pageNumber < getCount(cb, org.hibernate.mapping.Map.class).intValue()) {
             typedQuery.setFirstResult(from);
             typedQuery.setMaxResults(size);
             typedQuery.getResultList();

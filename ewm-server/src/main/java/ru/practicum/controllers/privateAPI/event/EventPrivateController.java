@@ -103,6 +103,7 @@ public class EventPrivateController {
                                                                     Integer from,
                                                                 @Positive @RequestParam(defaultValue = "10")
                                                                     Integer size) {
+        log.info("Получен запрос в контроллер на получение рейтинга пользователей");
         return eventService.getUsersByRating(from, size);
     }
 }
