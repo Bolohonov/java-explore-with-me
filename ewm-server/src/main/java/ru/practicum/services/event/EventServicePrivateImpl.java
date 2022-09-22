@@ -68,7 +68,6 @@ public class EventServicePrivateImpl implements EventServicePrivate {
     @Transactional
     @Override
     public Optional<EventFullDto> addEvent(Long userId, EventAddDto event) {
-        log.info("Получен запрос в сервис на добавление события");
         validateEventDate(event);
         Event newEvent = eventMapper.fromEventAddDto(event, userId);
         return of(eventMapper.toEventFullDto(eventRepository.save(newEvent)));
@@ -117,7 +116,6 @@ public class EventServicePrivateImpl implements EventServicePrivate {
     }
 
     private void validateEventDate(EventAddDto event) {
-        log.info("Проверка даты события");
         if (!event.getEventDate().isAfter(LocalDateTime.now().plusHours(2L))) {
             throw new ApiError(HttpStatus.BAD_REQUEST, "Поле eventDate указано неверно.",
                     String.format("Error: must be a date in the present or in the future (plus 2 hours). " +
@@ -126,7 +124,6 @@ public class EventServicePrivateImpl implements EventServicePrivate {
     }
 
     private void validateEventDate(EventFullDto event) {
-        log.info("Проверка даты события");
         if (!event.getEventDate().isAfter(LocalDateTime.now().plusHours(2L))) {
             throw new ApiError(HttpStatus.BAD_REQUEST, "Поле eventDate указано неверно.",
                     String.format("Error: must be a date in the present or in the future (plus 2 hours). " +
