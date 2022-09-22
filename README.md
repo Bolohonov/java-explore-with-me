@@ -1,6 +1,6 @@
 # java-explore-with-me
 Ссылка на PR
-https://github.com/Bolohonov/java-explore-with-me/pull/1
+https://github.com/Bolohonov/java-explore-with-me/pull/2
 Сейчас не проходит один тест (если его запускать без подборки - он проходит, там что-то с pre-request scripts).
 Эти тесты вчера вечером выложили, думаю поправят.
 
