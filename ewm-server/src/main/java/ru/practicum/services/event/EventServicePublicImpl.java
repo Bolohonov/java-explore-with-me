@@ -83,6 +83,9 @@ public class EventServicePublicImpl implements EventServicePublic {
             result = "views";
 
         }
+        if (sort != null) {
+            result = sort;
+        }
         return result;
     }
 }
