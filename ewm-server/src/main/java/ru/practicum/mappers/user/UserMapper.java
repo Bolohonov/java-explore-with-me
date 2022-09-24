@@ -29,7 +29,6 @@ public class UserMapper {
         return new UserDtoWithRating(user.getId(),
                 user.getName(),
                 user.getEmail(),
-                user.getActivation() != null ? user.getActivation() : Boolean.FALSE,
                 rating);
     }
 

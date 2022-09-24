@@ -19,10 +19,6 @@ public class UserDtoWithRating {
      */
     private String email;
     /**
-     * Статус активации аккаунта
-     */
-    private Boolean activation;
-    /**
      * Рейтинг пользователя
      */
     private Long rating;
