@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 import ru.practicum.errors.ApiError;
+import ru.practicum.mappers.user.UserMapper;
 import ru.practicum.model.event.Event;
 import ru.practicum.model.event.State;
 import ru.practicum.model.event.dto.EventAddDto;
@@ -16,14 +17,16 @@ import ru.practicum.model.event.dto.EventFullDto;
 import ru.practicum.mappers.event.EventMapper;
 import ru.practicum.model.event.dto.EventShortDto;
 import ru.practicum.model.event.dto.EventUpdateDto;
+import ru.practicum.model.like.Like;
+import ru.practicum.model.user.dto.UserDto;
+import ru.practicum.model.user.dto.UserDtoWithRating;
 import ru.practicum.repository.event.EventRepository;
+import ru.practicum.repository.like.LikeRepository;
 import ru.practicum.services.user.UserService;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
+import java.util.stream.Collectors;
 
 import static java.util.Optional.of;
 
@@ -35,6 +38,8 @@ public class EventServicePrivateImpl implements EventServicePrivate {
     private final EventMapper eventMapper;
     private final EventService eventService;
     private final UserService userService;
+    private final LikeRepository likeRepository;
+
 
     @Transactional(readOnly = true)
     @Override
@@ -83,6 +88,80 @@ public class EventServicePrivateImpl implements EventServicePrivate {
         }
         event.setState(State.CANCELED);
         return of(eventMapper.toEventFullDto(event));
+    }
+
+    @Transactional
+    @Override
+    public Optional<EventFullDto> addLike(Long userId, Long eventId, Boolean reason) {
+        log.info("Запрос в сервис на добавление лайка/дизлайка");
+        Event event = eventService.getEventFromRepository(eventId);
+        List<ApiError> errorsList = new ArrayList<>();
+        if (event == null) {
+            errorsList.add(new ApiError(HttpStatus.BAD_REQUEST, "Ошибка при сохранении like",
+                    String.format("Проверьте указанные id события %s", eventId)));
+        }
+        if (!userService.getUserById(userId).isPresent()) {
+            errorsList.add(new ApiError(HttpStatus.BAD_REQUEST, "Ошибка при сохранении like",
+                    String.format("Проверьте указанные id пользователя %s", userId)));
+        }
+        if (errorsList.isEmpty()) {
+            Like like = likeRepository.findByUserIdAndEventId(userId, eventId);
+            if (like != null) {
+                checkLikeStatus(event, like, reason);
+            } else {
+                likeRepository.save(new Like(userId, eventId, reason));
+            }
+        } else {
+            throw new ApiError(HttpStatus.BAD_REQUEST, "Ошибка при сохранении like",
+                    "Получены следующие ошибки при сохранении", errorsList);
+        }
+        return of(eventMapper.toEventFullDto(event));
+    }
+
+    @Transactional
+    @Override
+    public Collection<UserDtoWithRating> getUsersByRating(Integer from, Integer size) {
+        log.info("Запрос в сервис на получение рейтинга инициаторов событий");
+        Collection<Object[]> queryResult = eventRepository.getEventsByRatingGroupByInitiators(from, size);
+        Map<UserDto, Long> usersRating = new HashMap<>();
+        for (Object[] o : queryResult) {
+            for (int i = 0; i < o.length; i ++) {
+                usersRating.put(userService.getUserById(Long.parseLong(o[0].toString())).get(),
+                        Long.parseLong(o[1].toString()));
+            }
+        }
+        Map<UserDto,Long> usersRatingPage =
+                usersRating.entrySet().stream()
+                        .sorted(Map.Entry.comparingByValue(Comparator.reverseOrder()))
+                        .skip(from)
+                        .limit(usersRating.size() + size - 1)
+                        .collect(Collectors.toMap(
+                                Map.Entry::getKey, Map.Entry::getValue, (e1, e2) -> e1, LinkedHashMap::new));
+        return UserMapper.toUserDtoWithRatingColl(usersRatingPage);
+    }
+
+    private void checkLikeStatus(Event event, Like like, Boolean reason) {
+        if (like.getReason().equals(Boolean.TRUE) && reason.equals(Boolean.TRUE)) {
+            likeRepository.delete(like);
+            getEventById(event.getId());
+            log.info("Рейтинг события с id {} обновлен", event.getId());
+            return;
+        }
+        if (like.getReason().equals(Boolean.TRUE) && reason.equals(Boolean.FALSE)) {
+            throw new ApiError(HttpStatus.BAD_REQUEST, "Ошибка при сохранении like",
+                    String.format("Вы уже поставили лайк данному событию с id %s",
+                            event.getId()));
+        }
+        if (like.getReason().equals(Boolean.FALSE) && reason.equals(Boolean.TRUE)) {
+            throw new ApiError(HttpStatus.BAD_REQUEST, "Ошибка при сохранении like",
+                    String.format("Вы уже поставили дизлайк данному событию с id %s",
+                            event.getId()));
+        }
+        if (like.getReason().equals(Boolean.FALSE) && reason.equals(Boolean.FALSE)) {
+            likeRepository.delete(like);
+            getEventById(event.getId());
+            log.info("Рейтинг события с id {} обновлен", event.getId());
+        }
     }
 
     private Integer getPageNumber(Integer from, Integer size) {
