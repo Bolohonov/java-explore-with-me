@@ -10,16 +10,16 @@ server:
   port: 8080
 spring:
   datasource:
-    driverClassName: org.h2.Driver
-    password:
-    url: jdbc:h2:file:./db/ewm_server
-    username: sa
+    driverClassName: org.postgresql.Driver
+    password: password
+    url: jdbc:postgresql://localhost:5432/postgres
+    username: postgres
   jpa:
     hibernate:
       ddl-auto: none
     properties:
       hibernate:
-        dialect: org.hibernate.dialect.h2dialect
+        dialect: org.hibernate.dialect.PostgreSQLDialect
         format_sql: true
 statistics:
-  url: http://ewm-statistics:9090
+  url: http://localhost:9090
