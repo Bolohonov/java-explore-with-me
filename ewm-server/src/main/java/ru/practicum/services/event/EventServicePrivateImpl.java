@@ -19,7 +19,7 @@ import ru.practicum.model.event.dto.EventShortDto;
 import ru.practicum.model.event.dto.EventUpdateDto;
 import ru.practicum.model.like.Like;
 import ru.practicum.model.user.dto.UserDto;
-import ru.practicum.model.user.dto.UserDtoWithRating;
+import ru.practicum.model.user.dto.UserWithRatingDto;
 import ru.practicum.repository.event.EventRepository;
 import ru.practicum.repository.like.LikeRepository;
 import ru.practicum.services.user.UserService;
@@ -93,7 +93,7 @@ public class EventServicePrivateImpl implements EventServicePrivate {
 
     @Transactional
     @Override
-    public Optional<EventFullDto> addLike(Long userId, Long eventId, Boolean reason) {
+    public Optional<EventFullDto> addLikeOrDislike(Long userId, Long eventId, Boolean reason) {
         log.info("Запрос в сервис на добавление лайка/дизлайка");
         Event event = eventService.getEventFromRepository(eventId);
         List<ApiError> errorsList = new ArrayList<>();
@@ -108,7 +108,7 @@ public class EventServicePrivateImpl implements EventServicePrivate {
         if (errorsList.isEmpty()) {
             Like like = likeRepository.findByUserIdAndEventId(userId, eventId);
             if (like != null) {
-                checkLikeStatus(event, like, reason);
+                checkStatusOfLikeDislike(event, like, reason);
             } else {
                 likeRepository.save(new Like(userId, eventId, reason));
             }
@@ -121,7 +121,7 @@ public class EventServicePrivateImpl implements EventServicePrivate {
 
     @Transactional
     @Override
-    public Collection<UserDtoWithRating> getUsersByRating(Integer from, Integer size) {
+    public Collection<UserWithRatingDto> getUsersByRating(Integer from, Integer size) {
         log.info("Запрос в сервис на получение рейтинга инициаторов событий");
         Collection<Object[]> queryResult = eventRepository.getEventsByRatingGroupByInitiators(from, size);
         Map<UserDto, Long> usersRating = new HashMap<>();
@@ -141,7 +141,7 @@ public class EventServicePrivateImpl implements EventServicePrivate {
         return UserMapper.toUserDtoWithRatingColl(usersRatingPage);
     }
 
-    private void checkLikeStatus(Event event, Like like, Boolean reason) {
+    private void checkStatusOfLikeDislike(Event event, Like like, Boolean reason) {
         if (like.getReason().equals(Boolean.TRUE) && reason.equals(Boolean.TRUE)) {
             likeRepository.delete(like);
             getEventById(event.getId());

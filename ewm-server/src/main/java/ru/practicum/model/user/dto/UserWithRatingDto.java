@@ -5,7 +5,7 @@ import lombok.Data;
 
 @Data
 @AllArgsConstructor
-public class UserDtoWithRating {
+public class UserWithRatingDto {
     /**
      * уникальный идентификатор пользователя
      */

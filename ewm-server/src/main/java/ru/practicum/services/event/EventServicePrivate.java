@@ -4,7 +4,7 @@ import ru.practicum.model.event.dto.EventAddDto;
 import ru.practicum.model.event.dto.EventFullDto;
 import ru.practicum.model.event.dto.EventShortDto;
 import ru.practicum.model.event.dto.EventUpdateDto;
-import ru.practicum.model.user.dto.UserDtoWithRating;
+import ru.practicum.model.user.dto.UserWithRatingDto;
 
 import java.util.Collection;
 import java.util.Optional;
@@ -38,10 +38,10 @@ public interface EventServicePrivate {
     /**
      * Лайкнуть/дизлайкнуть событие
      */
-    Optional<EventFullDto> addLike(Long userId, Long eventId, Boolean like);
+    Optional<EventFullDto> addLikeOrDislike(Long userId, Long eventId, Boolean like);
 
     /**
      * Получение списка инициаторов событий по их рейтингу
      */
-    Collection<UserDtoWithRating> getUsersByRating(Integer from, Integer size);
+    Collection<UserWithRatingDto> getUsersByRating(Integer from, Integer size);
 }

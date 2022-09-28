@@ -7,7 +7,7 @@ import ru.practicum.model.event.dto.EventAddDto;
 import ru.practicum.model.event.dto.EventFullDto;
 import ru.practicum.model.event.dto.EventShortDto;
 import ru.practicum.model.event.dto.EventUpdateDto;
-import ru.practicum.model.user.dto.UserDtoWithRating;
+import ru.practicum.model.user.dto.UserWithRatingDto;
 import ru.practicum.services.event.EventServicePrivate;
 import ru.practicum.services.request.RequestService;
 import ru.practicum.model.request.dto.RequestDto;
@@ -90,20 +90,27 @@ public class EventPrivateController {
     @PostMapping("/{eventId}/like")
     @ResponseStatus(OK)
     public Optional<EventFullDto> likeEvent(@PathVariable Long userId,
-                                             @PathVariable Long eventId,
-                                             @RequestParam Boolean like) {
-        log.info("Получен запрос в контроллер на добавление лайка");
-        return eventService.addLike(userId, eventId, like);
+                                             @PathVariable Long eventId) {
+        log.debug("Получен запрос в контроллер на добавление лайка события с id {}", eventId);
+        return eventService.addLikeOrDislike(userId, eventId, Boolean.TRUE);
+    }
+
+    @PostMapping("/{eventId}/dislike")
+    @ResponseStatus(OK)
+    public Optional<EventFullDto> dislikeEvent(@PathVariable Long userId,
+                                            @PathVariable Long eventId) {
+        log.debug("Получен запрос в контроллер на добавление лайка события с id {}", eventId);
+        return eventService.addLikeOrDislike(userId, eventId, Boolean.FALSE);
     }
 
     @GetMapping("/rating")
     @ResponseStatus(OK)
-    public Collection<UserDtoWithRating> getUsersByEventsRating(@PathVariable Long userId,
+    public Collection<UserWithRatingDto> getUsersByEventsRating(@PathVariable Long userId,
                                                                 @PositiveOrZero @RequestParam(defaultValue = "0")
-                                                                    Integer from,
+                                                                    Integer userFrom,
                                                                 @Positive @RequestParam(defaultValue = "10")
                                                                     Integer size) {
         log.info("Получен запрос в контроллер на получение рейтинга пользователей");
-        return eventService.getUsersByRating(from, size);
+        return eventService.getUsersByRating(userFrom, size);
     }
 }
