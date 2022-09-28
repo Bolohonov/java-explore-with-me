@@ -99,7 +99,7 @@ public class EventPrivateController {
     @ResponseStatus(OK)
     public Optional<EventFullDto> dislikeEvent(@PathVariable Long userId,
                                             @PathVariable Long eventId) {
-        log.debug("Получен запрос в контроллер на добавление лайка события с id {}", eventId);
+        log.debug("Получен запрос в контроллер на добавление дизлайка события с id {}", eventId);
         return eventService.addLikeOrDislike(userId, eventId, Boolean.FALSE);
     }
 
