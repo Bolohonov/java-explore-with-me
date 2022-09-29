@@ -11,21 +11,18 @@ import javax.persistence.*;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
+@IdClass(FeedbackId.class)
 public class Feedback {
-    /**
-     * уникальный идентификатор
-     */
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
     /**
      * уникальный идентификатор пользователя
      */
+    @Id
     @Column(name = "user_id")
     private Long userId;
     /**
      * уникальный идентификатор события
      */
+    @Id
     @Column(name = "event_id")
     private Long eventId;
     /**
@@ -33,10 +30,4 @@ public class Feedback {
      */
     @Column(name = "is_like")
     private Boolean isLike;
-
-    public Feedback(Long userId, Long eventId, Boolean isLike) {
-        this.userId = userId;
-        this.eventId = eventId;
-        this.isLike = isLike;
-    }
 }

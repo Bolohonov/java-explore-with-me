@@ -21,11 +21,11 @@ public class FeedbackCountRepositoryImpl implements FeedbackCountRepository {
         Root<Feedback> like = query.from(Feedback.class);
         CriteriaQuery<Long> likes = query.select(cb.count(like))
                 .where(cb.and(cb.equal(like.get("eventId"), eventId),
-                        cb.equal(like.get("is_like"), Boolean.TRUE)));
+                        cb.equal(like.get("isLike"), Boolean.TRUE)));
         Long l = entityManager.createQuery(likes).getSingleResult();
         CriteriaQuery<Long> dislikes = query.select(cb.count(like))
                 .where(cb.and(cb.equal(like.get("eventId"), eventId),
-                        cb.equal(like.get("is_like"), Boolean.FALSE)));
+                        cb.equal(like.get("isLike"), Boolean.FALSE)));
         Long d = entityManager.createQuery(dislikes).getSingleResult();
         return l - d;
     }
