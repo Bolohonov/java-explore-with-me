@@ -28,7 +28,7 @@ public class CategoryServiceImpl implements CategoryService {
     @Transactional(readOnly = true)
     @Override
     public Collection<CategoryDto> getCategories(Integer from, Integer size) {
-        log.info("Получен запрос на вывод списка категорий");
+        log.debug("Получен запрос на вывод списка категорий");
         PageRequest pageRequest = PageRequest.of(this.getPageNumber(from, size), size);
         return CategoryMapper.toCategoryDto(categoryRepository.findAll(pageRequest));
     }
@@ -36,7 +36,7 @@ public class CategoryServiceImpl implements CategoryService {
     @Transactional(readOnly = true)
     @Override
     public Optional<CategoryDto> getCategoryById(Long catId) {
-        log.info("Получен запрос на вывод категории");
+        log.debug("Получен запрос на вывод категории");
         return of(CategoryMapper
                 .toCategoryDto(getCategoryFromRepository(catId)));
     }
@@ -44,7 +44,7 @@ public class CategoryServiceImpl implements CategoryService {
     @Transactional
     @Override
     public Optional<CategoryDto> updateCategoryByAdmin(CategoryDto newCategory) {
-        log.info("Получен запрос на обновление категории");
+        log.debug("Получен запрос на обновление категории");
         validateCategoryForUpdate(newCategory);
         Category category = getCategoryFromRepository(newCategory.getId());
         category.setName(newCategory.getName());
@@ -54,7 +54,7 @@ public class CategoryServiceImpl implements CategoryService {
     @Transactional
     @Override
     public Optional<CategoryDto> addCategoryByAdmin(Category newCategory) {
-        log.info("Получен запрос на добавление категории");
+        log.debug("Получен запрос на добавление категории");
         categoryRepository.save(newCategory);
         return of(CategoryMapper.toCategoryDto(newCategory));
     }
@@ -62,7 +62,7 @@ public class CategoryServiceImpl implements CategoryService {
     @Transactional
     @Override
     public void deleteCategoryByAdmin(Long catId) {
-        log.info("Получен запрос на удаление категории");
+        log.debug("Получен запрос на удаление категории");
         Category categoryToDelete = getCategoryFromRepository(catId);
         if (!eventService
                 .findEvents(null, null,

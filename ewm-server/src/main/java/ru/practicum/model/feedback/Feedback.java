@@ -1,4 +1,4 @@
-package ru.practicum.model.like;
+package ru.practicum.model.feedback;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -7,11 +7,11 @@ import lombok.NoArgsConstructor;
 import javax.persistence.*;
 
 @Entity
-@Table(name = "likes", schema = "public")
+@Table(name = "feedbacks", schema = "public")
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class Like {
+public class Feedback {
     /**
      * уникальный идентификатор
      */
@@ -31,12 +31,12 @@ public class Like {
     /**
      * флаг like - True, dislike - False
      */
-    @Column(name = "reason")
-    private Boolean reason;
+    @Column(name = "is_like")
+    private Boolean isLike;
 
-    public Like(Long userId, Long eventId, Boolean reason) {
+    public Feedback(Long userId, Long eventId, Boolean isLike) {
         this.userId = userId;
         this.eventId = eventId;
-        this.reason = reason;
+        this.isLike = isLike;
     }
 }

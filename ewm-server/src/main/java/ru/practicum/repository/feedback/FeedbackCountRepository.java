@@ -1,6 +1,6 @@
-package ru.practicum.repository.like;
+package ru.practicum.repository.feedback;
 
-public interface LikeRepositoryCustom {
+public interface FeedbackCountRepository {
     /**
      * Рассчитать рейтинг события по его id
      */

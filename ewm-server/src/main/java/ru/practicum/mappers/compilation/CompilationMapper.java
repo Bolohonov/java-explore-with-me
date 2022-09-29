@@ -25,7 +25,7 @@ public class CompilationMapper {
 
     @Transactional
     public CompilationDto toCompilationDto(Compilation compilation) {
-        log.info("Получен запрос на конвертацию подборки");
+        log.debug("Получен запрос на конвертацию подборки");
         return new CompilationDto(
                 compilation.getId(),
                 compilation.getTitle(),
@@ -43,7 +43,7 @@ public class CompilationMapper {
 
     @Transactional
     public Compilation fromCompilationDto(CompilationDto compilationDto) {
-        log.info("Получен запрос на конвертацию в подборку");
+        log.debug("Получен запрос на конвертацию в подборку");
         return new Compilation(
                 compilationDto.getId(),
                 compilationDto.getTitle(),
@@ -54,7 +54,7 @@ public class CompilationMapper {
 
     @Transactional
     public Compilation fromCompilationAddDto(CompilationAddDto compilation) {
-        log.info("Получен запрос на конвертацию в подборку");
+        log.debug("Получен запрос на конвертацию в подборку");
         Set<Event> events = new HashSet<>();
         compilation.getEvents()
                 .stream()
