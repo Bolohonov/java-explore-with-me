@@ -9,6 +9,10 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 import ru.practicum.errors.ApiError;
+import ru.practicum.errors.event.EventDateException;
+import ru.practicum.errors.event.EventNotFoundException;
+import ru.practicum.errors.feedback.FeedbackException;
+import ru.practicum.errors.user.UserNotFoundException;
 import ru.practicum.mappers.user.UserMapper;
 import ru.practicum.model.event.Event;
 import ru.practicum.model.event.State;
@@ -129,12 +133,10 @@ public class EventServicePrivateImpl implements EventServicePrivate {
         Event event = eventService.getEventFromRepository(eventId);
         List<ApiError> errorsList = new ArrayList<>();
         if (event == null) {
-            errorsList.add(new ApiError(HttpStatus.BAD_REQUEST, "Ошибка при сохранении like",
-                    String.format("Проверьте указанные id события %s", eventId)));
+            errorsList.add(new EventNotFoundException("Ошибка при сохранении feedback", eventId));
         }
         if (!userService.getUserById(userId).isPresent()) {
-            errorsList.add(new ApiError(HttpStatus.BAD_REQUEST, "Ошибка при сохранении like",
-                    String.format("Проверьте указанные id пользователя %s", userId)));
+            errorsList.add(new UserNotFoundException("Ошибка при сохранении feedback", userId));
         }
         if (errorsList.isEmpty()) {
             Feedback feedback = feedbackRepository.findByUserIdAndEventId(userId, eventId);
@@ -152,14 +154,10 @@ public class EventServicePrivateImpl implements EventServicePrivate {
 
     private void checkStatusOfLikeDislike(Event event, Feedback feedback, Boolean reason) {
         if (feedback.getIsLike().equals(Boolean.TRUE) && reason.equals(Boolean.FALSE)) {
-            throw new ApiError(HttpStatus.BAD_REQUEST, "Ошибка при сохранении like",
-                    String.format("Вы уже поставили лайк данному событию с id %s",
-                            event.getId()));
+            FeedbackException.likeAlreadyExists(event.getId());
         }
         if (feedback.getIsLike().equals(Boolean.FALSE) && reason.equals(Boolean.TRUE)) {
-            throw new ApiError(HttpStatus.BAD_REQUEST, "Ошибка при сохранении like",
-                    String.format("Вы уже поставили дизлайк данному событию с id %s",
-                            event.getId()));
+            FeedbackException.dislikeAlreadyExists(event.getId());
         }
     }
 
@@ -195,17 +193,13 @@ public class EventServicePrivateImpl implements EventServicePrivate {
 
     private void validateEventDate(EventAddDto event) {
         if (!event.getEventDate().isAfter(LocalDateTime.now().plusHours(2L))) {
-            throw new ApiError(HttpStatus.BAD_REQUEST, "Поле eventDate указано неверно.",
-                    String.format("Error: must be a date in the present or in the future (plus 2 hours). " +
-                            "Value: %s", event.getEventDate().toString()));
+            throw new EventDateException(event.getEventDate().toString());
         }
     }
 
     private void validateEventDate(EventFullDto event) {
         if (!event.getEventDate().isAfter(LocalDateTime.now().plusHours(2L))) {
-            throw new ApiError(HttpStatus.BAD_REQUEST, "Поле eventDate указано неверно.",
-                    String.format("Error: must be a date in the present or in the future (plus 2 hours). " +
-                            "Value: %s", event.getEventDate().toString()));
+            throw new EventDateException(event.getEventDate().toString());
         }
     }
 
