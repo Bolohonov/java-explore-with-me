@@ -71,7 +71,8 @@ public class EventMapper {
                 new EventShortDto.UserShortDto(event.getInitiatorId(),
                         userService.getUserById(event.getInitiatorId()).get().getName()),
                 event.getPaid(),
-                event.getViews()
+                event.getViews(),
+                likeRepository.countEventRating(event.getId())
         );
     }
 

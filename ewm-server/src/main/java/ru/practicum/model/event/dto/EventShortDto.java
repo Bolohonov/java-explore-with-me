@@ -46,6 +46,10 @@ public class EventShortDto {
      * Количество просмотрев события
      */
     private Long views;
+    /**
+     * Рейтинг события
+     */
+    private Long rating;
 
     @AllArgsConstructor
     @ToString
