@@ -25,8 +25,8 @@ public class FeedbackCountRepositoryImpl implements FeedbackCountRepository {
         CriteriaBuilder cb = entityManager.getCriteriaBuilder();
         CriteriaQuery<Object[]> query = cb.createQuery(Object[].class);
         Root<Feedback> like = query.from(Feedback.class);
-        CriteriaQuery<Object[]> likes = query.multiselect(like.get("isLike").alias("isLike"),
-                        cb.count(like.get("isLike")).alias("count"))
+        CriteriaQuery<Object[]> likes = query.multiselect(like.get("isLike"),
+                        cb.count(like.get("isLike")))
                 .where(cb.equal(like.get("eventId"), eventId))
                 .groupBy(like.get("isLike"));
         Long result = 0L;
