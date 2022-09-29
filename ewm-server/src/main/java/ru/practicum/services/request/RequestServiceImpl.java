@@ -33,14 +33,14 @@ public class RequestServiceImpl implements RequestService {
     @Transactional(readOnly = true)
     @Override
     public Collection<RequestDto> getUserRequests(Long userId) {
-        log.info("Получен запрос в сервис на поиск запросов пользователя на участие в событиях");
+        log.debug("Получен запрос в сервис на поиск запросов пользователя на участие в событиях");
         return RequestMapper.toRequestDto(requestRepository.getRequestsByRequester(userId));
     }
 
     @Transactional
     @Override
     public Optional<RequestDto> addNewRequest(Long userId, Long eventId) {
-        log.info("Получен запрос в сервис на добавление запроса на участие в событии");
+        log.debug("Получен запрос в сервис на добавление запроса на участие в событии");
         validateRequestForAdd(userId, eventId);
         Request request = Request.builder()
                 .created(LocalDateTime.now())
@@ -72,7 +72,7 @@ public class RequestServiceImpl implements RequestService {
     @Transactional
     @Override
     public Optional<RequestDto> confirmRequest(Long userId, Long eventId, Long requestId) {
-        log.info("Получен запрос в сервис на подтверждение запроса на участие в событии");
+        log.debug("Получен запрос в сервис на подтверждение запроса на участие в событии");
         Request request = getRequestFromRepository(requestId);
         EventFullDto event = eventService.getEventById(eventId).get();
         if (event.getConfirmedRequests() != null) {
@@ -94,14 +94,14 @@ public class RequestServiceImpl implements RequestService {
     @Transactional
     @Override
     public Optional<RequestDto> rejectRequest(Long userId, Long requestId) {
-        log.info("Получен запрос в сервис на отклонение запроса на участие в событии");
+        log.debug("Получен запрос в сервис на отклонение запроса на участие в событии");
         Request request = getRequestFromRepository(requestId);
         request.setStatus(Status.REJECTED);
         return of(RequestMapper.toRequestDto(request));
     }
 
     private void validateRequestForAdd(Long userId, Long eventId) {
-        log.info("Проверка события и запроса");
+        log.debug("Проверка события и запроса");
         EventFullDto event = eventService.getEventById(eventId).get();
         List<ApiError> errors = new ArrayList<>();
         if (requestRepository.getRequestByRequesterAndEvent(userId, eventId) != null) {
@@ -145,14 +145,14 @@ public class RequestServiceImpl implements RequestService {
             throw new ApiError(HttpStatus.BAD_REQUEST, "Ошибка запроса на участие",
                     "Получены ошибки при проверке условий запроса", errors);
         }
-        log.info("Запрос прошел проверки");
+        log.debug("Запрос прошел проверки");
     }
 
     private void validateAndSetStatus(Long eventId, Request request) {
-        log.info("Установка статуса запроса");
+        log.debug("Установка статуса запроса");
         if (!eventService.getEventById(eventId).get().getRequestModeration()) {
             request.setStatus(Status.CONFIRMED);
-            log.info("Установлен статус ACCEPTED");
+            log.debug("Установлен статус ACCEPTED");
         }
     }
 

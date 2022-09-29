@@ -40,21 +40,21 @@ public class EventAdminController {
     @ResponseStatus(OK)
     public Optional<EventAddDto> updateEvent(@PathVariable Long eventId,
                                              @RequestBody EventAddDto event) {
-        log.info("Поступил запрос на обновление события администратором");
+        log.debug("Поступил запрос на обновление события администратором");
         return eventService.updateEvent(eventId, event);
     }
 
     @PatchMapping("/{eventId}/publish")
     @ResponseStatus(OK)
     public Optional<EventFullDto> publishEvent(@PathVariable Long eventId) {
-        log.info("Поступил запрос на публикацию события");
+        log.debug("Поступил запрос на публикацию события");
         return eventService.publishEvent(eventId);
     }
 
     @PatchMapping("/{eventId}/reject")
     @ResponseStatus(OK)
     public Optional<EventFullDto> rejectEvent(@PathVariable Long eventId) {
-        log.info("Поступил запрос на отклонение публикации события");
+        log.debug("Поступил запрос на отклонение публикации события");
         return eventService.rejectEvent(eventId);
     }
 }

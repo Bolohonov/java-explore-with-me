@@ -17,11 +17,11 @@ import ru.practicum.model.event.dto.EventFullDto;
 import ru.practicum.mappers.event.EventMapper;
 import ru.practicum.model.event.dto.EventShortDto;
 import ru.practicum.model.event.dto.EventUpdateDto;
-import ru.practicum.model.like.Like;
+import ru.practicum.model.feedback.Feedback;
 import ru.practicum.model.user.dto.UserDto;
 import ru.practicum.model.user.dto.UserWithRatingDto;
 import ru.practicum.repository.event.EventRepository;
-import ru.practicum.repository.like.LikeRepository;
+import ru.practicum.repository.feedback.FeedbackRepository;
 import ru.practicum.services.user.UserService;
 
 import java.time.LocalDateTime;
@@ -38,12 +38,12 @@ public class EventServicePrivateImpl implements EventServicePrivate {
     private final EventMapper eventMapper;
     private final EventService eventService;
     private final UserService userService;
-    private final LikeRepository likeRepository;
+    private final FeedbackRepository feedbackRepository;
 
     @Transactional(readOnly = true)
     @Override
     public Optional<EventFullDto> getEventById(Long eventId) {
-        log.info("Получен запрос на поиск события");
+        log.debug("Получен запрос на поиск события c id {}", eventId);
         Event event = eventService.getEventFromRepository(eventId);
         return of(eventMapper.toEventFullDto(event));
     }
@@ -51,7 +51,7 @@ public class EventServicePrivateImpl implements EventServicePrivate {
     @Transactional(readOnly = true)
     @Override
     public Collection<EventShortDto> findEventsByInitiator(Long userId, Integer from, Integer size) {
-        log.info("Получен запрос в сервис на поиск события по инициатору");
+        log.debug("Получен запрос в сервис на поиск события по инициатору");
         PageRequest pageRequest = PageRequest.of(this.getPageNumber(from, size), size,
                 Sort.by("id").ascending());
         Iterable<Event> eventsPage = eventRepository.findEventsByInitiatorId(userId, pageRequest);
@@ -63,7 +63,7 @@ public class EventServicePrivateImpl implements EventServicePrivate {
     @Transactional
     @Override
     public Optional<EventFullDto> updateEventByInitiator(Long userId, EventUpdateDto event) {
-        log.info("Получен запрос в сервис на обновление события инициатором");
+        log.debug("Получен запрос в сервис на обновление события инициатором");
         Event oldEvent = eventService.getEventFromRepository(event.getEventId());
         validateEventBeforeUpdateByInitiator(userId, event);
         return of(updateEventInRepository(oldEvent, event));
@@ -80,7 +80,7 @@ public class EventServicePrivateImpl implements EventServicePrivate {
     @Transactional
     @Override
     public Optional<EventFullDto> changeEventStateToCanceled(Long userId, Long eventId) {
-        log.info("Получен запрос на отмену события");
+        log.debug("Получен запрос на отмену события c id {}", eventId);
         Event event = eventService.getEventFromRepository(eventId);
         if (!event.getState().equals(State.PENDING)) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
@@ -91,36 +91,22 @@ public class EventServicePrivateImpl implements EventServicePrivate {
 
     @Transactional
     @Override
-    public Optional<EventFullDto> addLikeOrDislike(Long userId, Long eventId, Boolean reason) {
-        log.info("Запрос в сервис на добавление лайка/дизлайка");
-        Event event = eventService.getEventFromRepository(eventId);
-        List<ApiError> errorsList = new ArrayList<>();
-        if (event == null) {
-            errorsList.add(new ApiError(HttpStatus.BAD_REQUEST, "Ошибка при сохранении like",
-                    String.format("Проверьте указанные id события %s", eventId)));
-        }
-        if (!userService.getUserById(userId).isPresent()) {
-            errorsList.add(new ApiError(HttpStatus.BAD_REQUEST, "Ошибка при сохранении like",
-                    String.format("Проверьте указанные id пользователя %s", userId)));
-        }
-        if (errorsList.isEmpty()) {
-            Like like = likeRepository.findByUserIdAndEventId(userId, eventId);
-            if (like != null) {
-                checkStatusOfLikeDislike(event, like, reason);
-            } else {
-                likeRepository.save(new Like(userId, eventId, reason));
-            }
-        } else {
-            throw new ApiError(HttpStatus.BAD_REQUEST, "Ошибка при сохранении like",
-                    "Получены следующие ошибки при сохранении", errorsList);
-        }
-        return of(eventMapper.toEventFullDto(event));
+    public Optional<EventFullDto> addLike(Long userId, Long eventId) {
+        log.debug("Запрос в сервис на добавление лайка событию с id {}", eventId);
+        return of(eventMapper.toEventFullDto(addLikeOrDislike(userId, eventId, Boolean.TRUE)));
+    }
+
+    @Transactional
+    @Override
+    public Optional<EventFullDto> addDislike(Long userId, Long eventId) {
+        log.debug("Запрос в сервис на добавление дизлайка событию с id {}", eventId);
+        return of(eventMapper.toEventFullDto(addLikeOrDislike(userId, eventId, Boolean.FALSE)));
     }
 
     @Transactional
     @Override
     public Collection<UserWithRatingDto> getUsersByRating(Integer from, Integer size) {
-        log.info("Запрос в сервис на получение рейтинга инициаторов событий");
+        log.debug("Запрос в сервис на получение рейтинга инициаторов событий");
         Collection<Object[]> queryResult = eventRepository.getEventsByRatingGroupByInitiators(from, size);
         Map<UserDto, Long> usersRating = new HashMap<>();
         for (Object[] o : queryResult) {
@@ -136,30 +122,44 @@ public class EventServicePrivateImpl implements EventServicePrivate {
                         .limit(usersRating.size() + size - 1)
                         .collect(Collectors.toMap(
                                 Map.Entry::getKey, Map.Entry::getValue, (e1, e2) -> e1, LinkedHashMap::new));
-        return UserMapper.toUserDtoWithRatingColl(usersRatingPage);
+        return UserMapper.toUserDtoWithRating(usersRatingPage);
     }
 
-    private void checkStatusOfLikeDislike(Event event, Like like, Boolean reason) {
-        if (like.getReason().equals(Boolean.TRUE) && reason.equals(Boolean.TRUE)) {
-            likeRepository.delete(like);
-            getEventById(event.getId());
-            log.info("Рейтинг события с id {} обновлен", event.getId());
-            return;
+    public Event addLikeOrDislike(Long userId, Long eventId, Boolean isLike) {
+        Event event = eventService.getEventFromRepository(eventId);
+        List<ApiError> errorsList = new ArrayList<>();
+        if (event == null) {
+            errorsList.add(new ApiError(HttpStatus.BAD_REQUEST, "Ошибка при сохранении like",
+                    String.format("Проверьте указанные id события %s", eventId)));
         }
-        if (like.getReason().equals(Boolean.TRUE) && reason.equals(Boolean.FALSE)) {
+        if (!userService.getUserById(userId).isPresent()) {
+            errorsList.add(new ApiError(HttpStatus.BAD_REQUEST, "Ошибка при сохранении like",
+                    String.format("Проверьте указанные id пользователя %s", userId)));
+        }
+        if (errorsList.isEmpty()) {
+            Feedback feedback = feedbackRepository.findByUserIdAndEventId(userId, eventId);
+            if (feedback != null) {
+                checkStatusOfLikeDislike(event, feedback, isLike);
+            } else {
+                feedbackRepository.save(new Feedback(userId, eventId, isLike));
+            }
+        } else {
+            throw new ApiError(HttpStatus.BAD_REQUEST, "Ошибка при сохранении feedback",
+                    "Получены следующие ошибки при сохранении", errorsList);
+        }
+        return event;
+    }
+
+    private void checkStatusOfLikeDislike(Event event, Feedback feedback, Boolean reason) {
+        if (feedback.getIsLike().equals(Boolean.TRUE) && reason.equals(Boolean.FALSE)) {
             throw new ApiError(HttpStatus.BAD_REQUEST, "Ошибка при сохранении like",
                     String.format("Вы уже поставили лайк данному событию с id %s",
                             event.getId()));
         }
-        if (like.getReason().equals(Boolean.FALSE) && reason.equals(Boolean.TRUE)) {
+        if (feedback.getIsLike().equals(Boolean.FALSE) && reason.equals(Boolean.TRUE)) {
             throw new ApiError(HttpStatus.BAD_REQUEST, "Ошибка при сохранении like",
                     String.format("Вы уже поставили дизлайк данному событию с id %s",
                             event.getId()));
-        }
-        if (like.getReason().equals(Boolean.FALSE) && reason.equals(Boolean.FALSE)) {
-            likeRepository.delete(like);
-            getEventById(event.getId());
-            log.info("Рейтинг события с id {} обновлен", event.getId());
         }
     }
 
@@ -210,7 +210,7 @@ public class EventServicePrivateImpl implements EventServicePrivate {
     }
 
     private EventFullDto updateEventInRepository(Event oldEvent, EventUpdateDto event) {
-        log.info("Обновить событие в репозитории");
+        log.debug("Обновить событие в репозитории");
         oldEvent = eventMapper.fromEventUpdateDtoToUpdate(event, oldEvent, oldEvent.getConfirmedRequests(),
                 oldEvent.getCreatedOn(), oldEvent.getInitiatorId(), oldEvent.getPublishedOn(),
                 oldEvent.getState(), oldEvent.getViews());

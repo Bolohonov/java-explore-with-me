@@ -92,7 +92,7 @@ public class EventPrivateController {
     public Optional<EventFullDto> likeEvent(@PathVariable Long userId,
                                              @PathVariable Long eventId) {
         log.debug("Получен запрос в контроллер на добавление лайка события с id {}", eventId);
-        return eventService.addLikeOrDislike(userId, eventId, Boolean.TRUE);
+        return eventService.addLike(userId, eventId);
     }
 
     @PostMapping("/{eventId}/dislike")
@@ -100,7 +100,7 @@ public class EventPrivateController {
     public Optional<EventFullDto> dislikeEvent(@PathVariable Long userId,
                                             @PathVariable Long eventId) {
         log.debug("Получен запрос в контроллер на добавление дизлайка события с id {}", eventId);
-        return eventService.addLikeOrDislike(userId, eventId, Boolean.FALSE);
+        return eventService.addDislike(userId, eventId);
     }
 
     @GetMapping("/rating")
@@ -110,7 +110,7 @@ public class EventPrivateController {
                                                                     Integer userFrom,
                                                                 @Positive @RequestParam(defaultValue = "10")
                                                                     Integer size) {
-        log.info("Получен запрос в контроллер на получение рейтинга пользователей");
+        log.debug("Получен запрос в контроллер на получение рейтинга пользователей");
         return eventService.getUsersByRating(userFrom, size);
     }
 }

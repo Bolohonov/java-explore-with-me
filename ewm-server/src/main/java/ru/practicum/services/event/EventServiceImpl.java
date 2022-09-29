@@ -8,7 +8,7 @@ import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.errors.ApiError;
 import ru.practicum.model.event.Event;
 import ru.practicum.repository.event.EventRepository;
-import ru.practicum.repository.like.LikeRepository;
+import ru.practicum.repository.feedback.FeedbackRepository;
 
 import java.util.*;
 
@@ -17,12 +17,12 @@ import java.util.*;
 @Slf4j
 public class EventServiceImpl implements EventService {
     private final EventRepository eventRepository;
-    private final LikeRepository likeRepository;
+    private final FeedbackRepository likeRepository;
 
     @Override
     @Transactional
     public Event getEventFromRepository(Long eventId) {
-        log.info("Получить событие с id {} из репозитория", eventId);
+        log.debug("Получить событие с id {} из репозитория", eventId);
         Event event = eventRepository.findById(eventId).orElseThrow(() -> {
             throw new ApiError(HttpStatus.NOT_FOUND, "Событие не найдено",
                     String.format("Не найдено событие c id %s", eventId

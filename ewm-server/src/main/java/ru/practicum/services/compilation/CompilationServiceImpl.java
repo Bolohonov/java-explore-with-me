@@ -32,7 +32,7 @@ public class CompilationServiceImpl implements CompilationService {
     @Transactional(readOnly = true)
     @Override
     public Collection<CompilationDto> getCompilations(Boolean pinned, Integer from, Integer size) {
-        log.info("Получен запрос в сервис на получение списка подборок");
+        log.debug("Получен запрос в сервис на получение списка подборок");
         PageRequest pageRequest = PageRequest.of(this.getPageNumber(from, size), size,
                 Sort.by("id").ascending());
         Iterable<Compilation> compilationsPage = compilationRepository.findCompilationsByPinned(pinned, pageRequest);
@@ -44,14 +44,14 @@ public class CompilationServiceImpl implements CompilationService {
     @Transactional(readOnly = true)
     @Override
     public Optional<CompilationDto> getCompilationById(Long compilationId) {
-        log.info("Получен запрос в сервис на получение подборки с id {}", compilationId);
+        log.debug("Получен запрос в сервис на получение подборки с id {}", compilationId);
         return of(compilationMapper.toCompilationDto(getById(compilationId)));
     }
 
     @Transactional
     @Override
     public Optional<CompilationDto> addCompilation(CompilationAddDto compilation) {
-        log.info("Получен запрос в сервис на добавление подборки");
+        log.debug("Получен запрос в сервис на добавление подборки");
         return of(compilationMapper.toCompilationDto(compilationRepository
                 .save(compilationMapper
                         .fromCompilationAddDto(compilation))));
@@ -60,14 +60,14 @@ public class CompilationServiceImpl implements CompilationService {
     @Transactional
     @Override
     public void deleteCompilation(Long compilationId) {
-        log.info("Получен запрос в сервис на удаление подборки");
+        log.debug("Получен запрос в сервис на удаление подборки");
         compilationRepository.delete(getById(compilationId));
     }
 
     @Transactional
     @Override
     public boolean removeEventFromCompilation(Long compId, Long eventId) {
-        log.info("Получен запрос в сервис на удаление события с id {} из подборки {}", eventId, compId);
+        log.debug("Получен запрос в сервис на удаление события с id {} из подборки {}", eventId, compId);
         return getById(compId).getEvents().remove(eventRepository.findById(eventId).orElseThrow(
                 () -> new ApiError(HttpStatus.NOT_FOUND, "Не найдено событие",
                         String.format("Не найдено событие с id %s при попытке добавления в подборку", eventId)
@@ -77,7 +77,7 @@ public class CompilationServiceImpl implements CompilationService {
     @Transactional
     @Override
     public boolean addEventToCompilation(Long compId, Long eventId) {
-        log.info("Получен запрос в сервис на добавление события с id {} в подборку {}", eventId, compId);
+        log.debug("Получен запрос в сервис на добавление события с id {} в подборку {}", eventId, compId);
         return getById(compId).getEvents().add(eventRepository.findById(eventId).orElseThrow(
                 () -> new ApiError(HttpStatus.NOT_FOUND, "Не найдено событие",
                         String.format("Не найдено событие с id %s при попытке добавления в подборку", eventId)
@@ -87,7 +87,7 @@ public class CompilationServiceImpl implements CompilationService {
     @Transactional
     @Override
     public boolean removeCompilationFromHomePage(Long compId) {
-        log.info("Получен запрос в сервис на удаление подборки с id {} с главной страницы", compId);
+        log.debug("Получен запрос в сервис на удаление подборки с id {} с главной страницы", compId);
         compilationRepository.findById(compId).orElseThrow(
                 () -> new ApiError(HttpStatus.NOT_FOUND, "Подборка не найдена",
                         String.format("Подборка с id %s не найдена", compId))
@@ -98,7 +98,7 @@ public class CompilationServiceImpl implements CompilationService {
     @Transactional
     @Override
     public boolean addCompilationToHomePage(Long compId) {
-        log.info("Получен запрос в сервис на добавление подборки с id {} на главную страницу", compId);
+        log.debug("Получен запрос в сервис на добавление подборки с id {} на главную страницу", compId);
         compilationRepository.findById(compId).orElseThrow(
                 () -> new ApiError(HttpStatus.NOT_FOUND, "Подборка не найдена",
                         String.format("Подборка с id %s не найдена", compId))

@@ -36,9 +36,14 @@ public interface EventServicePrivate {
     Optional<EventFullDto> changeEventStateToCanceled(Long userId, Long eventId);
 
     /**
-     * Лайкнуть/дизлайкнуть событие
+     * Лайкнуть событие
      */
-    Optional<EventFullDto> addLikeOrDislike(Long userId, Long eventId, Boolean like);
+    Optional<EventFullDto> addLike(Long userId, Long eventId);
+
+    /**
+     * Дизлайкнуть событие
+     */
+    Optional<EventFullDto> addDislike(Long userId, Long eventId);
 
     /**
      * Получение списка инициаторов событий по их рейтингу

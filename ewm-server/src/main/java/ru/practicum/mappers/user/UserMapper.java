@@ -32,7 +32,7 @@ public class UserMapper {
                 rating);
     }
 
-    public static Collection<UserWithRatingDto> toUserDtoWithRatingColl(Map<UserDto, Long> users) {
+    public static Collection<UserWithRatingDto> toUserDtoWithRating(Map<UserDto, Long> users) {
         return users.entrySet().stream()
                 .map((e) -> toUserDtoWithRating(e.getKey(), e.getValue()))
                 .collect(Collectors.toList());
