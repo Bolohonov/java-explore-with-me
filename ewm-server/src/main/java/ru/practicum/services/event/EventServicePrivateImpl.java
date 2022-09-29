@@ -144,6 +144,7 @@ public class EventServicePrivateImpl implements EventServicePrivate {
                 checkStatusOfLikeDislike(event, feedback, isLike);
             } else {
                 feedbackRepository.save(new Feedback(userId, eventId, isLike));
+                eventService.getEventFromRepository(eventId);
             }
         } else {
             throw new ApiError(HttpStatus.BAD_REQUEST, "Ошибка при сохранении feedback",
