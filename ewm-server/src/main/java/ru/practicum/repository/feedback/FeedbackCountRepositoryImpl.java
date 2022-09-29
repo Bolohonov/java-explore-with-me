@@ -31,11 +31,7 @@ public class FeedbackCountRepositoryImpl implements FeedbackCountRepository {
                 .groupBy(like.get("isLike"));
         Long result = 0L;
         for (Object[] arr : entityManager.createQuery(likes).getResultList()) {
-            if (arr[0].equals(true)) {
-                result =  result + (Long) arr[1];
-            } else {
-                result =  result - (Long) arr[1];
-            }
+            result = arr[0].equals(true) ? result + (Long) arr[1] : result - (Long) arr[1];
         }
         return result;
     }
