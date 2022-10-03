@@ -28,7 +28,7 @@ public class EventServiceImpl implements EventService {
                     String.format("Не найдено событие c id %s", eventId
                     ));
         });
-        Long rating = likeRepository.countEventRating(eventId);
+        Long rating = likeRepository.getRating(eventId);
         event.setRating(rating);
         return event;
     }

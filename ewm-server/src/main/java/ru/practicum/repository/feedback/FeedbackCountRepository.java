@@ -4,5 +4,5 @@ public interface FeedbackCountRepository {
     /**
      * Рассчитать рейтинг события по его id
      */
-    Long countEventRating(Long eventId);
+    Long getRating(Long eventId);
 }

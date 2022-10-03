@@ -49,7 +49,7 @@ public class EventMapper {
                 event.getState(),
                 event.getViews(),
                 new EventFullDto.Location(event.getLocLat(), event.getLocLon()),
-                likeRepository.countEventRating(event.getId())
+                likeRepository.getRating(event.getId())
         );
     }
 
@@ -72,7 +72,7 @@ public class EventMapper {
                         userService.getUserById(event.getInitiatorId()).get().getName()),
                 event.getPaid(),
                 event.getViews(),
-                likeRepository.countEventRating(event.getId())
+                likeRepository.getRating(event.getId())
         );
     }
 
@@ -132,7 +132,7 @@ public class EventMapper {
                 views,
                 newEvent.getLocation() != null ? newEvent.getLocation().getLat() : oldEvent.getLocLat(),
                 newEvent.getLocation() != null ? newEvent.getLocation().getLon() : oldEvent.getLocLon(),
-                likeRepository.countEventRating(oldEvent.getId())
+                likeRepository.getRating(oldEvent.getId())
         );
     }
 
@@ -160,7 +160,7 @@ public class EventMapper {
                 views,
                 newEvent.getLocation() != null ? newEvent.getLocation().getLat() : oldEvent.getLocLat(),
                 newEvent.getLocation() != null ? newEvent.getLocation().getLon() : oldEvent.getLocLon(),
-                likeRepository.countEventRating(oldEvent.getId())
+                likeRepository.getRating(oldEvent.getId())
         );
     }
 
