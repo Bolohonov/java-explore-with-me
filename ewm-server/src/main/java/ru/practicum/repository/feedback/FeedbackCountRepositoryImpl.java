@@ -15,7 +15,7 @@ public class FeedbackCountRepositoryImpl implements FeedbackCountRepository {
 
     @Override
     @Transactional
-    public Long countEventRating(Long eventId) {
+    public Long getRating(Long eventId) {
         CriteriaBuilder cb = entityManager.getCriteriaBuilder();
         CriteriaQuery<Object[]> query = cb.createQuery(Object[].class);
         Root<Feedback> like = query.from(Feedback.class);
