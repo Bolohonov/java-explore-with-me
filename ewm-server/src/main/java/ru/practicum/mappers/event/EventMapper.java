@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.model.event.dto.EventAddDto;
 import ru.practicum.model.event.dto.EventFullDto;
 import ru.practicum.model.event.dto.EventShortDto;
@@ -12,6 +13,7 @@ import ru.practicum.repository.category.CategoryRepository;
 import ru.practicum.errors.ApiError;
 import ru.practicum.model.event.Event;
 import ru.practicum.model.event.State;
+import ru.practicum.repository.feedback.FeedbackRepository;
 import ru.practicum.services.user.UserService;
 
 import java.time.LocalDateTime;
@@ -24,7 +26,9 @@ import java.util.stream.Collectors;
 public class EventMapper {
     private final UserService userService;
     private final CategoryRepository categoryRepository;
+    private final FeedbackRepository likeRepository;
 
+    @Transactional
     public EventFullDto toEventFullDto(Event event) {
         return new EventFullDto(
                 event.getId(),
@@ -44,7 +48,8 @@ public class EventMapper {
                 event.getRequestModeration(),
                 event.getState(),
                 event.getViews(),
-                new EventFullDto.Location(event.getLocLat(), event.getLocLon())
+                new EventFullDto.Location(event.getLocLat(), event.getLocLon()),
+                likeRepository.getRating(event.getId())
         );
     }
 
@@ -66,7 +71,8 @@ public class EventMapper {
                 new EventShortDto.UserShortDto(event.getInitiatorId(),
                         userService.getUserById(event.getInitiatorId()).get().getName()),
                 event.getPaid(),
-                event.getViews()
+                event.getViews(),
+                likeRepository.getRating(event.getId())
         );
     }
 
@@ -77,7 +83,7 @@ public class EventMapper {
     }
 
     public Event fromEventAddDto(EventAddDto event, Long userId) throws ApiError {
-        log.info("Получено событие для конвертации");
+        log.debug("Получено событие для конвертации");
         if (event.getLocation() == null) {
             throw new ApiError(HttpStatus.BAD_REQUEST,
                     "Ошибка создания события", "Вы не указали локацию");
@@ -98,14 +104,15 @@ public class EventMapper {
                 State.PENDING,
                 0L,
                 event.getLocation().getLat(),
-                event.getLocation().getLon()
+                event.getLocation().getLon(),
+                0L
         );
     }
 
-    public Event fromEventAddDtoToUpdate(EventAddDto newEvent, Event oldEvent, Long confirmedRequests,
-                                         LocalDateTime createdOn, Long initiatorId,
-                                         LocalDateTime publishedOn, State state, Long views) throws ApiError {
-        log.info("Получено событие для конвертации");
+    public Event fromEventUpdateDtoToUpdate(EventAddDto newEvent, Event oldEvent, Long confirmedRequests,
+                                            LocalDateTime createdOn, Long initiatorId,
+                                            LocalDateTime publishedOn, State state, Long views) throws ApiError {
+        log.debug("Получено событие для конвертации");
         return new Event(
                 newEvent.getTitle() != null ? newEvent.getTitle() : oldEvent.getTitle(),
                 newEvent.getAnnotation() != null ? newEvent.getAnnotation() : oldEvent.getAnnotation(),
@@ -124,14 +131,15 @@ public class EventMapper {
                 state,
                 views,
                 newEvent.getLocation() != null ? newEvent.getLocation().getLat() : oldEvent.getLocLat(),
-                newEvent.getLocation() != null ? newEvent.getLocation().getLon() : oldEvent.getLocLon()
+                newEvent.getLocation() != null ? newEvent.getLocation().getLon() : oldEvent.getLocLon(),
+                likeRepository.getRating(oldEvent.getId())
         );
     }
 
-    public Event fromEventAddDtoToUpdate(EventUpdateDto newEvent, Event oldEvent, Long confirmedRequests,
-                                         LocalDateTime createdOn, Long initiatorId,
-                                         LocalDateTime publishedOn, State state, Long views) throws ApiError {
-        log.info("Получено событие для конвертации");
+    public Event fromEventUpdateDtoToUpdate(EventUpdateDto newEvent, Event oldEvent, Long confirmedRequests,
+                                            LocalDateTime createdOn, Long initiatorId,
+                                            LocalDateTime publishedOn, State state, Long views) throws ApiError {
+        log.debug("Получено событие для конвертации");
         return new Event(
                 oldEvent.getId(),
                 newEvent.getTitle() != null ? newEvent.getTitle() : oldEvent.getTitle(),
@@ -151,12 +159,13 @@ public class EventMapper {
                 state,
                 views,
                 newEvent.getLocation() != null ? newEvent.getLocation().getLat() : oldEvent.getLocLat(),
-                newEvent.getLocation() != null ? newEvent.getLocation().getLon() : oldEvent.getLocLon()
+                newEvent.getLocation() != null ? newEvent.getLocation().getLon() : oldEvent.getLocLon(),
+                likeRepository.getRating(oldEvent.getId())
         );
     }
 
     public EventAddDto toEventAddDto(Event event) throws ApiError {
-        log.info("Получено событие для конвертации");
+        log.debug("Получено событие для конвертации");
         return new EventAddDto(
                 event.getTitle(),
                 event.getAnnotation(),

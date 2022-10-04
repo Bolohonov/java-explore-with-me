@@ -8,6 +8,8 @@ import javax.persistence.TypedQuery;
 import javax.persistence.criteria.*;
 import java.time.*;
 import java.util.*;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 public class EventRepositoryCustomImpl implements EventRepositoryCustom {
     @PersistenceContext
@@ -55,6 +57,17 @@ public class EventRepositoryCustomImpl implements EventRepositoryCustom {
                 .orderBy(cb.desc(event.get("eventDate")));
 
         return getResultWithPagination(cb, select, from, size);
+    }
+
+    @Override
+    public Collection<Object[]> getEventsByRatingGroupByInitiators(Integer from, Integer size) {
+        CriteriaBuilder cb = entityManager.getCriteriaBuilder();
+        CriteriaQuery<Object[]> query = cb.createQuery(Object[].class);
+        Root<Event> event = query.from(Event.class);
+        CriteriaQuery<Object[]> select = query.multiselect(event.get("initiatorId"), cb.sum(event.get("rating")))
+                .groupBy(event.get("initiatorId"));
+        TypedQuery<Object[]> typedQuery = entityManager.createQuery(select);
+        return typedQuery.getResultList();
     }
 
     private <T> Predicate[] getPredicatesEqual(CriteriaBuilder cb, Root<Event> event,

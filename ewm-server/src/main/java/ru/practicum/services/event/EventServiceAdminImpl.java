@@ -31,7 +31,7 @@ public class EventServiceAdminImpl implements EventServiceAdmin {
     @Override
     public Collection<EventFullDto> findEvents(List<Long> users, List<String> states, List<Long> categories,
                                                String rangeStart, String rangeEnd, Integer from, Integer size) {
-        log.info("Получен запрос на вывод списка событий администратором");
+        log.debug("Получен запрос на вывод списка событий администратором");
         Collection<Event> events = eventRepository.getEventsByAdmin(
                 eventService.getSetOfParams(users),
                 eventService.getSetOfParams(states),
@@ -46,9 +46,9 @@ public class EventServiceAdminImpl implements EventServiceAdmin {
     @Transactional
     @Override
     public Optional<EventAddDto> updateEvent(Long eventId, EventAddDto newEventDto) {
-        log.info("Получен запрос на обновление события администратором");
+        log.debug("Получен запрос на обновление события администратором");
         Event oldEvent = eventService.getEventFromRepository(eventId);
-        Event newEvent = eventMapper.fromEventAddDtoToUpdate(newEventDto, oldEvent, oldEvent.getConfirmedRequests(),
+        Event newEvent = eventMapper.fromEventUpdateDtoToUpdate(newEventDto, oldEvent, oldEvent.getConfirmedRequests(),
                 oldEvent.getCreatedOn(), oldEvent.getInitiatorId(), oldEvent.getPublishedOn(),
                 oldEvent.getState(), oldEvent.getViews());
         newEvent.setId(oldEvent.getId());
@@ -58,7 +58,7 @@ public class EventServiceAdminImpl implements EventServiceAdmin {
     @Transactional
     @Override
     public Optional<EventFullDto> publishEvent(Long eventId) {
-        log.info("Получен запрос на публикацию события администратором");
+        log.debug("Получен запрос на публикацию события администратором");
         Event event = eventService.getEventFromRepository(eventId);
         validateEventForPublishing(event);
         event.setPublishedOn(LocalDateTime.now());
@@ -69,7 +69,7 @@ public class EventServiceAdminImpl implements EventServiceAdmin {
     @Transactional
     @Override
     public Optional<EventFullDto> rejectEvent(Long eventId) {
-        log.info("Получен запрос на отмену события администратором");
+        log.debug("Получен запрос на отмену события администратором");
         Event event = eventService.getEventFromRepository(eventId);
         validateEventForRejecting(event);
         event.setState(State.CANCELED);
@@ -77,7 +77,7 @@ public class EventServiceAdminImpl implements EventServiceAdmin {
     }
 
     private Map<String, LocalDateTime> getAndValidateTimeRange(String rangeStart, String rangeEnd) {
-        log.info("Получение временного интервала в eventService");
+        log.debug("Получение временного интервала в eventService");
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss",
                 Locale.getDefault());
         Map<String, LocalDateTime> timeMap = new HashMap<>();
@@ -93,7 +93,7 @@ public class EventServiceAdminImpl implements EventServiceAdmin {
     }
 
     private void validateEventForPublishing(Event event) {
-        log.info("Проверка события перед публикацией");
+        log.debug("Проверка события перед публикацией");
         if (event.getEventDate().isBefore(LocalDateTime.now().plusHours(1L))) {
             throw new ApiError(HttpStatus.BAD_REQUEST, "Поле eventDate указано неверно.",
                     String.format("Error: must be a date in the present or in the future (plus 1 hour). " +
@@ -106,7 +106,7 @@ public class EventServiceAdminImpl implements EventServiceAdmin {
     }
 
     private void validateEventForRejecting(Event event) {
-        log.info("Проверка события для отклонения");
+        log.debug("Проверка события для отклонения");
         if (!event.getState().equals(State.PENDING)) {
             throw new ApiError(HttpStatus.BAD_REQUEST, "У события неверный статус",
                     String.format("Error: событие должно иметь статус %s", State.PUBLISHED));

@@ -2,7 +2,7 @@
 Ссылка на PR
 https://github.com/Bolohonov/java-explore-with-me/pull/1
 
-Приложение состоит из двух сервисов, каждый из которых работает со совей БД - PostgreSQL.
+Приложение состоит из двух сервисов, каждый из которых работает со своей БД - PostgreSQL.
 Спецификации API сервисов в формате JSON:
 ewm-server : https://raw.githubusercontent.com/yandex-praktikum/java-explore-with-me/main/ewm-main-service-spec.json
 ewm-statistics : https://raw.githubusercontent.com/yandex-praktikum/java-explore-with-me/main/ewm-stats-service-spec.json

@@ -31,7 +31,7 @@ public class EventServicePublicImpl implements EventServicePublic {
     public Collection<EventShortDto> getEvents(String text, List<Long> categories, Boolean paid, String rangeStart,
                                                String rangeEnd, Boolean onlyAvailable, String sort,
                                                Integer from, Integer size) {
-        log.info("Получен запрос на вывод списка событий");
+        log.debug("Получен запрос на вывод списка событий");
         Collection<Event> events = eventRepository.getEvents(text,
                 eventService.getSetOfParams(categories), paid,
                 getAndValidateTimeRangeWithDefault(rangeStart, rangeEnd),
@@ -44,7 +44,7 @@ public class EventServicePublicImpl implements EventServicePublic {
     @Transactional(readOnly = true)
     @Override
     public Optional<EventFullDto> getPublishedEventById(Long eventId) {
-        log.info("Получен запрос на вывод списка опубликованных событий");
+        log.debug("Получен запрос на вывод списка опубликованных событий");
         Event event = eventService.getEventFromRepository(eventId);
         if (event.getPublishedOn() == null) {
             throw new ApiError(HttpStatus.NOT_FOUND, "Событие не найдено",
@@ -56,7 +56,7 @@ public class EventServicePublicImpl implements EventServicePublic {
     }
 
     private Map<String, LocalDateTime> getAndValidateTimeRangeWithDefault(String rangeStart, String rangeEnd) {
-        log.info("Получение временного интервала в eventService по умолчанию");
+        log.debug("Получение временного интервала в eventService по умолчанию");
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss",
                 Locale.getDefault());
         Map<String, LocalDateTime> timeMap = new HashMap<>();
@@ -83,7 +83,6 @@ public class EventServicePublicImpl implements EventServicePublic {
         }
         if (sort != null && sort.equals("VIEWS")) {
             result = "views";
-
         }
         return result;
     }

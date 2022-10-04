@@ -7,6 +7,7 @@ import ru.practicum.model.event.dto.EventAddDto;
 import ru.practicum.model.event.dto.EventFullDto;
 import ru.practicum.model.event.dto.EventShortDto;
 import ru.practicum.model.event.dto.EventUpdateDto;
+import ru.practicum.model.user.dto.UserWithRatingDto;
 import ru.practicum.services.event.EventServicePrivate;
 import ru.practicum.services.request.RequestService;
 import ru.practicum.model.request.dto.RequestDto;
@@ -84,5 +85,32 @@ public class EventPrivateController {
     public Optional<RequestDto> rejectRequest(@PathVariable Long userId,
                                               @PathVariable Long reqId) {
         return requestService.rejectRequest(userId, reqId);
+    }
+
+    @PostMapping("/{eventId}/like")
+    @ResponseStatus(OK)
+    public Optional<EventFullDto> likeEvent(@PathVariable Long userId,
+                                             @PathVariable Long eventId) {
+        log.debug("Получен запрос в контроллер на добавление лайка события с id {}", eventId);
+        return eventService.addLike(userId, eventId);
+    }
+
+    @PostMapping("/{eventId}/dislike")
+    @ResponseStatus(OK)
+    public Optional<EventFullDto> dislikeEvent(@PathVariable Long userId,
+                                            @PathVariable Long eventId) {
+        log.debug("Получен запрос в контроллер на добавление дизлайка события с id {}", eventId);
+        return eventService.addDislike(userId, eventId);
+    }
+
+    @GetMapping("/rating")
+    @ResponseStatus(OK)
+    public Collection<UserWithRatingDto> getUsersByEventsRating(@PathVariable Long userId,
+                                                                @PositiveOrZero @RequestParam(defaultValue = "0")
+                                                                    Integer userFrom,
+                                                                @Positive @RequestParam(defaultValue = "10")
+                                                                    Integer size) {
+        log.debug("Получен запрос в контроллер на получение рейтинга пользователей");
+        return eventService.getUsersByRating(userFrom, size);
     }
 }

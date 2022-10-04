@@ -4,6 +4,7 @@ import ru.practicum.model.event.dto.EventAddDto;
 import ru.practicum.model.event.dto.EventFullDto;
 import ru.practicum.model.event.dto.EventShortDto;
 import ru.practicum.model.event.dto.EventUpdateDto;
+import ru.practicum.model.user.dto.UserWithRatingDto;
 
 import java.util.Collection;
 import java.util.Optional;
@@ -33,4 +34,19 @@ public interface EventServicePrivate {
      * Отменить событие - статус Canceled
      */
     Optional<EventFullDto> changeEventStateToCanceled(Long userId, Long eventId);
+
+    /**
+     * Лайкнуть событие
+     */
+    Optional<EventFullDto> addLike(Long userId, Long eventId);
+
+    /**
+     * Дизлайкнуть событие
+     */
+    Optional<EventFullDto> addDislike(Long userId, Long eventId);
+
+    /**
+     * Получение списка инициаторов событий по их рейтингу
+     */
+    Collection<UserWithRatingDto> getUsersByRating(Integer from, Integer size);
 }
