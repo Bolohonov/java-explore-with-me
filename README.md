@@ -12,7 +12,7 @@ ewm-statistics : https://raw.githubusercontent.com/yandex-praktikum/java-explore
 при этом будут развернуты 4 контейнера Docker: 2 для сервисов и 2 базы данных.
 
 Каждый сервис может быть запущен отдельно с БД PostgreSQL для этого необходимо выполнить последовательность команд
-в корневой директории проекта выполнить команды:
+в корневой директории проекта:
 
 mvn clean install
 cd ewm-server/target
