@@ -1,6 +1,4 @@
 # java-explore-with-me
-Ссылка на PR
-https://github.com/Bolohonov/java-explore-with-me/pull/1
 
 Приложение состоит из двух сервисов, каждый из которых работает со своей БД - PostgreSQL.
 Спецификации API сервисов в формате JSON:
