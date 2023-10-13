@@ -1,6 +1,6 @@
 # java-explore-with-me
 
-Реализовано два микросервисы, каждый из которых работает со своей БД - PostgreSQL.
+Реализовано два микросервиса, каждый из которых работает со своей БД - PostgreSQL.
 Спецификации API сервисов в формате JSON:
 ewm-server : https://raw.githubusercontent.com/yandex-praktikum/java-explore-with-me/main/ewm-main-service-spec.json
 ewm-statistics : https://raw.githubusercontent.com/yandex-praktikum/java-explore-with-me/main/ewm-stats-service-spec.json
